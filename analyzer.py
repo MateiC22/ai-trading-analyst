@@ -582,7 +582,7 @@ def main():
         "stocksScanned": len(results),
         "signalsToday": signals_count,
         "updatedAt": ro_time,
-        "opportunities": results[:35]
+        "opportunities": results
     }
 
     with open("data.json", "w", encoding="utf-8") as f:
