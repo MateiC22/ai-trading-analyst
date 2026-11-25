@@ -324,10 +324,10 @@ def main():
                 continue
 
             # Stabilim semnalul
-            if stats["score"] >= 74 and stats["win_chance"] >= 60:
+            if stats["score"] >= 68 and stats["win_chance"] >= 56:
                 signal = "BUY"
                 signals_count += 1
-            elif stats["score"] >= 58:
+            elif stats["score"] >= 52:
                 signal = "WATCH"
             else:
                 signal = "WAIT"
