@@ -1,1784 +1,1371 @@
 <!DOCTYPE html>
-<html lang="ro" class="dark">
+<html lang="ro">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Trading Analyst — Trading 212 Live Scanner</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>AI Trading Analyst — Trading 212</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-          },
-        },
-      },
-    };
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
-    html, body {
-      background-color: #050507;
-      color: #f8fafc;
-      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    :root {
+      --bg-base: #07080a;
+      --bg-surface: #0e1015;
+      --bg-elevated: #14171f;
+      --bg-hover: #1a1e29;
+      --border: #1e222d;
+      --border-strong: #2c3242;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.12);
+      --green-border: rgba(16, 185, 129, 0.35);
+      --amber: #f59e0b;
+      --amber-bg: rgba(245, 158, 11, 0.12);
+      --amber-border: rgba(245, 158, 11, 0.35);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.12);
+      --red-border: rgba(239, 68, 68, 0.35);
+      --blue: #3b82f6;
+      --blue-bg: rgba(59, 130, 246, 0.12);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(circle at 18% 0%, #0f151c 0%, var(--bg-base) 48%);
+      color: var(--text-primary);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      line-height: 1.45;
       -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
     }
 
-    .tabular-nums {
-      font-variant-numeric: tabular-nums;
+    .container {
+      max-width: 1380px;
+      margin: 0 auto;
+      padding: 20px 24px 60px;
     }
 
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #050507;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1c1f26;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #2d3340;
+    /* HEADER */
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .surface-card {
-      background-color: #0d0e12;
-      border: 1px solid #1c1f26;
-      border-radius: 14px;
-      transition: border-color 0.2s ease, background-color 0.2s ease, transform 0.15s ease;
-    }
-    .surface-card:hover {
-      border-color: #2d3340;
-      background-color: #111319;
+    .brand h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
-    .spotlight-buy {
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, #0d0e12 48%);
-      border: 1px solid rgba(16, 185, 129, 0.34);
-      box-shadow: 0 0 28px -12px rgba(16, 185, 129, 0.32);
-    }
-    .spotlight-buy:hover {
-      border-color: rgba(16, 185, 129, 0.58);
+    .brand p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 2px;
     }
 
-    .spotlight-amber {
-      background: linear-gradient(180deg, rgba(245, 158, 11, 0.05) 0%, #0d0e12 48%);
-      border: 1px solid rgba(245, 158, 11, 0.28);
-      box-shadow: 0 0 26px -12px rgba(245, 158, 11, 0.24);
-    }
-    .spotlight-amber:hover {
-      border-color: rgba(245, 158, 11, 0.5);
-    }
-
-    /* Desktop 2-column scanner grid above 860px */
-    .scanner-grid {
-      display: grid;
-      grid-template-columns: 1fr;
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
       gap: 12px;
     }
-    @media (min-width: 860px) {
-      .scanner-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: var(--green-bg);
+      border: 1px solid var(--green-border);
+      color: var(--green);
+      font-size: 0.78rem;
+      font-weight: 600;
     }
 
-    /* Slide-over drawer animation */
-    .drawer-panel {
-      transform: translateX(100%);
-      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .drawer-open .drawer-panel {
-      transform: translateX(0);
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2s infinite;
     }
 
-    @keyframes pulseDot {
+    @keyframes pulse {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.42; transform: scale(0.9); }
+      50% { opacity: 0.45; transform: scale(0.85); }
     }
-    .dot-pulse {
-      animation: pulseDot 2.1s infinite ease-in-out;
+
+    .scan-timer {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      padding: 5px 11px;
+      border-radius: 8px;
+    }
+
+    .scan-timer strong {
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    .icon-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .icon-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-strong);
+    }
+
+    /* QUICK STATS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin: 18px 0 22px;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat-value.green { color: var(--green); }
+
+    /* PORTFOLIO MONITORING STRIP */
+    .portfolio-section {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--bg-surface) 60%);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      padding: 16px 18px;
+      margin-bottom: 24px;
+    }
+
+    .portfolio-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .portfolio-header h2 {
+      font-size: 0.92rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 12px;
+    }
+
+    .port-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+    }
+
+    .port-card:hover {
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .port-card.alert-exit {
+      border-color: var(--red-border);
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.07) 0%, var(--bg-elevated) 100%);
+    }
+
+    .port-card.alert-tp {
+      border-color: var(--green-border);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-elevated) 100%);
+    }
+
+    .port-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .port-ticker {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 0.96rem;
+    }
+
+    .exit-pill {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+    }
+
+    .exit-HOLD { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+    .exit-TP { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .exit-WATCH { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+    .exit-SELL { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+    .port-metrics {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 6px;
+    }
+
+    .port-reason {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.38;
+    }
+
+    /* MAIN WORKSPACE LAYOUT (Varianta 1: Spotlight Left + 2-Col Grid Right) */
+    .workspace {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .section-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title span {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+
+    /* SPOTLIGHT COLUMN */
+    .spotlight-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .spot-card {
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, var(--bg-surface) 100%);
+      border: 1px solid var(--green-border);
+      border-radius: 14px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .spot-card.watch-spot {
+      background: var(--bg-surface);
+      border-color: var(--border-strong);
+    }
+
+    .spot-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    }
+
+    .spot-tags {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.7rem;
+      color: var(--amber);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .spot-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .spot-ticker {
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .spot-name {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      max-width: 195px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .spot-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .price-text {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.92rem;
+      font-weight: 600;
+    }
+
+    .copy-mini {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .copy-mini:hover {
+      color: var(--text-primary);
+      border-color: var(--green);
+    }
+
+    .spot-summary {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-top: 10px;
+      line-height: 1.42;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* CONTROLS & FILTER BAR */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 190px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 9px;
+      font-size: 0.83rem;
+      outline: none;
+    }
+
+    .search-box:focus { border-color: var(--border-strong); }
+
+    .pill-group {
+      display: inline-flex;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 3px;
+      gap: 2px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.76rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-btn:hover { color: var(--text-primary); }
+    .filter-btn.active {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .sort-select {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      padding: 7px 10px;
+      border-radius: 9px;
+      font-size: 0.78rem;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* 2-COLUMN CARDS GRID */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .stock-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.16s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stock-card:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-strong);
+      transform: translateY(-1px);
+    }
+
+    .stock-card.sig-BUY {
+      border-color: var(--green-border);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.045) 0%, var(--bg-surface) 100%);
+    }
+
+    .stock-card.sig-WAIT { opacity: 0.82; }
+    .stock-card.sig-WAIT:hover { opacity: 1; }
+
+    .card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .ticker-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pin-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 0 2px;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+
+    .pin-btn.pinned, .pin-btn:hover { color: var(--amber); }
+
+    .card-ticker {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .card-company {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      max-width: 165px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .badge-BUY { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+    .badge-WATCH { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+    .badge-WAIT { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+
+    .score-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+    }
+
+    .score-row strong {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 5px;
+      background: #1b1f2a;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 999px;
+    }
+
+    .card-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.74rem;
+      color: var(--text-secondary);
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .win-txt { color: var(--green); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+
+    /* SLIDE-OVER DETAIL DRAWER */
+    .drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(3px);
+      z-index: 90;
+      display: none;
+    }
+
+    .drawer-backdrop.open { display: block; }
+
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -520px;
+      width: 100%;
+      max-width: 490px;
+      height: 100vh;
+      background: #0b0d12;
+      border-left: 1px solid var(--border-strong);
+      z-index: 100;
+      padding: 20px 22px 36px;
+      overflow-y: auto;
+      transition: right 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .drawer.open { right: 0; }
+
+    .drawer-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .close-drawer {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+    }
+
+    .drawer-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+    }
+
+    .drawer-box h4 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tf-switch {
+      display: inline-flex;
+      gap: 4px;
+    }
+
+    .tf-btn {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .tf-btn.active {
+      color: var(--text-primary);
+      border-color: var(--green);
+    }
+
+    .tv-container {
+      width: 100%;
+      height: 270px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #07080a;
+    }
+
+    .levels-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .level-pill {
+      padding: 8px 10px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .level-tp { background: var(--green-bg); border: 1px solid var(--green-border); color: var(--green); }
+    .level-sl { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+
+    .calc-input-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .calc-input {
+      width: 130px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      padding: 6px 10px;
+      border-radius: 7px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88rem;
+      text-align: right;
+    }
+
+    .calc-res-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      padding: 4px 0;
+    }
+
+    .ind-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .ind-tag {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-secondary);
+    }
+
+    .t212-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--green);
+      color: #04130d;
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .t212-cta:hover { opacity: 0.92; }
+
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: var(--bg-elevated);
+      border: 1px solid var(--green-border);
+      color: var(--text-primary);
+      padding: 9px 16px;
+      border-radius: 9px;
+      font-size: 0.82rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 200;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 1024px) {
+      .workspace { grid-template-columns: 1fr; }
+      .spotlight-list { display: grid; grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 680px) {
+      .stats-row { grid-template-columns: 1fr; }
+      .cards-grid, .spotlight-list { grid-template-columns: 1fr; }
+      .container { padding: 14px 14px 48px; }
     }
   </style>
 </head>
-<body class="bg-[#050507] text-[#f8fafc] min-h-screen selection:bg-emerald-500/20 selection:text-emerald-300">
-
-  <!-- Toast Feedback -->
-  <div
-    id="toastBanner"
-    class="fixed bottom-5 left-1/2 -translate-x-1/2 z-[70] hidden items-center gap-2 px-4 py-2.5 rounded-full bg-[#111319] border border-emerald-500/40 text-xs font-medium text-emerald-300 shadow-2xl"
-  >
-    <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-    <span id="toastText">Simbol copiat!</span>
-  </div>
-
-  <!-- Main App Wrapper -->
-  <div class="max-w-[1340px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
-
-    <!-- 1. TOP HEADER BAR -->
-    <header class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 pb-6 border-b border-[#1c1f26]">
-      <div>
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-lg bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 font-bold text-sm">
-            AI
-          </div>
-          <div>
-            <h1 class="text-xl sm:text-[22px] font-bold tracking-tight text-white leading-tight">
-              AI Trading Analyst
-            </h1>
-            <p class="text-xs text-slate-400 mt-0.5">
-              Trading 212 Live &bull; US &amp; Worldwide
-            </p>
-          </div>
-        </div>
+<body>
+  <div class="container">
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div class="brand">
+        <h1>AI Trading Analyst</h1>
+        <p id="subHeader">Trading 212 • US & Worldwide Scanner</p>
       </div>
-
-      <!-- Center / Right Status, Countdown & Controls -->
-      <div class="flex flex-wrap items-center gap-2.5 sm:gap-3">
-        <!-- Feed Status Pill -->
-        <span id="feedStatusPill" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/25">
-          <span class="w-2 h-2 rounded-full bg-current dot-pulse"></span>
-          <span id="feedStatusText">Demo UI</span>
-        </span>
-
-        <!-- Timestamp & Live Countdown -->
-        <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 px-3 py-1.5 rounded-xl bg-[#0d0e12] border border-[#1c1f26] text-xs">
-          <span class="text-slate-400">
-            Actualizat la <strong id="updatedAtText" class="text-slate-200 font-medium">—</strong>
-          </span>
-          <span class="hidden sm:inline text-[#2d3340]">|</span>
-          <span class="text-slate-400 flex items-center gap-1.5 tabular-nums">
-            <svg class="w-3.5 h-3.5 text-emerald-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="9"></circle>
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v5l3 2"></path>
-            </svg>
-            <span id="countdownText">Următoarea scanare în calcul...</span>
-          </span>
-        </div>
-
-        <!-- Subtle Gear Icon (JSON Inspector/Tester) -->
-        <button
-          id="openJsonSettingsBtn"
-          type="button"
-          title="JSON Data & Schema"
-          aria-label="JSON Settings"
-          class="p-2 rounded-xl bg-[#0d0e12] text-slate-400 hover:text-white border border-[#1c1f26] hover:border-[#2d3340] transition cursor-pointer"
-        >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </button>
-
-        <!-- Reload Button -->
-        <button
-          id="reloadBtn"
-          type="button"
-          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#0d0e12] text-white border border-[#1c1f26] hover:border-[#2d3340] hover:bg-[#14171f] active:scale-[0.99] transition cursor-pointer"
-        >
-          <svg id="reloadIcon" class="w-3.5 h-3.5 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-          <span>Reload</span>
-        </button>
+      <div class="header-meta">
+        <span class="live-pill"><span class="pulse-dot"></span><span id="liveBadge">Live Feed</span></span>
+        <div class="scan-timer" id="nextScanTimer">Următoarea scanare: <strong>calcul...</strong></div>
+        <button class="icon-btn" onclick="loadMarketData(true)">↻ Reload</button>
       </div>
     </header>
 
-    <!-- 2. QUICK STATS BAR (3-COLUMN RESPONSIVE GRID) -->
-    <section aria-label="Statistici rapide" class="mt-6">
-      <div class="text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-2.5">
-        Statistici rapide
+    <!-- QUICK STATS -->
+    <section class="stats-row">
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Fază piață</div>
+          <div class="stat-value" id="marketStatusText" style="font-size:1.05rem;">Se încarcă...</div>
+        </div>
       </div>
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-        <!-- Card 1: Stare -->
-        <div class="surface-card px-4 py-3.5 flex items-center justify-between">
-          <div>
-            <div class="text-xs text-slate-400">Stare</div>
-            <div class="mt-1 flex items-center gap-2">
-              <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 dot-pulse"></span>
-              <span id="statMarketStatus" class="text-base sm:text-lg font-bold text-white tracking-tight">Active Scan</span>
-            </div>
-          </div>
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0" />
-            </svg>
-          </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Acțiuni scanate</div>
+          <div class="stat-value" id="scannedCount">0</div>
         </div>
-
-        <!-- Card 2: Acțiuni scanate -->
-        <div class="surface-card px-4 py-3.5 flex items-center justify-between">
-          <div>
-            <div class="text-xs text-slate-400">Acțiuni scanate</div>
-            <div id="statStocksScanned" class="mt-1 text-xl sm:text-2xl font-bold text-white tabular-nums">69</div>
-          </div>
-          <div class="w-9 h-9 rounded-xl bg-slate-800/70 border border-[#1c1f26] flex items-center justify-center text-slate-300">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3 13h2v8H3zm6-4h2v12H9zm6-6h2v18h-2zm6 10h2v8h-2z" />
-            </svg>
-          </div>
-        </div>
-
-        <!-- Card 3: Semnale azi -->
-        <div class="surface-card px-4 py-3.5 flex items-center justify-between">
-          <div>
-            <div class="text-xs text-slate-400">Semnale azi</div>
-            <div id="statSignalsToday" class="mt-1 text-xl sm:text-2xl font-bold text-emerald-400 tabular-nums">3</div>
-          </div>
-          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-            </svg>
-          </div>
+      </div>
+      <div class="stat-card">
+        <div>
+          <div class="stat-label">Semnale BUY azi</div>
+          <div class="stat-value green" id="signalsCount">0</div>
         </div>
       </div>
     </section>
 
-    <!-- 3. MAIN WORKSPACE: LEFT SPOTLIGHT COLUMN + RIGHT 2-COL SCANNER GRID -->
-    <div class="mt-7 grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+    <!-- PORTFOLIO MONITORING BAR (Trading 212) -->
+    <section class="portfolio-section" id="portfolioSection" style="display:none;">
+      <div class="portfolio-header">
+        <h2>💼 Portofoliul Tău Trading 212 <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">(Monitorizare Take Profit &amp; Stop Loss)</span></h2>
+        <span id="portfolioCountBadge" style="font-size:0.75rem;color:var(--text-secondary);"></span>
+      </div>
+      <div class="portfolio-grid" id="portfolioGrid"></div>
+    </section>
 
-      <!-- LEFT COLUMN (4 cols on XL): În atenția ta azi (Favorites & Custom) -->
-      <aside class="xl:col-span-4 flex flex-col gap-3.5">
-        <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-base font-bold text-white tracking-tight">
-              În atenția ta azi <span class="text-xs font-normal text-slate-400">(Favorites &amp; Custom)</span>
-            </h2>
-          </div>
-          <span id="spotlightCountPill" class="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#0d0e12] text-slate-400 border border-[#1c1f26] tabular-nums">
-            0
-          </span>
+    <!-- WORKSPACE -->
+    <main class="workspace">
+      <!-- LEFT SPOTLIGHT -->
+      <aside>
+        <div class="section-title">
+          În atenția ta azi
+          <span>BUY • Pinned • Custom</span>
         </div>
-
-        <div id="spotlightContainer" class="flex flex-col gap-3">
-          <!-- Featured cards injected via JS -->
-        </div>
+        <div class="spotlight-list" id="spotlightList"></div>
       </aside>
 
-      <!-- RIGHT COLUMN (8 cols on XL): Main Scanner Toolbar & 2-Column Grid -->
-      <main class="xl:col-span-8 flex flex-col gap-4">
+      <!-- RIGHT MAIN SCANNER -->
+      <section>
+        <div class="controls-bar">
+          <input type="text" id="searchInput" class="search-box" placeholder="Caută simbol sau companie (ex: PLTR, NVDA)..." />
 
-        <!-- Filter & Search Toolbar -->
-        <div class="surface-card p-3.5 flex flex-col gap-3">
-          <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
-            <!-- Search Input -->
-            <div class="relative flex-1">
-              <svg class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
-              </svg>
-              <input
-                id="searchInput"
-                type="text"
-                placeholder="Search ticker or company..."
-                class="w-full pl-9 pr-3 py-2 rounded-xl text-xs bg-[#050507] text-white placeholder-slate-500 border border-[#1c1f26] focus:outline-none focus:border-emerald-500/50 transition"
-              />
-            </div>
-
-            <!-- Sort Dropdown -->
-            <select
-              id="sortSelect"
-              aria-label="Sortează oportunitățile"
-              class="px-3 py-2 rounded-xl text-xs font-medium bg-[#050507] text-slate-200 border border-[#1c1f26] focus:outline-none focus:border-emerald-500/50 cursor-pointer"
-            >
-              <option value="featured">Featured (Custom + Score)</option>
-              <option value="score">Score: High → Low</option>
-              <option value="winChance">Win Chance: High → Low</option>
-            </select>
+          <div class="pill-group" id="signalFilters">
+            <button class="filter-btn active" data-sig="ALL">All</button>
+            <button class="filter-btn" data-sig="BUY">BUY</button>
+            <button class="filter-btn" data-sig="WATCH">WATCH</button>
+            <button class="filter-btn" data-sig="WAIT">WAIT</button>
           </div>
 
-          <!-- Signal & Region Filter Pills -->
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <!-- Signal Pills -->
-            <div id="signalPillsGroup" class="flex flex-wrap items-center gap-1.5">
-              <button type="button" data-signal="ALL" class="sig-pill px-2.5 py-1 rounded-lg text-xs font-semibold bg-white/10 text-white border border-white/15 transition cursor-pointer">
-                All <span id="cntSignalAll" class="text-slate-400 ml-0.5 tabular-nums">0</span>
-              </button>
-              <button type="button" data-signal="BUY" class="sig-pill px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#050507] text-emerald-400 border border-[#1c1f26] hover:border-emerald-500/40 transition cursor-pointer">
-                BUY <span id="cntSignalBuy" class="opacity-80 ml-0.5 tabular-nums">0</span>
-              </button>
-              <button type="button" data-signal="WATCH" class="sig-pill px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#050507] text-amber-400 border border-[#1c1f26] hover:border-amber-500/40 transition cursor-pointer">
-                WATCH <span id="cntSignalWatch" class="opacity-80 ml-0.5 tabular-nums">0</span>
-              </button>
-              <button type="button" data-signal="WAIT" class="sig-pill px-2.5 py-1 rounded-lg text-xs font-semibold bg-[#050507] text-red-400 border border-[#1c1f26] hover:border-red-500/40 transition cursor-pointer">
-                WAIT <span id="cntSignalWait" class="opacity-80 ml-0.5 tabular-nums">0</span>
-              </button>
-            </div>
-
-            <!-- Region / Category Pills -->
-            <div id="regionPillsGroup" class="flex flex-wrap items-center gap-1.5">
-              <button type="button" data-region="ALL" class="reg-pill px-2.5 py-1 rounded-lg text-xs font-medium bg-white/10 text-white border border-white/15 transition cursor-pointer">
-                All
-              </button>
-              <button type="button" data-region="FAVORITES" class="reg-pill px-2.5 py-1 rounded-lg text-xs font-medium bg-[#050507] text-amber-300 border border-[#1c1f26] hover:border-amber-500/40 transition cursor-pointer">
-                ★ Favorites
-              </button>
-              <button type="button" data-region="CUSTOM" class="reg-pill px-2.5 py-1 rounded-lg text-xs font-medium bg-[#050507] text-sky-300 border border-[#1c1f26] hover:border-sky-500/40 transition cursor-pointer">
-                CUSTOM
-              </button>
-              <button type="button" data-region="US" class="reg-pill px-2.5 py-1 rounded-lg text-xs font-medium bg-[#050507] text-slate-300 border border-[#1c1f26] hover:border-[#2d3340] transition cursor-pointer">
-                US
-              </button>
-              <button type="button" data-region="WORLDWIDE" class="reg-pill px-2.5 py-1 rounded-lg text-xs font-medium bg-[#050507] text-slate-300 border border-[#1c1f26] hover:border-[#2d3340] transition cursor-pointer">
-                WORLDWIDE
-              </button>
-            </div>
+          <div class="pill-group" id="regionFilters">
+            <button class="filter-btn active" data-reg="ALL">Toate</button>
+            <button class="filter-btn" data-reg="FAV">★ Favorites</button>
+            <button class="filter-btn" data-reg="PORTFOLIO">Portfolio</button>
+            <button class="filter-btn" data-reg="CUSTOM">CUSTOM</button>
+            <button class="filter-btn" data-reg="US">US</button>
+            <button class="filter-btn" data-reg="WORLDWIDE">World</button>
           </div>
+
+          <select id="sortSelect" class="sort-select">
+            <option value="featured">Sortare: Recomandate</option>
+            <option value="score">Scor Tehnic (Max)</option>
+            <option value="win">Win Chance (%)</option>
+            <option value="ticker">Alfabetic (A-Z)</option>
+          </select>
         </div>
 
-        <!-- 2-Column Scanner Grid -->
-        <div id="scannerGrid" class="scanner-grid">
-          <!-- Cards injected via JS -->
-        </div>
+        <div class="cards-grid" id="cardsGrid"></div>
+      </section>
+    </main>
+  </div>
 
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden surface-card p-10 text-center">
-          <p class="text-sm font-semibold text-white">Nicio acțiune nu corespunde filtrelor curente.</p>
-          <p class="text-xs text-slate-400 mt-1">Resetează căutarea sau filtrele pentru a vedea toate companiile scanate.</p>
-          <button
-            id="resetFiltersBtn"
-            type="button"
-            class="mt-4 px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 transition cursor-pointer"
-          >
-            Resetează filtrele
-          </button>
+  <!-- DETAIL DRAWER -->
+  <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeDrawer()"></div>
+  <aside class="drawer" id="detailDrawer">
+    <div class="drawer-head">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <h2 id="dTicker" style="font-family:'JetBrains Mono',monospace;font-size:1.3rem;">PLTR</h2>
+          <span id="dBadge" class="badge badge-BUY">BUY</span>
         </div>
-      </main>
+        <p id="dName" style="font-size:0.82rem;color:var(--text-secondary);margin-top:2px;">Palantir Technologies</p>
+      </div>
+      <button class="close-drawer" onclick="closeDrawer()">✕</button>
     </div>
 
-    <!-- Footer -->
-    <footer class="mt-10 pt-5 border-t border-[#1c1f26] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-slate-500">
-      <div>AI Trading Analyst &bull; Probabilități statistice bazate pe backtesting istoric, date intraday &amp; AI.</div>
-      <div>Compatibil Trading 212 Invest / ISA &bull; Grafice oferite de TradingView.</div>
-    </footer>
-  </div>
+    <!-- PORTFOLIO POSITION BOX IN DRAWER -->
+    <div class="drawer-box" id="dPortfolioBox" style="display:none;border-color:var(--border-strong);">
+      <h4>
+        <span>💼 Poziția ta activă Trading 212</span>
+        <span id="dExitPill" class="exit-pill exit-HOLD">HOLD</span>
+      </h4>
+      <div style="display:flex;justify-content:space-between;font-size:0.8rem;font-family:'JetBrains Mono',monospace;margin-bottom:6px;">
+        <span id="dPortQty">Cantitate: 0</span>
+        <span id="dPortAvg">Mediu: $0.00</span>
+        <span id="dPortPnl" style="font-weight:700;">+0.0%</span>
+      </div>
+      <p id="dPortReason" style="font-size:0.78rem;color:var(--text-secondary);"></p>
+    </div>
 
-  <!-- 4. SLIDE-OVER RIGHT DETAIL DRAWER -->
-  <div
-    id="detailDrawerOverlay"
-    class="fixed inset-0 z-50 hidden bg-black/75 backdrop-blur-xs"
-    aria-hidden="true"
-  >
-    <aside
-      id="detailDrawerPanel"
-      role="dialog"
-      aria-modal="true"
-      aria-label="Detalii companie și grafic TradingView"
-      class="drawer-panel fixed top-0 right-0 h-full w-full sm:w-[540px] lg:w-[600px] bg-[#0a0b0e] border-l border-[#1c1f26] shadow-2xl flex flex-col overflow-hidden"
-    >
-      <!-- Drawer Top Header -->
-      <div class="px-5 py-4 bg-[#0d0e12] border-b border-[#1c1f26] flex items-center justify-between gap-3 shrink-0">
-        <div class="flex items-center gap-3 min-w-0">
-          <div id="drawerMonogram" class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 border">
-            PL
-          </div>
-          <div class="min-w-0">
-            <div class="flex items-center gap-2">
-              <h3 id="drawerTicker" class="text-lg font-bold text-white tracking-tight">PLTR</h3>
-              <span id="drawerSignalBadge" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
-                BUY
-              </span>
-            </div>
-            <p id="drawerCompanyName" class="text-xs text-slate-400 truncate">Palantir Technologies Inc.</p>
-          </div>
+    <!-- TRADINGVIEW LIVE CHART -->
+    <div class="drawer-box">
+      <h4>
+        <span>Grafic Live TradingView</span>
+        <div class="tf-switch">
+          <button class="tf-btn active" onclick="changeChartTf('15', this)">15m</button>
+          <button class="tf-btn" onclick="changeChartTf('60', this)">1H</button>
+          <button class="tf-btn" onclick="changeChartTf('D', this)">1D</button>
         </div>
-
-        <div class="flex items-center gap-1.5 shrink-0">
-          <button
-            id="drawerCopyBtn"
-            type="button"
-            class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium bg-[#050507] text-slate-200 border border-[#1c1f26] hover:border-[#2d3340] transition cursor-pointer"
-          >
-            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-              <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-            </svg>
-            <span>Copy</span>
-          </button>
-
-          <button
-            id="drawerPinBtn"
-            type="button"
-            title="Fixează în atenția ta"
-            class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#050507] text-slate-300 border border-[#1c1f26] hover:border-amber-500/40 transition cursor-pointer"
-          >
-            ★ Pin
-          </button>
-
-          <button
-            id="closeDrawerBtn"
-            type="button"
-            aria-label="Închide panoul"
-            class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
-          >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <!-- Scrollable Drawer Body -->
-      <div class="flex-1 overflow-y-auto p-5 space-y-5">
-
-        <!-- Tags & Current Price Banner -->
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div id="drawerTagsList" class="flex flex-wrap items-center gap-1.5"></div>
-          <div class="text-right tabular-nums">
-            <span class="text-xs text-slate-400 mr-1.5">Preț curent:</span>
-            <span id="drawerPriceValue" class="text-base font-bold text-white">$26.40</span>
-          </div>
-        </div>
-
-        <!-- LIVE TRADINGVIEW CHART SECTION -->
-        <section class="rounded-2xl bg-[#0d0e12] border border-[#1c1f26] overflow-hidden">
-          <!-- Top TP / SL Strip + Interval Selector -->
-          <div class="px-4 py-2.5 bg-[#090a0d] border-b border-[#1c1f26] flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div class="flex flex-wrap items-center gap-3 tabular-nums">
-              <span class="inline-flex items-center gap-1.5 font-semibold text-emerald-400">
-                <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-                TP: <span id="drawerTpValue">+8.2% ($28.56)</span>
-              </span>
-              <span class="inline-flex items-center gap-1.5 font-semibold text-red-400">
-                <span class="w-2 h-2 rounded-full bg-red-400"></span>
-                SL: <span id="drawerSlValue">-4.1% ($25.32)</span>
-              </span>
-            </div>
-
-            <!-- Timeframe Switcher -->
-            <div id="tvIntervalGroup" class="flex items-center gap-1 bg-[#050507] p-0.5 rounded-lg border border-[#1c1f26]">
-              <button type="button" data-interval="15" class="tv-int-btn px-2 py-0.5 rounded-md text-[11px] font-semibold text-slate-400 hover:text-white transition cursor-pointer">
-                15m
-              </button>
-              <button type="button" data-interval="60" class="tv-int-btn px-2 py-0.5 rounded-md text-[11px] font-semibold bg-white/10 text-white transition cursor-pointer">
-                1H
-              </button>
-              <button type="button" data-interval="D" class="tv-int-btn px-2 py-0.5 rounded-md text-[11px] font-semibold text-slate-400 hover:text-white transition cursor-pointer">
-                1D
-              </button>
-            </div>
-          </div>
-
-          <!-- TradingView Chart Container -->
-          <div id="tradingviewWidgetContainer" class="w-full h-[330px] bg-[#0a0b0e]"></div>
-        </section>
-
-        <!-- CALCULATOR RAPID DE PROFIT -->
-        <section class="surface-card p-4">
-          <div class="flex items-center justify-between mb-3">
-            <div>
-              <h4 class="text-sm font-bold text-white">Calculator rapid de profit</h4>
-              <p class="text-[11px] text-slate-400">Estimare bazată pe țintele algoritmului</p>
-            </div>
-            <span id="calcCurrencyBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#050507] text-slate-300 border border-[#1c1f26]">
-              USD ($)
-            </span>
-          </div>
-
-          <div class="flex items-center gap-3">
-            <label for="investAmountInput" class="text-xs font-medium text-slate-300 shrink-0">
-              Suma investită:
-            </label>
-            <div class="relative flex-1">
-              <input
-                id="investAmountInput"
-                type="number"
-                min="1"
-                step="any"
-                value="500"
-                class="w-full px-3.5 py-2 pr-10 rounded-xl text-sm font-bold text-white bg-[#050507] border border-[#1c1f26] focus:outline-none focus:border-emerald-500/50 tabular-nums"
-              />
-              <span id="investCurrencySymbol" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400">
-                $
-              </span>
-            </div>
-          </div>
-
-          <div class="mt-3.5 pt-3 border-t border-[#1c1f26] grid grid-cols-3 gap-2.5 text-xs tabular-nums">
-            <div class="p-2.5 rounded-xl bg-[#050507] border border-[#1c1f26]">
-              <div class="text-slate-400 text-[11px]">Profit estimat (TP)</div>
-              <div id="calcProfitOutput" class="text-sm font-bold text-emerald-400 mt-0.5">+$41.00</div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-[#050507] border border-[#1c1f26]">
-              <div class="text-slate-400 text-[11px]">Pierdere maximă (SL)</div>
-              <div id="calcLossOutput" class="text-sm font-bold text-red-400 mt-0.5">-$20.50</div>
-            </div>
-            <div class="p-2.5 rounded-xl bg-[#050507] border border-[#1c1f26]">
-              <div class="text-slate-400 text-[11px]">Cantitate estimată</div>
-              <div id="calcSharesOutput" class="text-sm font-bold text-slate-200 mt-0.5">~18.94 acțiuni</div>
-            </div>
-          </div>
-        </section>
-
-        <!-- PROBABILITATE & BACKTEST -->
-        <section class="surface-card p-4">
-          <div class="flex items-center justify-between mb-2.5">
-            <h4 class="text-sm font-bold text-white">Probabilitate &amp; Backtest</h4>
-            <span id="drawerScoreText" class="text-xs font-bold text-emerald-400 tabular-nums">Score: 78/100</span>
-          </div>
-
-          <!-- Split Bar -->
-          <div class="w-full h-2.5 rounded-full bg-[#1a1d24] overflow-hidden flex">
-            <div id="drawerWinBar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 68%"></div>
-            <div id="drawerLossBar" class="h-full bg-red-500 transition-all duration-300" style="width: 32%"></div>
-          </div>
-
-          <div class="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs tabular-nums">
-            <span class="font-semibold text-emerald-400">Win Chance: <span id="drawerWinPct">68%</span></span>
-            <span class="font-semibold text-red-400">Loss Risk: <span id="drawerLossPct">32%</span></span>
-            <span class="font-semibold text-slate-200">R/R: <span id="drawerRRText">1 : 2.0</span></span>
-          </div>
-
-          <div id="drawerBacktestStats" class="mt-2 text-[11px] text-slate-400">
-            56 Wins vs 75 Losses (ultimii 3 ani)
-          </div>
-        </section>
-
-        <!-- INDICATORI TEHNICI & ANALIZĂ AI -->
-        <section class="surface-card p-4 space-y-3">
-          <h4 class="text-sm font-bold text-white">Indicatori Tehnici &amp; Analiză AI</h4>
-          <div id="drawerIndicatorsWrap" class="flex flex-wrap gap-1.5"></div>
-          <div class="p-3.5 rounded-xl bg-[#050507] border border-[#1c1f26]">
-            <p id="drawerSummaryText" class="text-xs text-slate-300 leading-relaxed"></p>
-          </div>
-        </section>
-      </div>
-
-      <!-- Sticky Bottom CTA -->
-      <div class="p-4 bg-[#0d0e12] border-t border-[#1c1f26] shrink-0">
-        <button
-          id="openTrading212Btn"
-          type="button"
-          class="w-full py-3 px-4 rounded-xl text-xs sm:text-sm font-bold bg-emerald-500 hover:bg-emerald-400 text-[#050507] transition flex items-center justify-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/10"
-        >
-          <span>Copiază simbolul &amp; Deschide Trading 212</span>
-          <span>↗</span>
-        </button>
-      </div>
-    </aside>
-  </div>
-
-  <!-- 5. JSON SETTINGS / TESTER MODAL (BEHIND GEAR ICON) -->
-  <div
-    id="jsonModal"
-    class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xs"
-    role="dialog"
-    aria-modal="true"
-  >
-    <div class="w-full max-w-2xl bg-[#0d0e12] border border-[#2d3340] rounded-2xl p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="flex items-start justify-between gap-4 pb-4 border-b border-[#1c1f26]">
-        <div>
-          <h3 class="text-base font-bold text-white">JSON Data &amp; Schema</h3>
-          <p class="text-xs text-slate-400 mt-1">
-            Inspectează datele curente din <code>./data.json</code> sau testează manual o structură JSON.
-          </p>
-        </div>
-        <button
-          id="closeJsonModalBtn"
-          type="button"
-          aria-label="Închide"
-          class="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
-        >
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
-        <button
-          id="loadDemoJsonBtn"
-          type="button"
-          class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#050507] text-emerald-400 border border-[#1c1f26] hover:border-[#2d3340] transition cursor-pointer"
-        >
-          Load Sample Schema
-        </button>
-        <button
-          id="copyJsonBtn"
-          type="button"
-          class="px-3 py-1.5 rounded-lg text-xs font-medium bg-[#050507] text-slate-300 border border-[#1c1f26] hover:border-[#2d3340] transition cursor-pointer"
-        >
-          Copy JSON
-        </button>
-      </div>
-
-      <div class="mt-3">
-        <textarea
-          id="jsonTextarea"
-          rows="11"
-          spellcheck="false"
-          class="w-full p-3.5 rounded-xl bg-[#050507] text-slate-200 font-mono text-xs border border-[#1c1f26] focus:outline-none focus:border-emerald-500/50 leading-relaxed"
-        ></textarea>
-      </div>
-
-      <div id="jsonFeedback" class="hidden mt-3 px-3.5 py-2 rounded-lg text-xs font-medium"></div>
-
-      <div class="mt-4 pt-3 border-t border-[#1c1f26] flex items-center justify-end gap-2.5">
-        <button
-          id="cancelJsonBtn"
-          type="button"
-          class="px-4 py-2 rounded-xl text-xs font-medium bg-[#050507] text-slate-400 hover:text-white border border-[#1c1f26] transition cursor-pointer"
-        >
-          Anulează
-        </button>
-        <button
-          id="applyJsonBtn"
-          type="button"
-          class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 text-[#050507] hover:bg-emerald-400 transition cursor-pointer"
-        >
-          Aplică în Dashboard
-        </button>
+      </h4>
+      <div class="tv-container" id="tvChartContainer"></div>
+      <div class="levels-grid">
+        <div class="level-pill level-tp">TP: <strong id="dTp">+5.0%</strong></div>
+        <div class="level-pill level-sl">SL: <strong id="dSl">-2.5%</strong></div>
       </div>
     </div>
-  </div>
 
-  <!-- Official TradingView Widget Library -->
-  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <!-- PROFIT CALCULATOR -->
+    <div class="drawer-box">
+      <h4><span>Calculator rapid de profit</span><span id="dBacktest" style="font-size:0.7rem;text-transform:none;"></span></h4>
+      <div class="calc-input-row">
+        <label for="investAmount" style="font-size:0.82rem;color:var(--text-secondary);">Sumă investită:</label>
+        <input type="number" id="investAmount" class="calc-input" value="500" min="1" step="50" oninput="recalcProfit()" />
+      </div>
+      <div class="calc-res-row">
+        <span style="color:var(--text-secondary);">Profit estimat la Take Profit:</span>
+        <strong id="calcTpVal" style="color:var(--green);font-family:'JetBrains Mono',monospace;">+0.00</strong>
+      </div>
+      <div class="calc-res-row">
+        <span style="color:var(--text-secondary);">Pierdere maximă la Stop Loss:</span>
+        <strong id="calcSlVal" style="color:var(--red);font-family:'JetBrains Mono',monospace;">-0.00</strong>
+      </div>
+    </div>
+
+    <!-- INDICATORS & AI SUMMARY -->
+    <div class="drawer-box">
+      <h4><span>Indicatori &amp; Analiză AI</span><span id="dRr" style="font-family:'JetBrains Mono',monospace;">R/R 1:2</span></h4>
+      <div class="ind-tags" id="dIndicators" style="margin-bottom:10px;"></div>
+      <p id="dSummary" style="font-size:0.82rem;color:var(--text-secondary);line-height:1.48;"></p>
+    </div>
+
+    <button class="t212-cta" id="dCopyOpenBtn">Copiază simbolul pentru Trading 212</button>
+  </aside>
+
+  <div class="toast" id="toast">Copiat în clipboard!</div>
 
   <script>
-    // ==========================================
-    // 1. DEMO FALLBACK DATA
-    // ==========================================
-    const DEMO_OPPORTUNITIES = [
-      {
-        ticker: 'PLTR',
-        name: 'Palantir Technologies Inc.',
-        region: 'CUSTOM • US • IN PORTFOLIO',
-        isCustom: true,
-        signal: 'BUY',
-        score: 78,
-        winChance: 68,
-        lossRisk: 32,
-        riskReward: '1 : 2.0',
-        price: '$26.40 (+3.1%)',
-        takeProfit: '+8.2% ($28.56)',
-        stopLoss: '-4.1% ($25.32)',
-        backtestStats: '56 Wins vs 26 Losses (ultimii 3 ani)',
-        indicators: ['RSI(14): 56.7', 'SMA200: Deasupra', 'VWAP: Deasupra', 'Vol Open 15m: 2.1x'],
-        summary: 'Trend ascendent puternic susținut de volum la deschidere peste medie și preț menținut deasupra VWAP.'
-      },
-      {
-        ticker: 'NVDA',
-        name: 'NVIDIA Corporation',
-        region: 'US',
-        isCustom: false,
-        signal: 'BUY',
-        score: 76,
-        winChance: 65,
-        lossRisk: 35,
-        riskReward: '1 : 1.9',
-        price: '$138.90 (+2.4%)',
-        takeProfit: '+6.4% ($147.79)',
-        stopLoss: '-3.3% ($134.32)',
-        backtestStats: '49 Wins vs 26 Losses (ultimii 3 ani)',
-        indicators: ['RSI(14): 54.2', 'SMA200: Deasupra', 'Pre-Market: +1.8%', 'VWAP: Deasupra'],
-        summary: 'Continuare pozitivă după gap sănătos în pre-market și cerere instituțională constantă.'
-      },
-      {
-        ticker: 'MSFT',
-        name: 'Microsoft Corporation',
-        region: 'US',
-        isCustom: false,
-        signal: 'WATCH',
-        score: 64,
-        winChance: 58,
-        lossRisk: 42,
-        riskReward: '1 : 1.8',
-        price: '$428.50 (+0.6%)',
-        takeProfit: '+3.8% ($444.78)',
-        stopLoss: '-2.1% ($419.50)',
-        backtestStats: '41 Wins vs 30 Losses (ultimii 3 ani)',
-        indicators: ['RSI(14): 48.9', 'SMA200: Deasupra', 'Vol Open 15m: 1.1x'],
-        summary: 'Consolidare aproape de suportul pe 50 de zile; așteptăm o creștere de volum pentru confirmare BUY.'
-      },
-      {
-        ticker: 'ASML.AS',
-        name: 'ASML Holding N.V.',
-        region: 'CUSTOM • WORLDWIDE',
-        isCustom: true,
-        signal: 'BUY',
-        score: 72,
-        winChance: 63,
-        lossRisk: 37,
-        riskReward: '1 : 2.1',
-        price: '€682.00 (+1.9%)',
-        takeProfit: '+5.5% (€719.51)',
-        stopLoss: '-2.6% (€664.27)',
-        backtestStats: '38 Wins vs 22 Losses (ultimii 3 ani)',
-        indicators: ['RSI(14): 43.5', 'SMA200: Deasupra', 'VWAP: Deasupra'],
-        summary: 'Revenire tehnică din zona RSI neutră pe bursa Euronext Amsterdam cu raport Risk/Reward favorabil.'
-      },
-      {
-        ticker: 'AMD',
-        name: 'Advanced Micro Devices',
-        region: 'US',
-        isCustom: false,
-        signal: 'WATCH',
-        score: 59,
-        winChance: 54,
-        lossRisk: 46,
-        riskReward: '1 : 1.7',
-        price: '$142.50 (-0.4%)',
-        takeProfit: '+5.1% ($149.77)',
-        stopLoss: '-3.0% ($138.23)',
-        backtestStats: '33 Wins vs 28 Losses (ultimii 3 ani)',
-        indicators: ['RSI(14): 49.8', 'SMA200: Sub', 'Pre-Market: -0.5%'],
-        summary: 'Prețul testează media mobilă pe 200 de zile; recomandată prudență până la depășirea rezistenței.'
-      },
-      {
-        ticker: 'TSLA',
-        name: 'Tesla Inc.',
-        region: 'US',
-        isCustom: false,
-        signal: 'WAIT',
-        score: 44,
-        winChance: 42,
-        lossRisk: 58,
-        riskReward: '1 : 1.5',
-        price: '$338.20 (-2.1%)',
-        takeProfit: '+7.5% ($363.57)',
-        stopLoss: '-5.0% ($321.29)',
-        backtestStats: '27 Wins vs 37 Losses (ultimii 3 ani)',
-        indicators: ['RSI(14): 69.4', 'SMA200: Deasupra', 'VWAP: Sub'],
-        summary: 'Volatilitate ridicată și respingere sub VWAP în primele minute; așteptăm stabilizarea prețului.'
-      }
-    ];
+    let allOpportunities = [];
+    let portfolioPositions = [];
+    let currentSignalFilter = "ALL";
+    let currentRegionFilter = "ALL";
+    let selectedStock = null;
+    let currentTf = "15";
+    let pinnedTickers = JSON.parse(localStorage.getItem("pinned_tickers") || "[]");
 
-    const DEMO_PAYLOAD = {
-      marketStatus: 'Active Scan',
-      stocksScanned: 69,
-      signalsToday: 3,
-      updatedAt: 'Demo Mode • 16:45 EET',
-      opportunities: DEMO_OPPORTUNITIES
-    };
-
-    // ==========================================
-    // 2. STATE & LOCALSTORAGE HELPERS
-    // ==========================================
-    const PINS_STORAGE_KEY = 'ai_trader_pins';
-    const INVEST_STORAGE_KEY = 'ai_trader_invest_amount';
-
-    function loadPins() {
-      try {
-        const raw = localStorage.getItem(PINS_STORAGE_KEY);
-        const arr = JSON.parse(raw || '[]');
-        return Array.isArray(arr) ? arr.map((t) => String(t).toUpperCase()) : [];
-      } catch (e) {
-        return [];
-      }
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
     }
 
-    function savePins(pins) {
-      try {
-        localStorage.setItem(PINS_STORAGE_KEY, JSON.stringify(pins));
-      } catch (e) {}
+    function showToast(msg) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(() => t.classList.remove("show"), 2200);
     }
 
-    function loadInvestAmount() {
-      try {
-        const val = Number(localStorage.getItem(INVEST_STORAGE_KEY));
-        return Number.isFinite(val) && val > 0 ? val : 500;
-      } catch (e) {
-        return 500;
-      }
+    function copyTicker(ticker, e) {
+      if (e) e.stopPropagation();
+      const clean = ticker.split(".")[0];
+      navigator.clipboard.writeText(clean).then(() => {
+        showToast(`Simbolul ${clean} a fost copiat pentru Trading 212!`);
+      });
     }
 
-    let pinnedTickers = loadPins();
-    let investAmount = loadInvestAmount();
-    let currentPayload = JSON.parse(JSON.stringify(DEMO_PAYLOAD));
-    let isLiveFeed = false;
-
-    let filterSignal = 'ALL';
-    let filterRegion = 'ALL';
-    let searchQuery = '';
-    let sortMode = 'featured';
-
-    let activeDrawerStock = null;
-    let activeTvInterval = '60';
-
-    // ==========================================
-    // 3. SAFE DATA NORMALIZER & PARSERS
-    // ==========================================
-    function normalizeOpportunity(raw) {
-      const item = raw || {};
-      const parsedScore = Number(item.score);
-      const score = Number.isFinite(parsedScore) ? Math.max(0, Math.min(100, Math.round(parsedScore))) : 50;
-
-      const parsedWin = Number(item.winChance ?? item.winProb ?? item.win_chance);
-      const winChance = Number.isFinite(parsedWin) ? Math.max(0, Math.min(100, Math.round(parsedWin))) : 50;
-
-      const parsedLoss = Number(item.lossRisk ?? item.lossProb ?? item.loss_risk);
-      const lossRisk = Number.isFinite(parsedLoss) ? Math.max(0, Math.min(100, Math.round(parsedLoss))) : 100 - winChance;
-
-      const ticker = String(item.ticker ?? 'N/A').toUpperCase();
-      const isCustom = Boolean(item.isCustom);
-      const signal = String(item.signal ?? item.status ?? 'WATCH').toUpperCase();
-      const region = String(item.region ?? (isCustom ? 'CUSTOM • US' : 'US'));
-
-      return {
-        ticker,
-        name: String(item.name ?? item.company ?? ticker),
-        region,
-        isCustom,
-        signal,
-        score,
-        winChance,
-        lossRisk,
-        riskReward: String(item.riskReward ?? item.rrRatio ?? '1 : 1.8'),
-        price: String(item.price ?? item.currentPrice ?? '—'),
-        takeProfit: String(item.takeProfit ?? '—'),
-        stopLoss: String(item.stopLoss ?? '—'),
-        backtestStats: String(item.backtestStats ?? `${winChance}% Win vs ${lossRisk}% Loss (backtest istoric)`),
-        indicators: Array.isArray(item.indicators) ? item.indicators.map(String) : [],
-        summary: String(item.summary ?? item.aiSummary ?? 'Analiză tehnică și statistică automată.')
-      };
-    }
-
-    function parsePriceDetails(priceStr) {
-      const str = String(priceStr || '');
-      let currency = '$';
-      if (str.includes('€')) currency = '€';
-      else if (str.includes('£')) currency = '£';
-      else if (str.includes('RON')) currency = 'RON';
-      else if (str.includes('CHF')) currency = 'CHF';
-
-      // Extract main price (before parentheses)
-      const mainPart = str.split('(')[0];
-      const numMatch = mainPart.match(/[\d]+(?:[.,][\d]+)?/);
-      const numericPrice = numMatch ? parseFloat(numMatch[0].replace(',', '.')) : 0;
-
-      // Extract percentage change inside parentheses e.g. (+3.1%) or (-1.2%)
-      const pctMatch = str.match(/\(([+-]?\d+(?:[.,]\d+)?)%\)/);
-      const changePct = pctMatch ? parseFloat(pctMatch[1].replace(',', '.')) : null;
-
-      return { currency, numericPrice, changePct, mainPriceText: mainPart.trim() || str };
-    }
-
-    function parseTargetPercent(targetStr, fallbackPct) {
-      const match = String(targetStr || '').match(/([+-]?\d+(?:[.,]\d+)?)%/);
-      if (match) {
-        return Math.abs(parseFloat(match[1].replace(',', '.')));
-      }
-      return fallbackPct;
-    }
-
-    // Yahoo Finance -> TradingView Symbol Mapper
-    function mapYahooToTradingView(yahooTicker) {
-      const t = String(yahooTicker || '').trim().toUpperCase();
-      if (!t) return 'NASDAQ:AAPL';
-
-      if (t === 'BRK-B') return 'NYSE:BRK.B';
-      if (t === 'BRK-A') return 'NYSE:BRK.A';
-
-      if (t.endsWith('.AS')) return `EURONEXT:${t.slice(0, -3)}`;
-      if (t.endsWith('.PA')) return `EURONEXT:${t.slice(0, -3)}`;
-      if (t.endsWith('.DE')) return `XETR:${t.slice(0, -3)}`;
-      if (t.endsWith('.L')) return `LSE:${t.slice(0, -2)}`;
-      if (t.endsWith('.SW')) return `SIX:${t.slice(0, -3)}`;
-      if (t.endsWith('.CO')) return `OMXCOP:${t.slice(0, -3).replace(/-/g, '_')}`;
-
-      // Clean US symbol (strip any dot suffix if present)
-      return t.split('.')[0];
-    }
-
-    function getMonogramStyle(ticker) {
-      const palettes = [
-        'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
-        'bg-sky-500/15 text-sky-400 border-sky-500/30',
-        'bg-violet-500/15 text-violet-400 border-violet-500/30',
-        'bg-amber-500/15 text-amber-400 border-amber-500/30',
-        'bg-cyan-500/15 text-cyan-400 border-cyan-500/30',
-        'bg-rose-500/15 text-rose-400 border-rose-500/30'
-      ];
-      let hash = 0;
-      for (let i = 0; i < ticker.length; i++) {
-        hash = ticker.charCodeAt(i) + ((hash << 5) - hash);
-      }
-      return palettes[Math.abs(hash) % palettes.length];
-    }
-
-    function getSignalBadgeClass(signal) {
-      if (signal === 'BUY') {
-        return 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
-      }
-      if (signal === 'WATCH') {
-        return 'bg-amber-500/15 text-amber-400 border border-amber-500/30';
-      }
-      return 'bg-red-500/15 text-red-400 border border-red-500/30';
-    }
-
-    function getScoreBarHex(score) {
-      if (score >= 68) return '#10b981';
-      if (score >= 52) return '#f59e0b';
-      return '#ef4444';
-    }
-
-    // ==========================================
-    // 4. BUCHAREST SCAN SCHEDULE COUNTDOWN
-    // ==========================================
-    function updateBucharestCountdown() {
-      const el = document.getElementById('countdownText');
-      if (!el) return;
-
-      try {
-        const now = new Date();
-        // Get current Bucharest time components reliably via Intl
-        const parts = new Intl.DateTimeFormat('en-GB', {
-          timeZone: 'Europe/Bucharest',
-          weekday: 'short',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false
-        }).formatToParts(now);
-
-        const map = {};
-        parts.forEach((p) => { map[p.type] = p.value; });
-
-        const weekday = map.weekday; // Mon, Tue, Wed, Thu, Fri, Sat, Sun
-        const curH = parseInt(map.hour, 10);
-        const curM = parseInt(map.minute, 10);
-        const curS = parseInt(map.second, 10);
-        const curTotalSecs = curH * 3600 + curM * 60 + curS;
-
-        const windows = [
-          { h: 15, m: 30, label: '15:30' },
-          { h: 16, m: 15, label: '16:15' },
-          { h: 16, m: 45, label: '16:45' }
-        ];
-
-        const isWeekend = weekday === 'Sat' || weekday === 'Sun';
-
-        if (!isWeekend) {
-          for (const w of windows) {
-            const targetSecs = w.h * 3600 + w.m * 60;
-            if (curTotalSecs < targetSecs) {
-              const diff = targetSecs - curTotalSecs;
-              const hrs = Math.floor(diff / 3600);
-              const mins = Math.floor((diff % 3600) / 60);
-              const timeStr = hrs > 0 ? `${hrs}h ${mins}m` : `${Math.max(1, mins)} min`;
-              el.innerHTML = `Următoarea scanare (${w.label}) în <strong class="text-slate-200 font-semibold">${timeStr}</strong>`;
-              return;
-            }
-          }
-        }
-
-        // Next scan is next weekday at 15:30
-        let daysToAdd = 1;
-        if (weekday === 'Fri') daysToAdd = 3;
-        else if (weekday === 'Sat') daysToAdd = 2;
-        else if (weekday === 'Sun') daysToAdd = 1;
-
-        const secsLeftToday = 24 * 3600 - curTotalSecs;
-        const totalDiff = secsLeftToday + (daysToAdd - 1) * 24 * 3600 + (15 * 3600 + 30 * 60);
-        const hrs = Math.floor(totalDiff / 3600);
-        const mins = Math.floor((totalDiff % 3600) / 60);
-        const dayName = daysToAdd > 1 ? 'Luni 15:30' : 'Mâine 15:30';
-        el.innerHTML = `Următoarea (${dayName}) în <strong class="text-slate-200 font-semibold">${hrs}h ${mins}m</strong>`;
-      } catch (e) {
-        el.textContent = 'Scanări zilnice: 15:30 • 16:15 • 16:45';
-      }
-    }
-
-    // ==========================================
-    // 5. CLIPBOARD & TOAST HELPER
-    // ==========================================
-    let toastTimer = null;
-    function showToast(message) {
-      const toast = document.getElementById('toastBanner');
-      const text = document.getElementById('toastText');
-      text.textContent = message;
-      toast.classList.remove('hidden');
-      toast.classList.add('flex');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toast.classList.add('hidden');
-        toast.classList.remove('flex');
-      }, 2200);
-    }
-
-    function copyTickerToClipboard(ticker, btnEl = null) {
-      const clean = String(ticker || '').split('.')[0];
-      const tempInput = document.createElement('input');
-      tempInput.value = clean;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      try {
-        document.execCommand('copy');
-      } catch (e) {}
-      document.body.removeChild(tempInput);
-
-      showToast(`Copiat: ${clean}`);
-
-      if (btnEl) {
-        const prevHtml = btnEl.innerHTML;
-        btnEl.innerHTML = `<span class="text-emerald-400 font-semibold">Copiat!</span>`;
-        setTimeout(() => {
-          btnEl.innerHTML = prevHtml;
-        }, 1300);
-      }
-    }
-
-    function togglePinTicker(ticker) {
-      const upper = String(ticker || '').toUpperCase();
-      if (pinnedTickers.includes(upper)) {
-        pinnedTickers = pinnedTickers.filter((t) => t !== upper);
-        showToast(`${upper} scos din favorite`);
+    function togglePin(ticker, e) {
+      if (e) e.stopPropagation();
+      if (pinnedTickers.includes(ticker)) {
+        pinnedTickers = pinnedTickers.filter(t => t !== ticker);
       } else {
-        pinnedTickers = [upper, ...pinnedTickers];
-        showToast(`★ ${upper} fixat în atenția ta`);
+        pinnedTickers.push(ticker);
       }
-      savePins(pinnedTickers);
+      localStorage.setItem("pinned_tickers", JSON.stringify(pinnedTickers));
       renderAll();
-      if (activeDrawerStock && activeDrawerStock.ticker === upper) {
-        syncDrawerPinButton(upper);
-      }
     }
 
-    // ==========================================
-    // 6. RENDERING: HEADER, SPOTLIGHT & GRID
-    // ==========================================
-    function renderHeaderAndStats(allItems) {
-      const statusPill = document.getElementById('feedStatusPill');
-      const statusText = document.getElementById('feedStatusText');
-      if (isLiveFeed) {
-        statusPill.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/25';
-        statusText.textContent = 'Live Feed';
+    function updateNextScanCountdown() {
+      const now = new Date();
+      const roString = now.toLocaleString("en-US", { timeZone: "Europe/Bucharest" });
+      const roNow = new Date(roString);
+      const day = roNow.getDay();
+      const minsNow = roNow.getHours() * 60 + roNow.getMinutes();
+
+      const targets = [
+        { mins: 15 * 60 + 22, label: "15:30 Pregătire" },
+        { mins: 16 * 60 + 11, label: "16:15 Pre-Market" },
+        { mins: 16 * 60 + 47, label: "16:45 Open Confirm" }
+      ];
+
+      const el = document.getElementById("nextScanTimer");
+      if (day === 0 || day === 6) {
+        el.innerHTML = "Piață închisă • Următoarea: <strong>Luni 15:30</strong>";
+        return;
+      }
+
+      const next = targets.find(t => t.mins > minsNow);
+      if (next) {
+        const diff = next.mins - minsNow;
+        const h = Math.floor(diff / 60);
+        const m = diff % 60;
+        const timeStr = h > 0 ? `${h}h ${m}m` : `${m} min`;
+        el.innerHTML = `Următoarea (${next.label}): <strong>în ${timeStr}</strong>`;
       } else {
-        statusPill.className = 'inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/25';
-        statusText.textContent = 'Demo UI';
+        el.innerHTML = "Sesiune completă • Următoarea: <strong>Mâine 15:30</strong>";
       }
-
-      document.getElementById('updatedAtText').textContent = currentPayload.updatedAt || '—';
-      document.getElementById('statMarketStatus').textContent = currentPayload.marketStatus || 'Active Scan';
-      document.getElementById('statStocksScanned').textContent = currentPayload.stocksScanned ?? allItems.length;
-
-      const buyCount = allItems.filter((x) => x.signal === 'BUY').length;
-      document.getElementById('statSignalsToday').textContent = currentPayload.signalsToday ?? buyCount;
-
-      // Update signal pill counters
-      document.getElementById('cntSignalAll').textContent = allItems.length;
-      document.getElementById('cntSignalBuy').textContent = allItems.filter((x) => x.signal === 'BUY').length;
-      document.getElementById('cntSignalWatch').textContent = allItems.filter((x) => x.signal === 'WATCH').length;
-      document.getElementById('cntSignalWait').textContent = allItems.filter((x) => x.signal === 'WAIT').length;
     }
 
-    function renderTagsHtml(stock) {
-      const parts = stock.region
-        .split('•')
-        .map((s) => s.trim())
-        .filter(Boolean);
-
-      if (stock.isCustom && !parts.some((p) => p.toUpperCase() === 'CUSTOM')) {
-        parts.unshift('CUSTOM');
-      }
-
-      return parts
-        .map((tag) => {
-          const upper = tag.toUpperCase();
-          let cls = 'bg-[#050507] text-slate-400 border-[#1c1f26]';
-          if (upper === 'CUSTOM') {
-            cls = 'bg-sky-500/10 text-sky-300 border-sky-500/25';
-          } else if (upper === 'IN PORTFOLIO') {
-            cls = 'bg-cyan-500/10 text-cyan-300 border-cyan-500/25';
-          }
-          return `<span class="px-2 py-0.5 rounded-md text-[10px] font-semibold tracking-wide border ${cls}">${tag}</span>`;
-        })
-        .join('');
+    function mapToTradingViewSymbol(ticker) {
+      if (ticker.endsWith(".AS")) return "EURONEXT:" + ticker.replace(".AS", "");
+      if (ticker.endsWith(".PA")) return "EURONEXT:" + ticker.replace(".PA", "");
+      if (ticker.endsWith(".DE")) return "XETR:" + ticker.replace(".DE", "");
+      if (ticker.endsWith(".L")) return "LSE:" + ticker.replace(".L", "");
+      if (ticker.endsWith(".SW")) return "SIX:" + ticker.replace(".SW", "");
+      if (ticker.endsWith(".CO")) return "OMXCOP:" + ticker.replace(".CO", "").replace("-", "_");
+      if (ticker.endsWith(".MI")) return "MIL:" + ticker.replace(".MI", "");
+      return ticker.replace("-", ".");
     }
 
-    function renderSpotlightSection(allItems) {
-      const container = document.getElementById('spotlightContainer');
-      const countPill = document.getElementById('spotlightCountPill');
+    function renderTradingViewChart(ticker, interval) {
+      const container = document.getElementById("tvChartContainer");
+      container.innerHTML = "";
+      const tvSym = mapToTradingViewSymbol(ticker);
 
-      // Priority: Pinned by user OR isCustom from watchlist.txt
-      let featured = allItems.filter(
-        (item) => pinnedTickers.includes(item.ticker) || item.isCustom
-      );
+      const widgetDiv = document.createElement("div");
+      widgetDiv.className = "tradingview-widget-container";
+      widgetDiv.style.height = "100%";
+      widgetDiv.style.width = "100%";
 
-      // Sort pinned first, then custom, then score
-      featured.sort((a, b) => {
-        const aPin = pinnedTickers.includes(a.ticker) ? 1 : 0;
-        const bPin = pinnedTickers.includes(b.ticker) ? 1 : 0;
-        if (aPin !== bPin) return bPin - aPin;
-        return b.score - a.score;
+      const script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+      script.async = true;
+      script.innerHTML = JSON.stringify({
+        autosize: true,
+        symbol: tvSym,
+        interval: interval,
+        timezone: "Europe/Bucharest",
+        theme: "dark",
+        style: "1",
+        locale: "ro",
+        backgroundColor: "#07080a",
+        gridColor: "rgba(30, 34, 45, 0.4)",
+        hide_top_toolbar: true,
+        hide_legend: false,
+        save_image: false,
+        calendar: false,
+        support_host: "https://www.tradingview.com"
       });
 
-      // Fallback if user has no pins and no custom stocks: show top BUY opportunities
-      if (featured.length === 0) {
-        featured = allItems
-          .filter((item) => item.signal === 'BUY')
-          .sort((a, b) => b.score - a.score)
-          .slice(0, 3);
-      }
-
-      countPill.textContent = featured.length;
-
-      if (featured.length === 0) {
-        container.innerHTML = `
-          <div class="surface-card p-5 text-center text-xs text-slate-400">
-            Apasă pe steluța <span class="text-amber-400">★</span> de pe orice acțiune pentru a o fixa aici.
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = featured
-        .map((stock) => {
-          const isPinned = pinnedTickers.includes(stock.ticker);
-          const cardGlow = stock.signal === 'BUY' ? 'spotlight-buy' : 'spotlight-amber';
-          const priceInfo = parsePriceDetails(stock.price);
-          const barHex = getScoreBarHex(stock.score);
-          const pctBadge =
-            priceInfo.changePct !== null
-              ? `<span class="text-xs font-semibold tabular-nums ${priceInfo.changePct >= 0 ? 'text-emerald-400' : 'text-red-400'}">(${priceInfo.changePct >= 0 ? '+' : ''}${priceInfo.changePct}%)</span>`
-              : '';
-
-          return `
-            <article
-              data-open-ticker="${stock.ticker}"
-              class="surface-card ${cardGlow} p-4 cursor-pointer select-none"
-            >
-              <!-- Top Pin + Tags Row -->
-              <div class="flex items-center justify-between gap-2 mb-2.5">
-                <button
-                  type="button"
-                  data-pin-ticker="${stock.ticker}"
-                  class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md border transition cursor-pointer ${
-                    isPinned
-                      ? 'bg-amber-500/15 text-amber-300 border-amber-500/30'
-                      : 'bg-[#050507] text-slate-400 border-[#1c1f26] hover:text-amber-300'
-                  }"
-                >
-                  <span>${isPinned ? '★ Pinned' : '☆ Pin'}</span>
-                </button>
-
-                <div class="flex flex-wrap items-center justify-end gap-1">
-                  ${renderTagsHtml(stock)}
-                </div>
-              </div>
-
-              <!-- Ticker & Company Name -->
-              <div class="flex items-start justify-between gap-2">
-                <div class="min-w-0">
-                  <div class="text-lg font-bold text-white tracking-tight leading-none">${stock.ticker}</div>
-                  <div class="text-xs text-slate-400 truncate mt-1">${stock.name}</div>
-                </div>
-                <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold shrink-0 ${getSignalBadgeClass(stock.signal)}">
-                  ${stock.signal}
-                </span>
-              </div>
-
-              <!-- Price + Copy Button Row -->
-              <div class="mt-3 flex items-center justify-between gap-2">
-                <div class="flex items-baseline gap-1.5 tabular-nums">
-                  <span class="text-base font-bold text-white">${priceInfo.mainPriceText}</span>
-                  ${pctBadge}
-                </div>
-
-                <button
-                  type="button"
-                  data-copy-ticker="${stock.ticker}"
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium bg-[#050507] text-slate-300 border border-[#1c1f26] hover:border-[#2d3340] hover:text-white transition cursor-pointer"
-                >
-                  <svg class="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-                  </svg>
-                  <span>Copy</span>
-                </button>
-              </div>
-
-              <!-- Technical Score Bar -->
-              <div class="mt-3.5">
-                <div class="flex items-center justify-between text-xs mb-1.5">
-                  <span class="text-slate-400">Technical Score:</span>
-                  <span class="font-bold text-white tabular-nums">${stock.score}/100</span>
-                </div>
-                <div class="w-full h-1.5 rounded-full bg-[#1a1d24] overflow-hidden">
-                  <div class="h-full rounded-full transition-all duration-500" style="width: ${stock.score}%; background-color: ${barHex};"></div>
-                </div>
-              </div>
-
-              <!-- Win / Loss Line -->
-              <div class="mt-3 flex items-center justify-between text-xs tabular-nums">
-                <span>
-                  <span class="text-slate-400">Win Chance:</span>
-                  <strong class="text-emerald-400 font-semibold ml-0.5">${stock.winChance}%</strong>
-                </span>
-                <span>
-                  <span class="text-slate-400">Loss Risk:</span>
-                  <strong class="text-red-400 font-semibold ml-0.5">${stock.lossRisk}%</strong>
-                </span>
-              </div>
-
-              <!-- AI / Technical Summary -->
-              <p class="mt-2.5 pt-2.5 border-t border-[#1c1f26] text-xs text-slate-400 leading-relaxed line-clamp-3">
-                ${stock.summary}
-              </p>
-            </article>
-          `;
-        })
-        .join('');
+      widgetDiv.appendChild(script);
+      container.appendChild(widgetDiv);
     }
 
-    function renderScannerGrid(allItems) {
-      const grid = document.getElementById('scannerGrid');
-      const emptyState = document.getElementById('emptyState');
+    function changeChartTf(tf, btn) {
+      currentTf = tf;
+      document.querySelectorAll(".tf-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      if (selectedStock) renderTradingViewChart(selectedStock.ticker, currentTf);
+    }
 
-      let filtered = [...allItems];
+    function recalcProfit() {
+      if (!selectedStock) return;
+      const amount = parseFloat(document.getElementById("investAmount").value) || 0;
+      const tpMatch = String(selectedStock.takeProfit).match(/\+([\d.]+)%/);
+      const slMatch = String(selectedStock.stopLoss).match(/-([\d.]+)%/);
+      const tpPct = tpMatch ? parseFloat(tpMatch[1]) : 5.0;
+      const slPct = slMatch ? parseFloat(slMatch[1]) : 2.5;
 
-      if (filterSignal !== 'ALL') {
-        filtered = filtered.filter((s) => s.signal === filterSignal);
+      const profit = (amount * (tpPct / 100)).toFixed(2);
+      const loss = (amount * (slPct / 100)).toFixed(2);
+
+      document.getElementById("calcTpVal").textContent = `+${profit}`;
+      document.getElementById("calcSlVal").textContent = `-${loss}`;
+    }
+
+    function openDrawer(ticker) {
+      const item = allOpportunities.find(x => x.ticker === ticker);
+      if (!item) return;
+      selectedStock = item;
+
+      document.getElementById("dTicker").textContent = item.ticker;
+      document.getElementById("dName").textContent = `${item.name} • ${item.price}`;
+
+      const badge = document.getElementById("dBadge");
+      badge.textContent = item.signal;
+      badge.className = `badge badge-${item.signal}`;
+
+      // Portfolio section in drawer
+      const portBox = document.getElementById("dPortfolioBox");
+      if (item.portfolio) {
+        portBox.style.display = "block";
+        const p = item.portfolio;
+        const pill = document.getElementById("dExitPill");
+        pill.textContent = p.exitSignal;
+        pill.className = `exit-pill ${getExitClass(p.exitSignal)}`;
+        document.getElementById("dPortQty").textContent = `Cant: ${p.quantity}`;
+        document.getElementById("dPortAvg").textContent = `Mediu: ${p.avgPrice}`;
+        const pnlEl = document.getElementById("dPortPnl");
+        pnlEl.textContent = `${p.pnlPctFormatted} (${p.pplFormatted})`;
+        pnlEl.style.color = p.pnlPct >= 0 ? "var(--green)" : "var(--red)";
+        document.getElementById("dPortReason").textContent = p.reason;
+      } else {
+        portBox.style.display = "none";
       }
 
-      if (filterRegion !== 'ALL') {
-        filtered = filtered.filter((s) => {
-          const regUpper = s.region.toUpperCase();
-          if (filterRegion === 'FAVORITES') return pinnedTickers.includes(s.ticker);
-          if (filterRegion === 'CUSTOM') return s.isCustom || regUpper.includes('CUSTOM');
-          if (filterRegion === 'WORLDWIDE') return regUpper.includes('WORLDWIDE');
-          if (filterRegion === 'US') return regUpper.includes('US') && !regUpper.includes('WORLDWIDE');
-          return true;
-        });
-      }
+      document.getElementById("dTp").textContent = item.takeProfit;
+      document.getElementById("dSl").textContent = item.stopLoss;
+      document.getElementById("dBacktest").textContent = item.backtestStats;
+      document.getElementById("dRr").textContent = `R/R ${item.riskReward}`;
+      document.getElementById("dSummary").textContent = item.summary;
 
-      if (searchQuery.trim() !== '') {
-        const q = searchQuery.trim().toLowerCase();
-        filtered = filtered.filter(
-          (s) => s.ticker.toLowerCase().includes(q) || s.name.toLowerCase().includes(q)
-        );
-      }
+      const indWrap = document.getElementById("dIndicators");
+      indWrap.innerHTML = (item.indicators || [])
+        .map(ind => `<span class="ind-tag">${escapeHtml(ind)}</span>`)
+        .join("");
 
-      if (sortMode === 'score') {
-        filtered.sort((a, b) => b.score - a.score);
-      } else if (sortMode === 'winChance') {
-        filtered.sort((a, b) => b.winChance - a.winChance);
-      }
+      const cta = document.getElementById("dCopyOpenBtn");
+      cta.onclick = () => copyTicker(item.ticker);
 
-      if (filtered.length === 0) {
-        grid.innerHTML = '';
-        emptyState.classList.remove('hidden');
+      recalcProfit();
+      renderTradingViewChart(item.ticker, currentTf);
+
+      document.getElementById("drawerBackdrop").classList.add("open");
+      document.getElementById("detailDrawer").classList.add("open");
+    }
+
+    function closeDrawer() {
+      document.getElementById("drawerBackdrop").classList.remove("open");
+      document.getElementById("detailDrawer").classList.remove("open");
+    }
+
+    function getExitClass(sig) {
+      if (sig.startsWith("TAKE PROFIT")) return "exit-TP";
+      if (sig.startsWith("SELL")) return "exit-SELL";
+      if (sig.startsWith("WATCH")) return "exit-WATCH";
+      return "exit-HOLD";
+    }
+
+    function renderPortfolioBar() {
+      const sec = document.getElementById("portfolioSection");
+      const grid = document.getElementById("portfolioGrid");
+      const badge = document.getElementById("portfolioCountBadge");
+
+      if (!portfolioPositions || portfolioPositions.length === 0) {
+        sec.style.display = "none";
         return;
       }
 
-      emptyState.classList.add('hidden');
+      sec.style.display = "block";
+      const alertsNum = portfolioPositions.filter(p => p.isAlert).length;
+      badge.textContent = alertsNum > 0
+        ? `${portfolioPositions.length} poziții • ${alertsNum} alerte active`
+        : `${portfolioPositions.length} poziții active`;
 
-      grid.innerHTML = filtered
-        .map((stock) => {
-          const isPinned = pinnedTickers.includes(stock.ticker);
-          const isWait = stock.signal === 'WAIT';
-          const priceInfo = parsePriceDetails(stock.price);
-          const barHex = getScoreBarHex(stock.score);
-          const monoCls = getMonogramStyle(stock.ticker);
-          const initials = stock.ticker.replace(/[^A-Z0-9]/g, '').slice(0, 2) || 'AI';
+      grid.innerHTML = portfolioPositions.map(p => {
+        let extraClass = "";
+        if (p.exitSignal.startsWith("SELL")) extraClass = "alert-exit";
+        else if (p.exitSignal.startsWith("TAKE PROFIT")) extraClass = "alert-tp";
 
-          const pctHtml =
-            priceInfo.changePct !== null
-              ? `<span class="text-[11px] font-semibold tabular-nums ${priceInfo.changePct >= 0 ? 'text-emerald-400' : 'text-red-400'}">${priceInfo.changePct >= 0 ? '+' : ''}${priceInfo.changePct}%</span>`
-              : '';
+        const pnlColor = p.pnlPct >= 0 ? "var(--green)" : "var(--red)";
+        return `
+          <div class="port-card ${extraClass}" onclick="openDrawer('${escapeHtml(p.ticker)}')">
+            <div class="port-top">
+              <span class="port-ticker">${escapeHtml(p.ticker)}</span>
+              <span class="exit-pill ${getExitClass(p.exitSignal)}">${escapeHtml(p.exitSignal)}</span>
+            </div>
+            <div class="port-metrics">
+              <span>${escapeHtml(p.avgPrice)} → ${escapeHtml(p.currentPrice)}</span>
+              <span style="color:${pnlColor};font-weight:700;">${escapeHtml(p.pnlPctFormatted)} (${escapeHtml(p.pplFormatted)})</span>
+            </div>
+            <div class="port-reason">${escapeHtml(p.reason)}</div>
+          </div>
+        `;
+      }).join("");
+    }
 
-          return `
-            <article
-              data-open-ticker="${stock.ticker}"
-              style="${isWait ? 'opacity: 0.82;' : ''}"
-              class="surface-card group p-4 cursor-pointer select-none flex flex-col justify-between"
-            >
+    function renderSpotlight() {
+      const wrap = document.getElementById("spotlightList");
+      const spotlights = allOpportunities.filter(
+        x => x.signal === "BUY" || pinnedTickers.includes(x.ticker) || x.isCustom || x.inPortfolio
+      ).slice(0, 5);
+
+      if (spotlights.length === 0) {
+        wrap.innerHTML = `<div class="drawer-box" style="font-size:0.8rem;color:var(--text-secondary);">Apasă pe steluța ★ a oricărei acțiuni pentru a o fixa aici.</div>`;
+        return;
+      }
+
+      wrap.innerHTML = spotlights.map(item => {
+        const isBuy = item.signal === "BUY";
+        const isPinned = pinnedTickers.includes(item.ticker);
+        const topLabel = isPinned ? "★ PINNED" : (item.inPortfolio ? "💼 IN PORTFOLIO" : (item.isCustom ? "⭐ CUSTOM WATCHLIST" : "🟢 TOP BUY SIGNAL"));
+        return `
+          <div class="spot-card ${isBuy ? "" : "watch-spot"}" onclick="openDrawer('${escapeHtml(item.ticker)}')">
+            <div class="spot-tags">
+              <span>${topLabel}</span>
+              <span>Win ${item.winChance}%</span>
+            </div>
+            <div class="spot-header">
               <div>
-                <!-- Card Top Row -->
-                <div class="flex items-start justify-between gap-2.5">
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    <div class="w-9 h-9 rounded-xl border flex items-center justify-center font-bold text-xs shrink-0 ${monoCls}">
-                      ${initials}
-                    </div>
-                    <div class="min-w-0">
-                      <div class="flex items-center gap-1.5">
-                        <span class="text-sm font-bold text-white tracking-tight">${stock.ticker}</span>
-                        <button
-                          type="button"
-                          data-pin-ticker="${stock.ticker}"
-                          title="${isPinned ? 'Scoate din favorite' : 'Adaugă la favorite'}"
-                          class="text-xs leading-none transition cursor-pointer ${isPinned ? 'text-amber-400' : 'text-slate-600 hover:text-amber-300'}"
-                        >
-                          ${isPinned ? '★' : '☆'}
-                        </button>
-                        <button
-                          type="button"
-                          data-copy-ticker="${stock.ticker}"
-                          title="Copiază simbolul"
-                          class="text-slate-500 hover:text-slate-200 transition cursor-pointer"
-                        >
-                          <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"></path>
-                          </svg>
-                        </button>
-                      </div>
-                      <div class="text-[11px] text-slate-400 truncate mt-0.5">${stock.name}</div>
-                    </div>
-                  </div>
+                <div class="spot-ticker">${escapeHtml(item.ticker)}</div>
+                <div class="spot-name">${escapeHtml(item.name)}</div>
+              </div>
+              <span class="badge badge-${item.signal}">${item.signal}</span>
+            </div>
+            <div class="spot-price-row">
+              <span class="price-text">${escapeHtml(item.price)}</span>
+              <button class="copy-mini" onclick="copyTicker('${escapeHtml(item.ticker)}', event)">Copy</button>
+            </div>
+            <div class="score-row">
+              <span>Scor Tehnic</span>
+              <strong>${item.score}/100</strong>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width:${item.score}%;background:${isBuy ? "var(--green)" : "var(--amber)"};"></div>
+            </div>
+            <div class="spot-summary">${escapeHtml(item.summary)}</div>
+          </div>
+        `;
+      }).join("");
+    }
 
-                  <div class="flex flex-col items-end shrink-0 gap-1">
-                    <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold ${getSignalBadgeClass(stock.signal)}">
-                      ${stock.signal}
-                    </span>
-                    <div class="flex items-center gap-1 tabular-nums">
-                      <span class="text-xs font-semibold text-slate-200">${priceInfo.mainPriceText}</span>
-                      ${pctHtml}
-                    </div>
+    function renderGrid() {
+      const grid = document.getElementById("cardsGrid");
+      const q = document.getElementById("searchInput").value.trim().toLowerCase();
+      const sortBy = document.getElementById("sortSelect").value;
+
+      let filtered = allOpportunities.filter(item => {
+        if (q && !item.ticker.toLowerCase().includes(q) && !item.name.toLowerCase().includes(q)) return false;
+        if (currentSignalFilter !== "ALL" && item.signal !== currentSignalFilter) return false;
+        if (currentRegionFilter === "FAV" && !pinnedTickers.includes(item.ticker)) return false;
+        if (currentRegionFilter === "PORTFOLIO" && !item.inPortfolio) return false;
+        if (currentRegionFilter === "CUSTOM" && !item.isCustom) return false;
+        if (currentRegionFilter === "US" && !item.region.includes("US")) return false;
+        if (currentRegionFilter === "WORLDWIDE" && !item.region.includes("WORLDWIDE")) return false;
+        return true;
+      });
+
+      if (sortBy === "score") filtered.sort((a, b) => b.score - a.score);
+      else if (sortBy === "win") filtered.sort((a, b) => b.winChance - a.winChance);
+      else if (sortBy === "ticker") filtered.sort((a, b) => a.ticker.localeCompare(b.ticker));
+
+      if (filtered.length === 0) {
+        grid.innerHTML = `<div class="drawer-box" style="grid-column:1/-1;text-align:center;color:var(--text-secondary);">Nicio acțiune nu corespunde filtrelor selectate.</div>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const isPinned = pinnedTickers.includes(item.ticker);
+        const barColor = item.signal === "BUY" ? "var(--green)" : (item.signal === "WATCH" ? "var(--amber)" : "var(--red)");
+        return `
+          <div class="stock-card sig-${item.signal}" onclick="openDrawer('${escapeHtml(item.ticker)}')">
+            <div>
+              <div class="card-top">
+                <div class="ticker-wrap">
+                  <button class="pin-btn ${isPinned ? "pinned" : ""}" title="Fixează sus" onclick="togglePin('${escapeHtml(item.ticker)}', event)">★</button>
+                  <div>
+                    <div class="card-ticker">${escapeHtml(item.ticker)} ${item.inPortfolio ? '<span style="font-size:0.65rem;color:var(--green);">●</span>' : ''}</div>
+                    <div class="card-company">${escapeHtml(item.name)}</div>
                   </div>
                 </div>
-
-                <!-- Technical Score & Progress Bar -->
-                <div class="mt-3.5">
-                  <div class="flex items-center justify-between text-xs mb-1.5">
-                    <span class="text-slate-400">Technical score</span>
-                    <span class="font-bold text-white tabular-nums">${stock.score}/100</span>
-                  </div>
-                  <div class="w-full h-1.5 rounded-full bg-[#1a1d24] overflow-hidden">
-                    <div class="h-full rounded-full transition-all duration-500" style="width: ${stock.score}%; background-color: ${barHex};"></div>
-                  </div>
-                </div>
+                <span class="badge badge-${item.signal}">${item.signal}</span>
               </div>
 
-              <!-- Card Footer -->
-              <div class="mt-3.5 pt-2.5 border-t border-[#1c1f26] flex items-center justify-between gap-2 text-[11px] tabular-nums">
-                <div class="flex flex-wrap items-center gap-x-2 gap-y-1 text-slate-400">
-                  <span>Win: <strong class="text-emerald-400 font-semibold">${stock.winChance}%</strong></span>
-                  <span class="text-[#2d3340]">&bull;</span>
-                  <span>Loss: <strong class="text-red-400 font-semibold">${stock.lossRisk}%</strong></span>
-                  <span class="text-[#2d3340]">&bull;</span>
-                  <span>R/R <strong class="text-slate-200 font-medium">${stock.riskReward}</strong></span>
-                </div>
-
-                <span class="font-semibold text-slate-300 group-hover:text-emerald-400 transition shrink-0">
-                  Details &rarr;
-                </span>
+              <div class="score-row">
+                <span>Technical &amp; Win score</span>
+                <strong>${item.score}/100</strong>
               </div>
-            </article>
-          `;
-        })
-        .join('');
+              <div class="progress-track">
+                <div class="progress-fill" style="width:${item.score}%;background:${barColor};"></div>
+              </div>
+            </div>
+
+            <div class="card-bottom">
+              <span>Win: <span class="win-txt">${item.winChance}%</span></span>
+              <span style="font-family:'JetBrains Mono',monospace;">${escapeHtml(item.price)}</span>
+              <span style="color:var(--text-primary);">Details →</span>
+            </div>
+          </div>
+        `;
+      }).join("");
     }
 
     function renderAll() {
-      const rawList = Array.isArray(currentPayload.opportunities) ? currentPayload.opportunities : [];
-      const normalized = rawList.map(normalizeOpportunity);
-
-      renderHeaderAndStats(normalized);
-      renderSpotlightSection(normalized);
-      renderScannerGrid(normalized);
+      renderPortfolioBar();
+      renderSpotlight();
+      renderGrid();
     }
 
-    // ==========================================
-    // 7. SLIDE-OVER DRAWER, TRADINGVIEW & CALCULATOR
-    // ==========================================
-    const drawerOverlay = document.getElementById('detailDrawerOverlay');
-    const investAmountInput = document.getElementById('investAmountInput');
-
-    function syncDrawerPinButton(ticker) {
-      const btn = document.getElementById('drawerPinBtn');
-      const isPinned = pinnedTickers.includes(ticker);
-      btn.textContent = isPinned ? '★ Pinned' : '☆ Pin';
-      btn.className = isPinned
-        ? 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/35 transition cursor-pointer'
-        : 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[#050507] text-slate-300 border border-[#1c1f26] hover:border-amber-500/40 transition cursor-pointer';
-    }
-
-    function updateProfitCalculator() {
-      if (!activeDrawerStock) return;
-      const amount = Math.max(0, parseFloat(investAmountInput.value) || 0);
-      localStorage.setItem(INVEST_STORAGE_KEY, String(amount));
-
-      const priceInfo = parsePriceDetails(activeDrawerStock.price);
-      const tpPct = parseTargetPercent(activeDrawerStock.takeProfit, 5.0);
-      const slPct = parseTargetPercent(activeDrawerStock.stopLoss, 2.5);
-
-      const estProfit = amount * (tpPct / 100);
-      const estLoss = amount * (slPct / 100);
-      const cur = priceInfo.currency;
-
-      const formatMoney = (val) =>
-        cur === 'RON' ? `${val.toFixed(2)} RON` : `${cur}${val.toFixed(2)}`;
-
-      document.getElementById('calcProfitOutput').textContent = `+${formatMoney(estProfit)}`;
-      document.getElementById('calcLossOutput').textContent = `-${formatMoney(estLoss)}`;
-
-      if (priceInfo.numericPrice > 0 && amount > 0) {
-        const shares = amount / priceInfo.numericPrice;
-        document.getElementById('calcSharesOutput').textContent = `~${shares.toFixed(2)} acțiuni`;
-      } else {
-        document.getElementById('calcSharesOutput').textContent = '—';
-      }
-    }
-
-    function mountTradingViewChart(yahooTicker, interval = '60') {
-      const container = document.getElementById('tradingviewWidgetContainer');
-      const tvSymbol = mapYahooToTradingView(yahooTicker);
-      container.innerHTML = `<div id="tv_chart_slot" class="w-full h-full"></div>`;
-
-      if (typeof TradingView !== 'undefined' && TradingView.widget) {
-        new TradingView.widget({
-          autosize: true,
-          symbol: tvSymbol,
-          interval: interval,
-          timezone: 'Europe/Bucharest',
-          theme: 'dark',
-          style: '1',
-          locale: 'en',
-          backgroundColor: '#0a0b0e',
-          gridColor: 'rgba(28, 31, 38, 0.55)',
-          hide_top_toolbar: false,
-          hide_legend: false,
-          save_image: false,
-          allow_symbol_change: true,
-          container_id: 'tv_chart_slot'
-        });
-      } else {
-        container.innerHTML = `
-          <div class="w-full h-full flex flex-col items-center justify-center p-6 text-center text-xs text-slate-400">
-            <p class="font-semibold text-slate-200">Grafic TradingView (${tvSymbol})</p>
-            <p class="mt-1">Se încarcă widget-ul extern sau verifică conexiunea la internet.</p>
-          </div>
-        `;
-      }
-    }
-
-    function openDetailDrawer(stock) {
-      activeDrawerStock = stock;
-      const monoEl = document.getElementById('drawerMonogram');
-      monoEl.className = `w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0 border ${getMonogramStyle(stock.ticker)}`;
-      monoEl.textContent = stock.ticker.replace(/[^A-Z0-9]/g, '').slice(0, 2) || 'AI';
-
-      document.getElementById('drawerTicker').textContent = stock.ticker;
-      document.getElementById('drawerCompanyName').textContent = stock.name;
-
-      const sigBadge = document.getElementById('drawerSignalBadge');
-      sigBadge.className = `px-2.5 py-0.5 rounded-full text-[11px] font-bold ${getSignalBadgeClass(stock.signal)}`;
-      sigBadge.textContent = stock.signal;
-
-      syncDrawerPinButton(stock.ticker);
-
-      document.getElementById('drawerTagsList').innerHTML = renderTagsHtml(stock);
-      document.getElementById('drawerPriceValue').textContent = stock.price;
-      document.getElementById('drawerTpValue').textContent = stock.takeProfit;
-      document.getElementById('drawerSlValue').textContent = stock.stopLoss;
-
-      // Calculator currency setup
-      const priceInfo = parsePriceDetails(stock.price);
-      document.getElementById('investCurrencySymbol').textContent = priceInfo.currency;
-      document.getElementById('calcCurrencyBadge').textContent =
-        priceInfo.currency === '€' ? 'EUR (€)' : priceInfo.currency === '£' ? 'GBP (£)' : `USD (${priceInfo.currency})`;
-      investAmountInput.value = loadInvestAmount();
-      updateProfitCalculator();
-
-      // Backtest & Probability
-      document.getElementById('drawerScoreText').textContent = `Score: ${stock.score}/100`;
-      document.getElementById('drawerWinBar').style.width = `${stock.winChance}%`;
-      document.getElementById('drawerLossBar').style.width = `${stock.lossRisk}%`;
-      document.getElementById('drawerWinPct').textContent = `${stock.winChance}%`;
-      document.getElementById('drawerLossPct').textContent = `${stock.lossRisk}%`;
-      document.getElementById('drawerRRText').textContent = stock.riskReward;
-      document.getElementById('drawerBacktestStats').textContent = stock.backtestStats;
-
-      // Technical Indicator Pills
-      const indWrap = document.getElementById('drawerIndicatorsWrap');
-      if (stock.indicators.length > 0) {
-        indWrap.innerHTML = stock.indicators
-          .map((ind) => {
-            const lower = ind.toLowerCase();
-            let pillCls = 'bg-[#050507] text-slate-300 border-[#1c1f26]';
-            if (lower.includes('deasupra') || lower.includes('bullish') || lower.includes('+')) {
-              pillCls = 'bg-emerald-500/10 text-emerald-300 border-emerald-500/25';
-            } else if (lower.includes('sub') || lower.includes('bearish') || lower.includes('-')) {
-              pillCls = 'bg-red-500/10 text-red-300 border-red-500/25';
-            }
-            return `<span class="px-2.5 py-1 rounded-lg text-[11px] font-medium border ${pillCls}">${ind}</span>`;
-          })
-          .join('');
-      } else {
-        indWrap.innerHTML = '<span class="text-xs text-slate-500">Fără indicatori suplimentari.</span>';
-      }
-
-      document.getElementById('drawerSummaryText').textContent = stock.summary;
-
-      // Show drawer & mount TradingView
-      drawerOverlay.classList.remove('hidden');
-      requestAnimationFrame(() => {
-        drawerOverlay.classList.add('drawer-open');
-      });
-
-      mountTradingViewChart(stock.ticker, activeTvInterval);
-    }
-
-    function closeDetailDrawer() {
-      drawerOverlay.classList.remove('drawer-open');
-      setTimeout(() => {
-        drawerOverlay.classList.add('hidden');
-        document.getElementById('tradingviewWidgetContainer').innerHTML = '';
-      }, 260);
-    }
-
-    // ==========================================
-    // 8. LIVE DATA FETCHING (./data.json)
-    // ==========================================
-    async function loadLiveData(isManual = false) {
-      const reloadIcon = document.getElementById('reloadIcon');
-      if (isManual) {
-        reloadIcon.classList.add('animate-spin');
-      }
-
+    async function loadMarketData(manual = false) {
       try {
-        const response = await fetch(`./data.json?t=${Date.now()}`, {
-          cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache' }
-        });
+        const res = await fetch(`data.json?t=${Date.now()}`);
+        if (!res.ok) throw new Error("Nu s-a putut citi data.json");
+        const data = await res.json();
 
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
+        allOpportunities = data.opportunities || [];
+        portfolioPositions = data.portfolioPositions || [];
 
-        const data = await response.json();
-        if (!data || !Array.isArray(data.opportunities)) {
-          throw new Error('Structură data.json invalidă');
-        }
+        document.getElementById("marketStatusText").textContent = data.marketStatus || "Active Scan";
+        document.getElementById("scannedCount").textContent = data.stocksScanned ?? allOpportunities.length;
+        document.getElementById("signalsCount").textContent = data.signalsToday ?? 0;
+        document.getElementById("subHeader").textContent = `Trading 212 • Actualizat: ${data.updatedAt || "recent"}`;
 
-        currentPayload = data;
-        isLiveFeed = true;
         renderAll();
-        if (isManual) showToast('Date actualizate din Live Feed!');
+        if (manual) showToast("Date actualizate!");
       } catch (err) {
-        if (!isLiveFeed) {
-          currentPayload = JSON.parse(JSON.stringify(DEMO_PAYLOAD));
-          isLiveFeed = false;
-          renderAll();
-        }
-        if (isManual) showToast('data.json indisponibil — mod Demo activ');
-      } finally {
-        if (isManual) {
-          setTimeout(() => reloadIcon.classList.remove('animate-spin'), 350);
-        }
+        console.error(err);
+        document.getElementById("marketStatusText").textContent = "Așteaptă prima scanare";
       }
     }
 
-    // ==========================================
-    // 9. EVENT LISTENERS
-    // ==========================================
-    // Delegated clicks for cards, pin buttons, and copy buttons
-    document.addEventListener('click', (e) => {
-      const pinBtn = e.target.closest('[data-pin-ticker]');
-      if (pinBtn) {
-        e.stopPropagation();
-        togglePinTicker(pinBtn.getAttribute('data-pin-ticker'));
-        return;
-      }
+    document.getElementById("searchInput").addEventListener("input", renderGrid);
+    document.getElementById("sortSelect").addEventListener("change", renderGrid);
 
-      const copyBtn = e.target.closest('[data-copy-ticker]');
-      if (copyBtn) {
-        e.stopPropagation();
-        copyTickerToClipboard(copyBtn.getAttribute('data-copy-ticker'), copyBtn);
-        return;
-      }
-
-      const cardEl = e.target.closest('[data-open-ticker]');
-      if (cardEl) {
-        const ticker = cardEl.getAttribute('data-open-ticker');
-        const found = (currentPayload.opportunities || []).find(
-          (item) => String(item.ticker).toUpperCase() === ticker
-        );
-        if (found) {
-          openDetailDrawer(normalizeOpportunity(found));
-        }
-      }
-    });
-
-    // Signal filter pills
-    document.getElementById('signalPillsGroup').addEventListener('click', (e) => {
-      const btn = e.target.closest('.sig-pill');
-      if (!btn) return;
-      filterSignal = btn.getAttribute('data-signal');
-
-      document.querySelectorAll('.sig-pill').forEach((p) => {
-        const active = p === btn;
-        p.classList.toggle('bg-white/10', active);
-        p.classList.toggle('border-white/15', active);
-        p.classList.toggle('bg-[#050507]', !active);
-        p.classList.toggle('border-[#1c1f26]', !active);
+    document.querySelectorAll("#signalFilters .filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#signalFilters .filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentSignalFilter = btn.dataset.sig;
+        renderGrid();
       });
-      renderAll();
     });
 
-    // Region filter pills
-    document.getElementById('regionPillsGroup').addEventListener('click', (e) => {
-      const btn = e.target.closest('.reg-pill');
-      if (!btn) return;
-      filterRegion = btn.getAttribute('data-region');
-
-      document.querySelectorAll('.reg-pill').forEach((p) => {
-        const active = p === btn;
-        p.classList.toggle('bg-white/10', active);
-        p.classList.toggle('border-white/15', active);
-        p.classList.toggle('bg-[#050507]', !active);
-        p.classList.toggle('border-[#1c1f26]', !active);
+    document.querySelectorAll("#regionFilters .filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("#regionFilters .filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentRegionFilter = btn.dataset.reg;
+        renderGrid();
       });
-      renderAll();
     });
 
-    // Search & Sort
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      searchQuery = e.target.value;
-      renderAll();
-    });
-
-    document.getElementById('sortSelect').addEventListener('change', (e) => {
-      sortMode = e.target.value;
-      renderAll();
-    });
-
-    document.getElementById('resetFiltersBtn').addEventListener('click', () => {
-      filterSignal = 'ALL';
-      filterRegion = 'ALL';
-      searchQuery = '';
-      sortMode = 'featured';
-      document.getElementById('searchInput').value = '';
-      document.getElementById('sortSelect').value = 'featured';
-
-      document.querySelectorAll('.sig-pill').forEach((p, idx) => {
-        p.classList.toggle('bg-white/10', idx === 0);
-        p.classList.toggle('border-white/15', idx === 0);
-        p.classList.toggle('bg-[#050507]', idx !== 0);
-        p.classList.toggle('border-[#1c1f26]', idx !== 0);
-      });
-      document.querySelectorAll('.reg-pill').forEach((p, idx) => {
-        p.classList.toggle('bg-white/10', idx === 0);
-        p.classList.toggle('border-white/15', idx === 0);
-        p.classList.toggle('bg-[#050507]', idx !== 0);
-        p.classList.toggle('border-[#1c1f26]', idx !== 0);
-      });
-      renderAll();
-    });
-
-    // Drawer Controls
-    document.getElementById('closeDrawerBtn').addEventListener('click', closeDetailDrawer);
-    drawerOverlay.addEventListener('click', (e) => {
-      if (e.target === drawerOverlay) closeDetailDrawer();
-    });
-
-    document.getElementById('drawerCopyBtn').addEventListener('click', function () {
-      if (activeDrawerStock) copyTickerToClipboard(activeDrawerStock.ticker, this);
-    });
-
-    document.getElementById('drawerPinBtn').addEventListener('click', () => {
-      if (activeDrawerStock) togglePinTicker(activeDrawerStock.ticker);
-    });
-
-    document.getElementById('tvIntervalGroup').addEventListener('click', (e) => {
-      const btn = e.target.closest('.tv-int-btn');
-      if (!btn || !activeDrawerStock) return;
-      activeTvInterval = btn.getAttribute('data-interval');
-
-      document.querySelectorAll('.tv-int-btn').forEach((b) => {
-        const active = b === btn;
-        b.classList.toggle('bg-white/10', active);
-        b.classList.toggle('text-white', active);
-        b.classList.toggle('text-slate-400', !active);
-      });
-
-      mountTradingViewChart(activeDrawerStock.ticker, activeTvInterval);
-    });
-
-    investAmountInput.addEventListener('input', updateProfitCalculator);
-
-    document.getElementById('openTrading212Btn').addEventListener('click', () => {
-      if (activeDrawerStock) {
-        copyTickerToClipboard(activeDrawerStock.ticker);
-      }
-      window.open('https://app.trading212.com', '_blank', 'noopener,noreferrer');
-    });
-
-    // Reload Button
-    document.getElementById('reloadBtn').addEventListener('click', () => loadLiveData(true));
-
-    // JSON Settings Modal Controls
-    const jsonModal = document.getElementById('jsonModal');
-    const jsonTextarea = document.getElementById('jsonTextarea');
-    const jsonFeedback = document.getElementById('jsonFeedback');
-
-    function showJsonStatus(msg, isError) {
-      jsonFeedback.textContent = msg;
-      jsonFeedback.className = isError
-        ? 'mt-3 px-3.5 py-2 rounded-lg text-xs font-medium bg-red-500/15 text-red-400 border border-red-500/30'
-        : 'mt-3 px-3.5 py-2 rounded-lg text-xs font-medium bg-emerald-500/15 text-emerald-400 border border-emerald-500/30';
-    }
-
-    document.getElementById('openJsonSettingsBtn').addEventListener('click', () => {
-      jsonFeedback.className = 'hidden';
-      jsonTextarea.value = JSON.stringify(currentPayload, null, 2);
-      jsonModal.classList.remove('hidden');
-      jsonModal.classList.add('flex');
-    });
-
-    function closeJsonModal() {
-      jsonModal.classList.add('hidden');
-      jsonModal.classList.remove('flex');
-    }
-
-    document.getElementById('closeJsonModalBtn').addEventListener('click', closeJsonModal);
-    document.getElementById('cancelJsonBtn').addEventListener('click', closeJsonModal);
-    jsonModal.addEventListener('click', (e) => {
-      if (e.target === jsonModal) closeJsonModal();
-    });
-
-    document.getElementById('loadDemoJsonBtn').addEventListener('click', () => {
-      jsonTextarea.value = JSON.stringify(DEMO_PAYLOAD, null, 2);
-      showJsonStatus('Schema exemplu încărcată.', false);
-    });
-
-    document.getElementById('copyJsonBtn').addEventListener('click', () => {
-      jsonTextarea.select();
-      try {
-        document.execCommand('copy');
-        showJsonStatus('JSON copiat în clipboard!', false);
-      } catch (e) {
-        showJsonStatus('Selectează manual textul pentru copiere.', true);
-      }
-    });
-
-    document.getElementById('applyJsonBtn').addEventListener('click', () => {
-      try {
-        const parsed = JSON.parse(jsonTextarea.value.trim());
-        if (!parsed || !Array.isArray(parsed.opportunities)) {
-          throw new Error('JSON-ul trebuie să conțină lista "opportunities".');
-        }
-        currentPayload = parsed;
-        isLiveFeed = true;
-        renderAll();
-        closeJsonModal();
-        showToast('Date JSON aplicate!');
-      } catch (err) {
-        showJsonStatus(`Eroare JSON: ${err.message}`, true);
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (!drawerOverlay.classList.contains('hidden')) closeDetailDrawer();
-        if (!jsonModal.classList.contains('hidden')) closeJsonModal();
-      }
-    });
-
-    // ==========================================
-    // 10. INITIALIZATION
-    // ==========================================
-    renderAll();
-    updateBucharestCountdown();
-    setInterval(updateBucharestCountdown, 30000);
-    loadLiveData(false);
+    updateNextScanCountdown();
+    setInterval(updateNextScanCountdown, 30000);
+    loadMarketData(false);
   </script>
 </body>
 </html>
