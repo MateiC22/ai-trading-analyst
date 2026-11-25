@@ -2,7 +2,7 @@
   "marketStatus": "Live Market Scan",
   "stocksScanned": 69,
   "signalsToday": 0,
-  "updatedAt": "25 Nov 2026, 23:21 EET",
+  "updatedAt": "26 Nov 2026, 00:05 EET",
   "opportunities": [
     {
       "ticker": "PLTR",
@@ -14,9 +14,9 @@
       "winChance": 53,
       "lossRisk": 47,
       "riskReward": "1 : 2.0",
-      "price": "$163.00 (+1.13%)",
-      "takeProfit": "+12.0% ($182.56)",
-      "stopLoss": "-6.0% ($153.22)",
+      "price": "$162.87 (+1.05%)",
+      "takeProfit": "+12.0% ($182.41)",
+      "stopLoss": "-6.0% ($153.10)",
       "backtestStats": "41 Wins vs 36 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 43.6",
@@ -34,19 +34,18 @@
       "isCustom": true,
       "signal": "WAIT",
       "score": 25,
-      "winChance": 27,
-      "lossRisk": 73,
+      "winChance": 26,
+      "lossRisk": 74,
       "riskReward": "1 : 2.0",
-      "price": "€1131.60 (-5.79%)",
+      "price": "€1131.60",
       "takeProfit": "+12.0% (€1267.39)",
       "stopLoss": "-6.0% (€1063.70)",
-      "backtestStats": "13 Wins vs 36 Losses (ultimii 3 ani)",
+      "backtestStats": "13 Wins vs 37 Losses (ultimii 3 ani)",
       "indicators": [
-        "RSI(14): 41.0",
-        "SMA200: Sub",
-        "VWAP: Sub"
+        "RSI(14): 42.0",
+        "SMA200: Sub"
       ],
-      "summary": "Win istoric 27% (13W/36L). RSI 41.0, sub SMA200. Sub VWAP."
+      "summary": "Win istoric 26% (13W/37L). RSI 42.0, sub SMA200."
     },
     {
       "ticker": "AMD",
@@ -58,9 +57,9 @@
       "winChance": 25,
       "lossRisk": 75,
       "riskReward": "1 : 2.0",
-      "price": "$406.41 (-1.66%)",
-      "takeProfit": "+12.0% ($455.18)",
-      "stopLoss": "-6.0% ($382.03)",
+      "price": "$405.15 (-1.97%)",
+      "takeProfit": "+12.0% ($453.76)",
+      "stopLoss": "-6.0% ($380.84)",
       "backtestStats": "16 Wins vs 63 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 43.1",
@@ -81,18 +80,18 @@
       "winChance": 50,
       "lossRisk": 50,
       "riskReward": "1 : 1.83",
-      "price": "$424.92 (+1.95%)",
-      "takeProfit": "+5.0% ($446.17)",
-      "stopLoss": "-2.7% ($413.45)",
+      "price": "$424.98 (+1.97%)",
+      "takeProfit": "+5.0% ($446.23)",
+      "stopLoss": "-2.7% ($413.51)",
       "backtestStats": "38 Wins vs 38 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 36.4",
         "SMA200: Deasupra",
         "Pre-Market: -0.15%",
-        "Vol Open 15m: 0.74x",
+        "Vol Open 15m: 1.33x",
         "VWAP: Deasupra"
       ],
-      "summary": "Win istoric 50% (38W/38L). RSI 36.4, peste SMA200. Pre-market: -0.15%. Volum deschidere: 0.74x. Peste VWAP."
+      "summary": "Win istoric 50% (38W/38L). RSI 36.4, peste SMA200. Pre-market: -0.15%. Volum deschidere: 1.33x. Peste VWAP."
     },
     {
       "ticker": "AAPL",
@@ -104,18 +103,18 @@
       "winChance": 47,
       "lossRisk": 53,
       "riskReward": "1 : 1.83",
-      "price": "$355.10 (+0.29%)",
-      "takeProfit": "+5.0% ($372.86)",
-      "stopLoss": "-2.8% ($345.16)",
+      "price": "$354.98 (+0.26%)",
+      "takeProfit": "+5.0% ($372.73)",
+      "stopLoss": "-2.8% ($345.04)",
       "backtestStats": "74 Wins vs 82 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 54.6",
         "SMA200: Deasupra",
         "Pre-Market: -0.13%",
-        "Vol Open 15m: 1.09x",
+        "Vol Open 15m: 0.69x",
         "VWAP: Deasupra"
       ],
-      "summary": "Win istoric 47% (74W/82L). RSI 54.6, peste SMA200. Pre-market: -0.13%. Volum deschidere: 1.09x. Peste VWAP."
+      "summary": "Win istoric 47% (74W/82L). RSI 54.6, peste SMA200. Pre-market: -0.13%. Volum deschidere: 0.69x. Peste VWAP."
     },
     {
       "ticker": "MRK",
@@ -127,9 +126,9 @@
       "winChance": 62,
       "lossRisk": 38,
       "riskReward": "1 : 1.83",
-      "price": "$140.29 (-0.9%)",
-      "takeProfit": "+7.0% ($150.11)",
-      "stopLoss": "-3.8% ($134.96)",
+      "price": "$140.52 (-0.74%)",
+      "takeProfit": "+7.0% ($150.36)",
+      "stopLoss": "-3.8% ($135.18)",
       "backtestStats": "25 Wins vs 15 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 36.3",
@@ -150,18 +149,18 @@
       "winChance": 39,
       "lossRisk": 61,
       "riskReward": "1 : 1.83",
-      "price": "$659.73 (+1.9%)",
-      "takeProfit": "+5.0% ($692.72)",
-      "stopLoss": "-2.7% ($641.92)",
+      "price": "$659.97 (+1.94%)",
+      "takeProfit": "+5.0% ($692.97)",
+      "stopLoss": "-2.7% ($642.15)",
       "backtestStats": "31 Wins vs 48 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 37.8",
         "SMA200: Deasupra",
         "Pre-Market: -0.1%",
-        "Vol Open 15m: 0.72x",
+        "Vol Open 15m: 1.22x",
         "VWAP: Deasupra"
       ],
-      "summary": "Win istoric 39% (31W/48L). RSI 37.8, peste SMA200. Pre-market: -0.1%. Volum deschidere: 0.72x. Peste VWAP."
+      "summary": "Win istoric 39% (31W/48L). RSI 37.8, peste SMA200. Pre-market: -0.1%. Volum deschidere: 1.22x. Peste VWAP."
     },
     {
       "ticker": "SPOT",
@@ -173,9 +172,9 @@
       "winChance": 38,
       "lossRisk": 62,
       "riskReward": "1 : 1.83",
-      "price": "$613.52 (+2.3%)",
-      "takeProfit": "+7.1% ($657.08)",
-      "stopLoss": "-3.9% ($589.60)",
+      "price": "$616.99 (+2.88%)",
+      "takeProfit": "+7.1% ($660.80)",
+      "stopLoss": "-3.9% ($592.93)",
       "backtestStats": "30 Wins vs 48 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 39.0",
@@ -196,9 +195,9 @@
       "winChance": 35,
       "lossRisk": 65,
       "riskReward": "1 : 1.83",
-      "price": "$579.99 (+0.48%)",
-      "takeProfit": "+4.0% ($603.19)",
-      "stopLoss": "-2.2% ($567.23)",
+      "price": "$580.00 (+0.48%)",
+      "takeProfit": "+4.0% ($603.20)",
+      "stopLoss": "-2.2% ($567.24)",
       "backtestStats": "49 Wins vs 92 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 48.4",
@@ -210,6 +209,29 @@
       "summary": "Win istoric 35% (49W/92L). RSI 48.4, peste SMA200. Pre-market: +0.05%. Volum deschidere: 0.69x. Peste VWAP."
     },
     {
+      "ticker": "SONY",
+      "name": "Sony Group Corporation",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WATCH",
+      "score": 56,
+      "winChance": 34,
+      "lossRisk": 66,
+      "riskReward": "1 : 1.83",
+      "price": "$28.49 (+2.52%)",
+      "takeProfit": "+5.7% ($30.11)",
+      "stopLoss": "-3.1% ($27.61)",
+      "backtestStats": "34 Wins vs 67 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 68.5",
+        "SMA200: Deasupra",
+        "Pre-Market: +1.48%",
+        "Vol Open 15m: 1.48x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 34% (34W/67L). RSI 68.5, peste SMA200. Pre-market: +1.48%. Volum deschidere: 1.48x. Peste VWAP."
+    },
+    {
       "ticker": "JNJ",
       "name": "Johnson & Johnson",
       "region": "US",
@@ -219,9 +241,9 @@
       "winChance": 41,
       "lossRisk": 59,
       "riskReward": "1 : 1.83",
-      "price": "$274.88 (-0.57%)",
-      "takeProfit": "+5.4% ($289.72)",
-      "stopLoss": "-2.9% ($266.91)",
+      "price": "$274.85 (-0.58%)",
+      "takeProfit": "+5.4% ($289.69)",
+      "stopLoss": "-2.9% ($266.88)",
       "backtestStats": "67 Wins vs 98 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 51.5",
@@ -265,9 +287,9 @@
       "winChance": 43,
       "lossRisk": 57,
       "riskReward": "1 : 2.0",
-      "price": "$134.18 (+1.41%)",
-      "takeProfit": "+12.0% ($150.28)",
-      "stopLoss": "-6.0% ($126.13)",
+      "price": "$133.12 (+0.61%)",
+      "takeProfit": "+12.0% ($149.09)",
+      "stopLoss": "-6.0% ($125.13)",
       "backtestStats": "35 Wins vs 47 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 34.3",
@@ -288,9 +310,9 @@
       "winChance": 29,
       "lossRisk": 71,
       "riskReward": "1 : 1.83",
-      "price": "$361.68 (+2.26%)",
-      "takeProfit": "+5.8% ($382.66)",
-      "stopLoss": "-3.2% ($350.11)",
+      "price": "$361.26 (+2.14%)",
+      "takeProfit": "+5.8% ($382.21)",
+      "stopLoss": "-3.2% ($349.70)",
       "backtestStats": "19 Wins vs 47 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 48.5",
@@ -357,9 +379,9 @@
       "winChance": 29,
       "lossRisk": 71,
       "riskReward": "1 : 1.83",
-      "price": "$284.00 (+1.18%)",
-      "takeProfit": "+5.0% ($298.20)",
-      "stopLoss": "-2.7% ($276.33)",
+      "price": "$283.37 (+0.95%)",
+      "takeProfit": "+5.0% ($297.54)",
+      "stopLoss": "-2.8% ($275.44)",
       "backtestStats": "34 Wins vs 83 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 50.7",
@@ -369,27 +391,6 @@
         "VWAP: Deasupra"
       ],
       "summary": "Win istoric 29% (34W/83L). RSI 50.7, peste SMA200. Pre-market: +0.49%. Volum deschidere: 0.58x. Peste VWAP."
-    },
-    {
-      "ticker": "NOVN.SW",
-      "name": "NOVARTIS N",
-      "region": "WORLDWIDE",
-      "isCustom": false,
-      "signal": "WAIT",
-      "score": 53,
-      "winChance": 52,
-      "lossRisk": 48,
-      "riskReward": "1 : 1.83",
-      "price": "CHF 128.10 (-0.39%)",
-      "takeProfit": "+4.1% (CHF 133.35)",
-      "stopLoss": "-2.2% (CHF 125.28)",
-      "backtestStats": "48 Wins vs 44 Losses (ultimii 3 ani)",
-      "indicators": [
-        "RSI(14): 33.9",
-        "SMA200: Deasupra",
-        "VWAP: Sub"
-      ],
-      "summary": "Win istoric 52% (48W/44L). RSI 33.9, peste SMA200. Sub VWAP."
     },
     {
       "ticker": "CRM",
@@ -424,10 +425,10 @@
       "winChance": 36,
       "lossRisk": 64,
       "riskReward": "1 : 1.83",
-      "price": "$97.84 (+0.23%)",
-      "takeProfit": "+4.4% ($102.14)",
-      "stopLoss": "-2.4% ($95.49)",
-      "backtestStats": "64 Wins vs 113 Losses (ultimii 3 ani)",
+      "price": "$97.76 (+0.14%)",
+      "takeProfit": "+4.4% ($102.06)",
+      "stopLoss": "-2.4% ($95.41)",
+      "backtestStats": "64 Wins vs 112 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 58.0",
         "SMA200: Deasupra",
@@ -435,7 +436,7 @@
         "Vol Open 15m: 0.75x",
         "VWAP: Sub"
       ],
-      "summary": "Win istoric 36% (64W/113L). RSI 58.0, peste SMA200. Pre-market: +0.57%. Volum deschidere: 0.75x. Sub VWAP."
+      "summary": "Win istoric 36% (64W/112L). RSI 58.0, peste SMA200. Pre-market: +0.57%. Volum deschidere: 0.75x. Sub VWAP."
     },
     {
       "ticker": "AMGN",
@@ -447,18 +448,38 @@
       "winChance": 37,
       "lossRisk": 63,
       "riskReward": "1 : 1.83",
-      "price": "$469.24 (-0.99%)",
-      "takeProfit": "+6.2% ($498.33)",
-      "stopLoss": "-3.4% ($453.29)",
+      "price": "$468.20 (-1.21%)",
+      "takeProfit": "+6.2% ($497.23)",
+      "stopLoss": "-3.4% ($452.28)",
       "backtestStats": "58 Wins vs 97 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 49.0",
         "SMA200: Deasupra",
         "Pre-Market: -0.83%",
         "Vol Open 15m: 1.45x",
-        "VWAP: Deasupra"
+        "VWAP: Sub"
       ],
-      "summary": "Win istoric 37% (58W/97L). RSI 49.0, peste SMA200. Pre-market: -0.83%. Volum deschidere: 1.45x. Peste VWAP."
+      "summary": "Win istoric 37% (58W/97L). RSI 49.0, peste SMA200. Pre-market: -0.83%. Volum deschidere: 1.45x. Sub VWAP."
+    },
+    {
+      "ticker": "NOVN.SW",
+      "name": "NOVARTIS N",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 52,
+      "winChance": 51,
+      "lossRisk": 49,
+      "riskReward": "1 : 1.83",
+      "price": "CHF 128.10",
+      "takeProfit": "+4.2% (CHF 133.48)",
+      "stopLoss": "-2.3% (CHF 125.15)",
+      "backtestStats": "46 Wins vs 45 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 33.2",
+        "SMA200: Deasupra"
+      ],
+      "summary": "Win istoric 51% (46W/45L). RSI 33.2, peste SMA200."
     },
     {
       "ticker": "RACE",
@@ -484,6 +505,29 @@
       "summary": "Win istoric 41% (28W/41L). RSI 30.5, peste SMA200. Pre-market: +2.1%. Volum deschidere: 0.98x. Peste VWAP."
     },
     {
+      "ticker": "IBM",
+      "name": "International Business Machines",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 51,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "$243.00 (+3.13%)",
+      "takeProfit": "+6.1% ($257.82)",
+      "stopLoss": "-3.3% ($234.98)",
+      "backtestStats": "21 Wins vs 65 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 34.6",
+        "SMA200: Deasupra",
+        "Pre-Market: -1.38%",
+        "Vol Open 15m: 0.75x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (21W/65L). RSI 34.6, peste SMA200. Pre-market: -1.38%. Volum deschidere: 0.75x. Peste VWAP."
+    },
+    {
       "ticker": "DIS",
       "name": "Walt Disney Company (The)",
       "region": "US",
@@ -493,39 +537,18 @@
       "winChance": 25,
       "lossRisk": 75,
       "riskReward": "1 : 1.83",
-      "price": "$125.60 (+2.52%)",
-      "takeProfit": "+5.8% ($132.88)",
-      "stopLoss": "-3.2% ($121.58)",
+      "price": "$125.64 (+2.55%)",
+      "takeProfit": "+5.8% ($132.93)",
+      "stopLoss": "-3.2% ($121.62)",
       "backtestStats": "19 Wins vs 76 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 57.5",
         "SMA200: Deasupra",
         "Pre-Market: -0.46%",
-        "Vol Open 15m: 0.68x",
+        "Vol Open 15m: 1.0x",
         "VWAP: Deasupra"
       ],
-      "summary": "Win istoric 25% (19W/76L). RSI 57.5, peste SMA200. Pre-market: -0.46%. Volum deschidere: 0.68x. Peste VWAP."
-    },
-    {
-      "ticker": "SIE.DE",
-      "name": "SIEMENS AG                    N",
-      "region": "WORLDWIDE",
-      "isCustom": false,
-      "signal": "WAIT",
-      "score": 51,
-      "winChance": 69,
-      "lossRisk": 31,
-      "riskReward": "1 : 1.83",
-      "price": "€245.50 (-3.59%)",
-      "takeProfit": "+8.2% (€265.63)",
-      "stopLoss": "-4.5% (€234.45)",
-      "backtestStats": "27 Wins vs 12 Losses (ultimii 3 ani)",
-      "indicators": [
-        "RSI(14): 36.9",
-        "SMA200: Sub",
-        "VWAP: Sub"
-      ],
-      "summary": "Win istoric 69% (27W/12L). RSI 36.9, sub SMA200. Sub VWAP."
+      "summary": "Win istoric 25% (19W/76L). RSI 57.5, peste SMA200. Pre-market: -0.46%. Volum deschidere: 1.0x. Peste VWAP."
     },
     {
       "ticker": "META",
@@ -537,18 +560,18 @@
       "winChance": 45,
       "lossRisk": 55,
       "riskReward": "1 : 1.83",
-      "price": "$608.68 (+3.2%)",
-      "takeProfit": "+9.0% ($663.46)",
-      "stopLoss": "-4.9% ($578.86)",
+      "price": "$608.00 (+3.08%)",
+      "takeProfit": "+9.0% ($662.72)",
+      "stopLoss": "-4.9% ($578.21)",
       "backtestStats": "50 Wins vs 61 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 41.0",
         "SMA200: Sub",
         "Pre-Market: -2.68%",
-        "Vol Open 15m: 1.49x",
+        "Vol Open 15m: 1.58x",
         "VWAP: Deasupra"
       ],
-      "summary": "Win istoric 45% (50W/61L). RSI 41.0, sub SMA200. Pre-market: -2.68%. Volum deschidere: 1.49x. Peste VWAP."
+      "summary": "Win istoric 45% (50W/61L). RSI 41.0, sub SMA200. Pre-market: -2.68%. Volum deschidere: 1.58x. Peste VWAP."
     },
     {
       "ticker": "ACN",
@@ -560,9 +583,9 @@
       "winChance": 48,
       "lossRisk": 52,
       "riskReward": "1 : 1.83",
-      "price": "$240.49 (+3.52%)",
-      "takeProfit": "+8.2% ($260.21)",
-      "stopLoss": "-4.5% ($229.67)",
+      "price": "$240.50 (+3.52%)",
+      "takeProfit": "+8.2% ($260.22)",
+      "stopLoss": "-4.5% ($229.68)",
       "backtestStats": "10 Wins vs 11 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 27.4",
@@ -583,9 +606,9 @@
       "winChance": 28,
       "lossRisk": 72,
       "riskReward": "1 : 2.0",
-      "price": "$270.40 (+4.63%)",
-      "takeProfit": "+12.0% ($302.85)",
-      "stopLoss": "-6.0% ($254.18)",
+      "price": "$269.03 (+4.1%)",
+      "takeProfit": "+12.0% ($301.31)",
+      "stopLoss": "-6.0% ($252.89)",
       "backtestStats": "13 Wins vs 33 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 35.4",
@@ -606,9 +629,9 @@
       "winChance": 32,
       "lossRisk": 68,
       "riskReward": "1 : 1.83",
-      "price": "$1394.71 (-0.92%)",
-      "takeProfit": "+6.8% ($1489.55)",
-      "stopLoss": "-3.7% ($1343.10)",
+      "price": "$1392.24 (-1.09%)",
+      "takeProfit": "+6.8% ($1486.91)",
+      "stopLoss": "-3.7% ($1340.73)",
       "backtestStats": "42 Wins vs 90 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 48.7",
@@ -629,18 +652,18 @@
       "winChance": 32,
       "lossRisk": 68,
       "riskReward": "1 : 1.83",
-      "price": "$294.45 (-1.94%)",
-      "takeProfit": "+5.4% ($310.35)",
-      "stopLoss": "-2.9% ($285.91)",
-      "backtestStats": "52 Wins vs 111 Losses (ultimii 3 ani)",
+      "price": "$296.00 (-1.43%)",
+      "takeProfit": "+5.4% ($311.98)",
+      "stopLoss": "-2.9% ($287.42)",
+      "backtestStats": "52 Wins vs 112 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 56.4",
         "SMA200: Deasupra",
         "Pre-Market: +0.45%",
         "Vol Open 15m: 0.89x",
-        "VWAP: Sub"
+        "VWAP: Deasupra"
       ],
-      "summary": "Win istoric 32% (52W/111L). RSI 56.4, peste SMA200. Pre-market: +0.45%. Volum deschidere: 0.89x. Sub VWAP."
+      "summary": "Win istoric 32% (52W/112L). RSI 56.4, peste SMA200. Pre-market: +0.45%. Volum deschidere: 0.89x. Peste VWAP."
     },
     {
       "ticker": "ABT",
@@ -698,16 +721,15 @@
       "winChance": 29,
       "lossRisk": 71,
       "riskReward": "1 : 1.83",
-      "price": "GBp 13926.00 (-0.04%)",
-      "takeProfit": "+4.6% (GBp 14566.60)",
-      "stopLoss": "-2.5% (GBp 13577.85)",
+      "price": "GBp 13926.00",
+      "takeProfit": "+4.5% (GBp 14552.67)",
+      "stopLoss": "-2.4% (GBp 13591.78)",
       "backtestStats": "27 Wins vs 65 Losses (ultimii 3 ani)",
       "indicators": [
-        "RSI(14): 47.6",
-        "SMA200: Deasupra",
-        "VWAP: Sub"
+        "RSI(14): 47.0",
+        "SMA200: Deasupra"
       ],
-      "summary": "Win istoric 29% (27W/65L). RSI 47.6, peste SMA200. Sub VWAP."
+      "summary": "Win istoric 29% (27W/65L). RSI 47.0, peste SMA200."
     },
     {
       "ticker": "JPM",
@@ -719,9 +741,9 @@
       "winChance": 74,
       "lossRisk": 26,
       "riskReward": "1 : 1.83",
-      "price": "$316.81 (-0.09%)",
-      "takeProfit": "+6.1% ($336.14)",
-      "stopLoss": "-3.3% ($306.36)",
+      "price": "$316.74 (-0.11%)",
+      "takeProfit": "+6.1% ($336.06)",
+      "stopLoss": "-3.3% ($306.29)",
       "backtestStats": "17 Wins vs 6 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 25.9",
@@ -742,41 +764,18 @@
       "winChance": 39,
       "lossRisk": 61,
       "riskReward": "1 : 1.83",
-      "price": "$131.98 (-0.25%)",
-      "takeProfit": "+5.0% ($138.58)",
-      "stopLoss": "-2.7% ($128.42)",
+      "price": "$131.86 (-0.34%)",
+      "takeProfit": "+5.0% ($138.45)",
+      "stopLoss": "-2.7% ($128.30)",
       "backtestStats": "58 Wins vs 92 Losses (ultimii 3 ani)",
       "indicators": [
         "RSI(14): 60.2",
         "SMA200: Deasupra",
         "Pre-Market: +0.09%",
         "Vol Open 15m: 0.64x",
-        "VWAP: Deasupra"
-      ],
-      "summary": "Win istoric 39% (58W/92L). RSI 60.2, peste SMA200. Pre-market: +0.09%. Volum deschidere: 0.64x. Peste VWAP."
-    },
-    {
-      "ticker": "IBM",
-      "name": "International Business Machines",
-      "region": "US",
-      "isCustom": false,
-      "signal": "WAIT",
-      "score": 45,
-      "winChance": 25,
-      "lossRisk": 75,
-      "riskReward": "1 : 1.83",
-      "price": "$241.57 (+2.53%)",
-      "takeProfit": "+6.2% ($256.55)",
-      "stopLoss": "-3.4% ($233.36)",
-      "backtestStats": "21 Wins vs 65 Losses (ultimii 3 ani)",
-      "indicators": [
-        "RSI(14): 34.6",
-        "SMA200: Deasupra",
-        "Pre-Market: -1.38%",
-        "Vol Open 15m: 0.75x",
         "VWAP: Sub"
       ],
-      "summary": "Win istoric 25% (21W/65L). RSI 34.6, peste SMA200. Pre-market: -1.38%. Volum deschidere: 0.75x. Sub VWAP."
+      "summary": "Win istoric 39% (58W/92L). RSI 60.2, peste SMA200. Pre-market: +0.09%. Volum deschidere: 0.64x. Sub VWAP."
     },
     {
       "ticker": "NESN.SW",
@@ -788,16 +787,776 @@
       "winChance": 25,
       "lossRisk": 75,
       "riskReward": "1 : 1.83",
-      "price": "CHF 87.15 (+1.01%)",
-      "takeProfit": "+3.6% (CHF 90.29)",
-      "stopLoss": "-2.0% (CHF 85.41)",
-      "backtestStats": "24 Wins vs 79 Losses (ultimii 3 ani)",
+      "price": "CHF 87.15",
+      "takeProfit": "+3.5% (CHF 90.20)",
+      "stopLoss": "-1.9% (CHF 85.49)",
+      "backtestStats": "24 Wins vs 80 Losses (ultimii 3 ani)",
       "indicators": [
-        "RSI(14): 51.5",
+        "RSI(14): 49.7",
+        "SMA200: Deasupra"
+      ],
+      "summary": "Win istoric 25% (24W/80L). RSI 49.7, peste SMA200."
+    },
+    {
+      "ticker": "ISRG",
+      "name": "Intuitive Surgical, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 43,
+      "winChance": 36,
+      "lossRisk": 64,
+      "riskReward": "1 : 1.83",
+      "price": "$428.10 (-1.46%)",
+      "takeProfit": "+7.8% ($461.49)",
+      "stopLoss": "-4.3% ($409.69)",
+      "backtestStats": "18 Wins vs 32 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 33.2",
         "SMA200: Deasupra",
+        "Pre-Market: -1.83%",
+        "Vol Open 15m: 1.26x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 36% (18W/32L). RSI 33.2, peste SMA200. Pre-market: -1.83%. Volum deschidere: 1.26x. Peste VWAP."
+    },
+    {
+      "ticker": "SIE.DE",
+      "name": "SIEMENS AG                    N",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 42,
+      "winChance": 69,
+      "lossRisk": 31,
+      "riskReward": "1 : 1.83",
+      "price": "€245.50",
+      "takeProfit": "+8.2% (€265.63)",
+      "stopLoss": "-4.5% (€234.45)",
+      "backtestStats": "27 Wins vs 12 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 34.0",
+        "SMA200: Sub"
+      ],
+      "summary": "Win istoric 69% (27W/12L). RSI 34.0, sub SMA200."
+    },
+    {
+      "ticker": "TM",
+      "name": "Toyota Motor Corporation",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 42,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "$215.79 (+2.77%)",
+      "takeProfit": "+5.8% ($228.31)",
+      "stopLoss": "-3.1% ($209.10)",
+      "backtestStats": "26 Wins vs 82 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 60.3",
+        "SMA200: Deasupra",
+        "Pre-Market: +0.87%",
+        "Vol Open 15m: 0.28x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (26W/82L). RSI 60.3, peste SMA200. Pre-market: +0.87%. Volum deschidere: 0.28x. Peste VWAP."
+    },
+    {
+      "ticker": "XOM",
+      "name": "ExxonMobil Holdings Corporation",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 41,
+      "winChance": 45,
+      "lossRisk": 55,
+      "riskReward": "1 : 1.83",
+      "price": "$157.95 (-0.18%)",
+      "takeProfit": "+5.4% ($166.48)",
+      "stopLoss": "-2.9% ($153.37)",
+      "backtestStats": "29 Wins vs 36 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 32.6",
+        "SMA200: Deasupra",
+        "Pre-Market: +0.17%",
+        "Vol Open 15m: 1.48x",
         "VWAP: Sub"
       ],
-      "summary": "Win istoric 25% (24W/79L). RSI 51.5, peste SMA200. Sub VWAP."
+      "summary": "Win istoric 45% (29W/36L). RSI 32.6, peste SMA200. Pre-market: +0.17%. Volum deschidere: 1.48x. Sub VWAP."
+    },
+    {
+      "ticker": "CSCO",
+      "name": "Cisco Systems, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 41,
+      "winChance": 42,
+      "lossRisk": 58,
+      "riskReward": "1 : 1.83",
+      "price": "$94.20 (+0.22%)",
+      "takeProfit": "+10.9% ($104.47)",
+      "stopLoss": "-5.9% ($88.64)",
+      "backtestStats": "2 Wins vs 0 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 39.2",
+        "SMA200: Sub",
+        "Pre-Market: -2.9%",
+        "Vol Open 15m: 0.89x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 42% (2W/0L). RSI 39.2, sub SMA200. Pre-market: -2.9%. Volum deschidere: 0.89x. Peste VWAP."
+    },
+    {
+      "ticker": "AMZN",
+      "name": "Amazon.com, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 40,
+      "winChance": 51,
+      "lossRisk": 49,
+      "riskReward": "1 : 1.83",
+      "price": "$244.73 (-3.0%)",
+      "takeProfit": "+9.7% ($268.46)",
+      "stopLoss": "-5.3% ($231.76)",
+      "backtestStats": "23 Wins vs 22 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 41.0",
+        "SMA200: Sub",
+        "Pre-Market: -3.65%",
+        "Vol Open 15m: 1.04x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 51% (23W/22L). RSI 41.0, sub SMA200. Pre-market: -3.65%. Volum deschidere: 1.04x. Peste VWAP."
+    },
+    {
+      "ticker": "GE",
+      "name": "GE Aerospace",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 40,
+      "winChance": 40,
+      "lossRisk": 60,
+      "riskReward": "1 : 1.83",
+      "price": "$314.35 (-1.16%)",
+      "takeProfit": "+7.7% ($338.55)",
+      "stopLoss": "-4.2% ($301.15)",
+      "backtestStats": "19 Wins vs 29 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 44.2",
+        "SMA200: Sub",
+        "Pre-Market: -2.05%",
+        "Vol Open 15m: 0.8x",
+        "VWAP: Sub"
+      ],
+      "summary": "Win istoric 40% (19W/29L). RSI 44.2, sub SMA200. Pre-market: -2.05%. Volum deschidere: 0.8x. Sub VWAP."
+    },
+    {
+      "ticker": "BAC",
+      "name": "Bank of America Corporation",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 39,
+      "winChance": 49,
+      "lossRisk": 51,
+      "riskReward": "1 : 1.83",
+      "price": "$48.52 (-0.08%)",
+      "takeProfit": "+5.7% ($51.29)",
+      "stopLoss": "-3.1% ($47.02)",
+      "backtestStats": "35 Wins vs 36 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 34.1",
+        "SMA200: Sub",
+        "Pre-Market: -1.4%",
+        "Vol Open 15m: 1.85x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 49% (35W/36L). RSI 34.1, sub SMA200. Pre-market: -1.4%. Volum deschidere: 1.85x. Peste VWAP."
+    },
+    {
+      "ticker": "NOVO-B.CO",
+      "name": "Novo Nordisk B A/S",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 38,
+      "winChance": 37,
+      "lossRisk": 63,
+      "riskReward": "1 : 1.83",
+      "price": "DKK 274.30",
+      "takeProfit": "+5.8% (DKK 290.21)",
+      "stopLoss": "-3.2% (DKK 265.52)",
+      "backtestStats": "65 Wins vs 109 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 53.0",
+        "SMA200: Sub"
+      ],
+      "summary": "Win istoric 37% (65W/109L). RSI 53.0, sub SMA200."
+    },
+    {
+      "ticker": "AIR.PA",
+      "name": "AIRBUS SE",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 38,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "€190.00",
+      "takeProfit": "+6.4% (€202.16)",
+      "stopLoss": "-3.5% (€183.35)",
+      "backtestStats": "15 Wins vs 50 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 41.1",
+        "SMA200: Deasupra"
+      ],
+      "summary": "Win istoric 25% (15W/50L). RSI 41.1, peste SMA200."
+    },
+    {
+      "ticker": "UBER",
+      "name": "Uber Technologies, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 37,
+      "winChance": 51,
+      "lossRisk": 49,
+      "riskReward": "1 : 1.83",
+      "price": "$66.07 (+2.12%)",
+      "takeProfit": "+8.6% ($71.76)",
+      "stopLoss": "-4.7% ($62.97)",
+      "backtestStats": "67 Wins vs 64 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 33.6",
+        "SMA200: Sub",
+        "Pre-Market: -1.81%",
+        "Vol Open 15m: 1.31x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 51% (67W/64L). RSI 33.6, sub SMA200. Pre-market: -1.81%. Volum deschidere: 1.31x. Peste VWAP."
+    },
+    {
+      "ticker": "GS",
+      "name": "Goldman Sachs Group, Inc. (The)",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 37,
+      "winChance": 54,
+      "lossRisk": 46,
+      "riskReward": "1 : 1.83",
+      "price": "$765.02 (-5.09%)",
+      "takeProfit": "+10.1% ($842.29)",
+      "stopLoss": "-5.5% ($722.95)",
+      "backtestStats": "13 Wins vs 11 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 30.7",
+        "SMA200: Sub",
+        "Pre-Market: -2.48%",
+        "Vol Open 15m: 1.28x",
+        "VWAP: Sub"
+      ],
+      "summary": "Win istoric 54% (13W/11L). RSI 30.7, sub SMA200. Pre-market: -2.48%. Volum deschidere: 1.28x. Sub VWAP."
+    },
+    {
+      "ticker": "SAP.DE",
+      "name": "SAP SE                        I",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 37,
+      "winChance": 38,
+      "lossRisk": 62,
+      "riskReward": "1 : 1.83",
+      "price": "€189.82",
+      "takeProfit": "+6.8% (€202.73)",
+      "stopLoss": "-3.7% (€182.80)",
+      "backtestStats": "19 Wins vs 31 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 22.7",
+        "SMA200: Deasupra"
+      ],
+      "summary": "Win istoric 38% (19W/31L). RSI 22.7, peste SMA200."
+    },
+    {
+      "ticker": "NVDA",
+      "name": "NVIDIA Corporation",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 36,
+      "winChance": 44,
+      "lossRisk": 56,
+      "riskReward": "1 : 2.0",
+      "price": "$148.56 (-4.39%)",
+      "takeProfit": "+12.0% ($166.39)",
+      "stopLoss": "-6.0% ($139.65)",
+      "backtestStats": "19 Wins vs 24 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 34.4",
+        "SMA200: Sub",
+        "Pre-Market: -7.32%",
+        "Vol Open 15m: 0.61x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 44% (19W/24L). RSI 34.4, sub SMA200. Pre-market: -7.32%. Volum deschidere: 0.61x. Peste VWAP."
+    },
+    {
+      "ticker": "PG",
+      "name": "Procter & Gamble Company (The)",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 36,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "$161.10 (-6.59%)",
+      "takeProfit": "+4.5% ($168.35)",
+      "stopLoss": "-2.5% ($157.07)",
+      "backtestStats": "22 Wins vs 82 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 62.1",
+        "SMA200: Deasupra",
+        "Pre-Market: +0.73%",
+        "Vol Open 15m: 0.72x",
+        "VWAP: Sub"
+      ],
+      "summary": "Win istoric 25% (22W/82L). RSI 62.1, peste SMA200. Pre-market: +0.73%. Volum deschidere: 0.72x. Sub VWAP."
+    },
+    {
+      "ticker": "TSLA",
+      "name": "Tesla, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 35,
+      "winChance": 32,
+      "lossRisk": 68,
+      "riskReward": "1 : 2.0",
+      "price": "$379.30 (-1.4%)",
+      "takeProfit": "+12.0% ($424.82)",
+      "stopLoss": "-6.0% ($356.54)",
+      "backtestStats": "23 Wins vs 48 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 49.9",
+        "SMA200: Sub",
+        "Pre-Market: -3.76%",
+        "Vol Open 15m: 0.97x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 32% (23W/48L). RSI 49.9, sub SMA200. Pre-market: -3.76%. Volum deschidere: 0.97x. Peste VWAP."
+    },
+    {
+      "ticker": "HSBA.L",
+      "name": "HSBC HOLDINGS PLC ORD $0.50 (UK",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 35,
+      "winChance": 57,
+      "lossRisk": 43,
+      "riskReward": "1 : 1.83",
+      "price": "GBp 1217.20",
+      "takeProfit": "+5.4% (GBp 1282.93)",
+      "stopLoss": "-2.9% (GBp 1181.90)",
+      "backtestStats": "8 Wins vs 6 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 33.5",
+        "SMA200: Sub"
+      ],
+      "summary": "Win istoric 57% (8W/6L). RSI 33.5, sub SMA200."
+    },
+    {
+      "ticker": "SHEL.L",
+      "name": "SHELL PLC ORD EUR0.07",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 34,
+      "winChance": 33,
+      "lossRisk": 67,
+      "riskReward": "1 : 1.83",
+      "price": "GBp 3555.50",
+      "takeProfit": "+4.5% (GBp 3715.50)",
+      "stopLoss": "-2.5% (GBp 3466.61)",
+      "backtestStats": "25 Wins vs 50 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 23.8",
+        "SMA200: Deasupra"
+      ],
+      "summary": "Win istoric 33% (25W/50L). RSI 23.8, peste SMA200."
+    },
+    {
+      "ticker": "MELI",
+      "name": "MercadoLibre, Inc.",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 33,
+      "winChance": 44,
+      "lossRisk": 56,
+      "riskReward": "1 : 1.83",
+      "price": "$1469.73 (+1.34%)",
+      "takeProfit": "+9.9% ($1615.24)",
+      "stopLoss": "-5.4% ($1390.37)",
+      "backtestStats": "49 Wins vs 62 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 25.9",
+        "SMA200: Sub",
+        "Pre-Market: -2.71%",
+        "Vol Open 15m: 0.71x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 44% (49W/62L). RSI 25.9, sub SMA200. Pre-market: -2.71%. Volum deschidere: 0.71x. Peste VWAP."
+    },
+    {
+      "ticker": "ADBE",
+      "name": "Adobe Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 32,
+      "winChance": 28,
+      "lossRisk": 72,
+      "riskReward": "1 : 1.83",
+      "price": "$232.93 (+0.37%)",
+      "takeProfit": "+8.0% ($251.56)",
+      "stopLoss": "-4.4% ($222.68)",
+      "backtestStats": "69 Wins vs 180 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 37.1",
+        "SMA200: Sub",
+        "Pre-Market: -0.9%",
+        "Vol Open 15m: 1.06x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 28% (69W/180L). RSI 37.1, sub SMA200. Pre-market: -0.9%. Volum deschidere: 1.06x. Peste VWAP."
+    },
+    {
+      "ticker": "QCOM",
+      "name": "QUALCOMM Incorporated",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 31,
+      "winChance": 27,
+      "lossRisk": 73,
+      "riskReward": "1 : 2.0",
+      "price": "$168.66 (+2.24%)",
+      "takeProfit": "+12.0% ($188.90)",
+      "stopLoss": "-6.0% ($158.54)",
+      "backtestStats": "18 Wins vs 49 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 45.1",
+        "SMA200: Sub",
+        "Pre-Market: -3.23%",
+        "Vol Open 15m: 1.01x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 27% (18W/49L). RSI 45.1, sub SMA200. Pre-market: -3.23%. Volum deschidere: 1.01x. Peste VWAP."
+    },
+    {
+      "ticker": "COST",
+      "name": "Costco Wholesale Corporation",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 30,
+      "winChance": 32,
+      "lossRisk": 68,
+      "riskReward": "1 : 1.83",
+      "price": "$1088.76 (-0.27%)",
+      "takeProfit": "+3.9% ($1131.22)",
+      "stopLoss": "-2.2% ($1064.81)",
+      "backtestStats": "33 Wins vs 70 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 75.6",
+        "SMA200: Deasupra",
+        "Pre-Market: +0.16%",
+        "Vol Open 15m: 1.41x",
+        "VWAP: Sub"
+      ],
+      "summary": "Win istoric 32% (33W/70L). RSI 75.6, peste SMA200. Pre-market: +0.16%. Volum deschidere: 1.41x. Sub VWAP."
+    },
+    {
+      "ticker": "CAT",
+      "name": "Caterpillar, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 30,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 2.0",
+      "price": "$541.56 (+0.17%)",
+      "takeProfit": "+12.0% ($606.54)",
+      "stopLoss": "-6.0% ($509.06)",
+      "backtestStats": "8 Wins vs 35 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 40.1",
+        "SMA200: Sub",
+        "Pre-Market: -3.85%",
+        "Vol Open 15m: 0.81x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (8W/35L). RSI 40.1, sub SMA200. Pre-market: -3.85%. Volum deschidere: 0.81x. Peste VWAP."
+    },
+    {
+      "ticker": "MSFT",
+      "name": "Microsoft Corporation",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 29,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "$490.00 (-1.24%)",
+      "takeProfit": "+7.8% ($528.22)",
+      "stopLoss": "-4.3% ($468.93)",
+      "backtestStats": "3 Wins vs 16 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 25.7",
+        "SMA200: Deasupra",
+        "Pre-Market: -2.04%",
+        "Vol Open 15m: 1.75x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (3W/16L). RSI 25.7, peste SMA200. Pre-market: -2.04%. Volum deschidere: 1.75x. Peste VWAP."
+    },
+    {
+      "ticker": "BABA",
+      "name": "Alibaba Group Holding Limited",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 28,
+      "winChance": 36,
+      "lossRisk": 64,
+      "riskReward": "1 : 1.83",
+      "price": "$86.20 (+1.58%)",
+      "takeProfit": "+10.4% ($95.16)",
+      "stopLoss": "-5.7% ($81.29)",
+      "backtestStats": "31 Wins vs 54 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 23.6",
+        "SMA200: Sub",
+        "Pre-Market: -3.39%",
+        "Vol Open 15m: 0.37x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 36% (31W/54L). RSI 23.6, sub SMA200. Pre-market: -3.39%. Volum deschidere: 0.37x. Peste VWAP."
+    },
+    {
+      "ticker": "AVGO",
+      "name": "Broadcom Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 26,
+      "winChance": 28,
+      "lossRisk": 72,
+      "riskReward": "1 : 2.0",
+      "price": "$299.20 (-0.62%)",
+      "takeProfit": "+12.0% ($335.10)",
+      "stopLoss": "-6.0% ($281.25)",
+      "backtestStats": "11 Wins vs 28 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 44.7",
+        "SMA200: Sub",
+        "Pre-Market: -4.89%",
+        "Vol Open 15m: 1.2x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 28% (11W/28L). RSI 44.7, sub SMA200. Pre-market: -4.89%. Volum deschidere: 1.2x. Peste VWAP."
+    },
+    {
+      "ticker": "ORCL",
+      "name": "Oracle Corporation",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 26,
+      "winChance": 29,
+      "lossRisk": 71,
+      "riskReward": "1 : 2.0",
+      "price": "$104.20 (-4.84%)",
+      "takeProfit": "+12.0% ($116.70)",
+      "stopLoss": "-6.0% ($97.95)",
+      "backtestStats": "40 Wins vs 98 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 39.7",
+        "SMA200: Sub",
+        "Pre-Market: -6.39%",
+        "Vol Open 15m: 0.98x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 29% (40W/98L). RSI 39.7, sub SMA200. Pre-market: -6.39%. Volum deschidere: 0.98x. Peste VWAP."
+    },
+    {
+      "ticker": "UNH",
+      "name": "UnitedHealth Group Incorporated",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 25,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "$345.72 (+1.12%)",
+      "takeProfit": "+10.5% ($382.02)",
+      "stopLoss": "-5.7% ($326.01)",
+      "backtestStats": "19 Wins vs 66 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 25.5",
+        "SMA200: Sub",
+        "Pre-Market: -1.31%",
+        "Vol Open 15m: 0.29x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (19W/66L). RSI 25.5, sub SMA200. Pre-market: -1.31%. Volum deschidere: 0.29x. Peste VWAP."
+    },
+    {
+      "ticker": "MC.PA",
+      "name": "LVMH",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 25,
+      "winChance": 35,
+      "lossRisk": 65,
+      "riskReward": "1 : 1.83",
+      "price": "€391.00",
+      "takeProfit": "+5.9% (€414.07)",
+      "stopLoss": "-3.2% (€378.49)",
+      "backtestStats": "73 Wins vs 137 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 30.0",
+        "SMA200: Sub"
+      ],
+      "summary": "Win istoric 35% (73W/137L). RSI 30.0, sub SMA200."
+    },
+    {
+      "ticker": "TSM",
+      "name": "Taiwan Semiconductor Manufactur",
+      "region": "WORLDWIDE",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 25,
+      "winChance": 27,
+      "lossRisk": 73,
+      "riskReward": "1 : 2.0",
+      "price": "$341.92 (-2.09%)",
+      "takeProfit": "+12.0% ($382.95)",
+      "stopLoss": "-6.0% ($321.40)",
+      "backtestStats": "8 Wins vs 22 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 41.1",
+        "SMA200: Sub",
+        "Pre-Market: -5.28%",
+        "Vol Open 15m: 0.81x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 27% (8W/22L). RSI 41.1, sub SMA200. Pre-market: -5.28%. Volum deschidere: 0.81x. Peste VWAP."
+    },
+    {
+      "ticker": "GOOGL",
+      "name": "Alphabet Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 24,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "$272.49 (-2.35%)",
+      "takeProfit": "+9.5% ($298.38)",
+      "stopLoss": "-5.2% ($258.32)",
+      "backtestStats": "9 Wins vs 35 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 44.0",
+        "SMA200: Sub",
+        "Pre-Market: -4.99%",
+        "Vol Open 15m: 1.02x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (9W/35L). RSI 44.0, sub SMA200. Pre-market: -4.99%. Volum deschidere: 1.02x. Peste VWAP."
+    },
+    {
+      "ticker": "NFLX",
+      "name": "Netflix, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 21,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.83",
+      "price": "$59.19 (+0.54%)",
+      "takeProfit": "+7.3% ($63.51)",
+      "stopLoss": "-4.0% ($56.82)",
+      "backtestStats": "36 Wins vs 120 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 26.1",
+        "SMA200: Sub",
+        "Pre-Market: -1.53%",
+        "Vol Open 15m: 0.85x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (36W/120L). RSI 26.1, sub SMA200. Pre-market: -1.53%. Volum deschidere: 0.85x. Peste VWAP."
+    },
+    {
+      "ticker": "NOW",
+      "name": "ServiceNow, Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 21,
+      "winChance": 25,
+      "lossRisk": 75,
+      "riskReward": "1 : 1.85",
+      "price": "$92.35 (+0.66%)",
+      "takeProfit": "+11.1% ($102.60)",
+      "stopLoss": "-6.0% ($86.81)",
+      "backtestStats": "34 Wins vs 105 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 26.5",
+        "SMA200: Sub",
+        "Pre-Market: -3.1%",
+        "Vol Open 15m: 0.86x",
+        "VWAP: Deasupra"
+      ],
+      "summary": "Win istoric 25% (34W/105L). RSI 26.5, sub SMA200. Pre-market: -3.1%. Volum deschidere: 0.86x. Peste VWAP."
+    },
+    {
+      "ticker": "INTU",
+      "name": "Intuit Inc.",
+      "region": "US",
+      "isCustom": false,
+      "signal": "WAIT",
+      "score": 20,
+      "winChance": 33,
+      "lossRisk": 67,
+      "riskReward": "1 : 2.0",
+      "price": "$272.85 (-2.35%)",
+      "takeProfit": "+12.0% ($305.59)",
+      "stopLoss": "-6.0% ($256.48)",
+      "backtestStats": "44 Wins vs 91 Losses (ultimii 3 ani)",
+      "indicators": [
+        "RSI(14): 16.4",
+        "SMA200: Sub",
+        "Pre-Market: -2.24%",
+        "Vol Open 15m: 0.94x",
+        "VWAP: Sub"
+      ],
+      "summary": "Win istoric 33% (44W/91L). RSI 16.4, sub SMA200. Pre-market: -2.24%. Volum deschidere: 0.94x. Sub VWAP."
     }
   ]
 }
