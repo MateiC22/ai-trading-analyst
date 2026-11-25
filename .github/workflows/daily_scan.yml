@@ -35,11 +35,15 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Ruleaza analiza pietelor si Trading 212
+      - name: Ruleaza analiza pietelor si trimite alerte
         env:
           T212_API_KEY: ${{ secrets.T212_API_KEY }}
           T212_API_SECRET: ${{ secrets.T212_API_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DASHBOARD_URL: ${{ secrets.DASHBOARD_URL }}
         run: python analyzer.py
 
       - name: Salveaza rezultatele in data.json
