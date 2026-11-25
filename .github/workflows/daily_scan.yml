@@ -1,0 +1,42 @@
+name: Daily AI Trading Scan
+
+on:
+  schedule:
+    # Ruleaza de luni pana vineri la 13:30 UTC (15:30 ora Romaniei)
+    - cron: '30 13 * * 1-5'
+  workflow_dispatch: # Permite rularea manuala oricand cu un click
+
+permissions:
+  contents: write
+
+jobs:
+  run-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Descarca proiectul
+        uses: actions/checkout@v4
+
+      - name: Configureaza Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instaleaza librariile
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ruleaza analiza pietelor si Trading 212
+        env:
+          T212_API_KEY: ${{ secrets.T212_API_KEY }}
+          T212_API_SECRET: ${{ secrets.T212_API_SECRET }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python analyzer.py
+
+      - name: Salveaza rezultatele in data.json
+        run: |
+          git config --local user.email "bot@trading-analyst.local"
+          git config --local user.name "AI Trading Bot"
+          git add data.json
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update daily market analysis" && git push)
