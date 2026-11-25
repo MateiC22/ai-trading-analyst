@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Trading Analyst — Trading 212 US Scanner</title>
+  <title>AI Trading Analyst — Trading 212 US & Worldwide Scanner</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -15,20 +15,6 @@
         extend: {
           fontFamily: {
             sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
-          },
-          colors: {
-            pureBlack: '#000000',
-            cardSurface: '#07080a',
-            cardBorder: '#1f2228',
-            cardBorderHover: '#2f3540',
-            divider: '#1a1d24',
-            mutedText: '#8b949e',
-            pillGreenBg: '#0b2918',
-            pillGreenText: '#22c55e',
-            pillAmberBg: '#2c1808',
-            pillAmberText: '#f59e0b',
-            pillRedBg: '#2d0f12',
-            pillRedText: '#ef4444',
           },
         },
       },
@@ -42,7 +28,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Custom subtle scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -51,22 +36,22 @@
       background: #000000;
     }
     ::-webkit-scrollbar-thumb {
-      background: #1f1f23;
+      background: #1f1f1f;
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #2f3540;
+      background: #333333;
     }
 
     .stock-card {
-      background-color: #0d0d0f;
-      border: 1px solid #1f1f23;
+      background-color: #0d0d0d;
+      border: 1px solid #1f1f1f;
       border-radius: 12px;
-      transition: border-color 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+      transition: border-color 0.2s ease, background-color 0.2s ease;
     }
     .stock-card:hover {
-      border-color: #2f3540;
-      background-color: #121215;
+      border-color: #333333;
+      background-color: #121212;
     }
 
     @keyframes pulseDot {
@@ -78,33 +63,33 @@
     }
   </style>
 </head>
-<body class="bg-pureBlack text-[#f8fafc] min-h-screen selection:bg-[#0b2918] selection:text-[#22c55e]">
+<body class="bg-[#000000] text-[#f8fafc] min-h-screen selection:bg-[#062814] selection:text-[#22c55e]">
 
   <!-- Main Container -->
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-10">
 
-    <!-- 1. TOP HEADER -->
+    <!-- 1. HEADER -->
     <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
         <h1 class="text-[22px] font-bold tracking-tight text-[#f8fafc] leading-tight">
           AI Trading Analyst
         </h1>
-        <p class="text-xs text-mutedText mt-1">
+        <p class="text-xs text-[#8b949e] mt-1">
           Trading 212 &bull; US &amp; Worldwide Scanner &bull; <span id="lastUpdatedLabel">Actualizat zilnic la 15:35 EET</span>
         </p>
       </div>
 
-      <!-- Right Status Badge & Compact Controls -->
+      <!-- Right Status Badge & Controls -->
       <div class="flex items-center gap-2.5 self-start sm:self-auto">
-        <span id="modeBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pillAmberBg text-pillAmberText tracking-wide">
-          <span id="modeBadgeDot" class="w-1.5 h-1.5 rounded-full bg-current"></span>
+        <span id="modeBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#271a06] text-[#f59e0b] tracking-wide">
+          <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
           <span id="modeBadgeText">Demo UI</span>
         </span>
 
         <button
           id="reloadBtn"
           type="button"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium bg-[#0d0d0f] text-[#f8fafc] border border-[#1f1f23] hover:border-[#2f3540] hover:bg-[#141418] active:scale-[0.99] transition cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium bg-[#0d0d0d] text-[#f8fafc] border border-[#1f1f1f] hover:border-[#333333] hover:bg-[#141414] active:scale-[0.99] transition cursor-pointer"
         >
           <svg id="reloadIcon" class="w-3.5 h-3.5 text-[#22c55e]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -113,150 +98,166 @@
         </button>
 
         <button
-          id="openImportBtn"
+          id="openJsonBtn"
           type="button"
-          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium bg-[#0d0d0f] text-[#f8fafc] border border-[#1f1f23] hover:border-[#2f3540] hover:bg-[#141418] active:scale-[0.99] transition cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium bg-[#0d0d0d] text-[#f8fafc] border border-[#1f1f1f] hover:border-[#333333] hover:bg-[#141414] active:scale-[0.99] transition cursor-pointer"
         >
-          <svg class="w-3.5 h-3.5 text-[#8b949e]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-          </svg>
+          <span class="font-mono text-[#8b949e]">&lt;/&gt;</span>
           <span>JSON</span>
         </button>
       </div>
     </header>
 
-    <!-- 2. 3-COLUMN KPI SUMMARY ROW -->
+    <!-- 2. 3-COLUMN STATS ROW -->
     <section aria-label="Market Summary" class="mt-7 grid grid-cols-3 gap-4 sm:gap-8">
-      <!-- Column 1 -->
       <div>
-        <div class="text-xs sm:text-[13px] font-medium text-mutedText">Market status</div>
+        <div class="text-xs sm:text-[13px] font-medium text-[#8b949e]">Market status</div>
         <div class="mt-1.5 flex items-center gap-2">
-          <span id="marketStatusDot" class="w-2 h-2 rounded-full bg-[#22c55e] status-dot-pulse inline-block"></span>
+          <span class="w-2 h-2 rounded-full bg-[#22c55e] status-dot-pulse inline-block"></span>
           <span id="marketStatusValue" class="text-lg sm:text-[22px] font-bold text-[#f8fafc] tracking-tight">Monitoring</span>
         </div>
       </div>
 
-      <!-- Column 2 -->
       <div class="sm:text-center">
-        <div class="text-xs sm:text-[13px] font-medium text-mutedText">Stocks scanned</div>
+        <div class="text-xs sm:text-[13px] font-medium text-[#8b949e]">Stocks scanned</div>
         <div id="stocksScannedValue" class="mt-1.5 text-lg sm:text-[22px] font-bold text-[#f8fafc] tracking-tight">42</div>
       </div>
 
-      <!-- Column 3 -->
       <div class="text-right">
-        <div class="text-xs sm:text-[13px] font-medium text-mutedText">Signals today</div>
+        <div class="text-xs sm:text-[13px] font-medium text-[#8b949e]">Signals today</div>
         <div id="signalsTodayValue" class="mt-1.5 text-lg sm:text-[22px] font-bold text-[#f8fafc] tracking-tight">3</div>
       </div>
     </section>
 
-    <!-- Horizontal Divider -->
-    <hr class="border-0 border-t border-[#1c1c1e] my-7" />
+    <!-- Thin Horizontal Divider -->
+    <hr class="border-0 border-t border-[#1f1f1f] my-7" />
 
-    <!-- 3. FILTER & CONTROLS BAR -->
-    <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
-      <div class="flex items-center justify-between">
-        <h2 class="text-[18px] font-bold text-[#f8fafc] tracking-tight">Top opportunities</h2>
-        <span id="visibleCountBadge" class="md:hidden text-xs text-mutedText">4 afișate</span>
-        <!-- Compact Pill Filter Tabs (Signal) -->
-        <div id="filterTabs" class="flex items-center gap-1 bg-[#0d0d0f] p-1 rounded-full border border-[#1f1f23]">
-          <button type="button" data-filter="ALL" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-[#1f1f23] text-[#f8fafc] transition cursor-pointer">
-            All
-          </button>
-          <button type="button" data-filter="BUY" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            BUY
-          </button>
-          <button type="button" data-filter="WATCH" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            WATCH
-          </button>
-          <button type="button" data-filter="WAIT" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            WAIT
-          </button>
+    <!-- 3. FILTER & SEARCH BAR -->
+    <section class="flex flex-col gap-3.5 mb-5">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-[18px] font-bold text-[#f8fafc] tracking-tight">Top opportunities</h2>
+          <span id="visibleCountBadge" class="sm:hidden text-xs text-[#8b949e]">4 afișate</span>
         </div>
 
-        <!-- Region Filter Tabs -->
-        <div id="regionTabs" class="flex items-center gap-1 bg-[#0d0d0f] p-1 rounded-full border border-[#1f1f23]">
-          <button type="button" data-region="ALL" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium bg-[#1f1f23] text-[#f8fafc] transition cursor-pointer">
-            All Regions
-          </button>
-          <button type="button" data-region="CUSTOM" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            CUSTOM
-          </button>
-          <button type="button" data-region="US" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            US
-          </button>
-          <button type="button" data-region="WORLDWIDE" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            WORLDWIDE
-          </button>
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-64">
+          <svg class="w-3.5 h-3.5 text-[#8b949e] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 104.5 4.5a7.5 7.5 0 0012.15 12.15z" />
+          </svg>
+          <input
+            id="searchInput"
+            type="text"
+            placeholder="Search ticker..."
+            class="w-full pl-8 pr-3 py-1.5 rounded-full text-xs bg-[#0d0d0d] text-[#f8fafc] placeholder-[#8b949e] border border-[#1f1f1f] focus:outline-none focus:border-[#333333] transition"
+          />
+        </div>
+      </div>
+
+      <!-- Pills & Sort Row -->
+      <div class="flex flex-wrap items-center justify-between gap-2.5">
+        <div class="flex flex-wrap items-center gap-2">
+          <!-- Signal Filter Pills -->
+          <div id="signalTabs" class="flex items-center gap-1 bg-[#0d0d0d] p-1 rounded-full border border-[#1f1f1f]">
+            <button type="button" data-signal="ALL" class="signal-pill px-3 py-1 rounded-full text-xs font-medium bg-[#1f1f1f] text-[#f8fafc] transition cursor-pointer">
+              All
+            </button>
+            <button type="button" data-signal="BUY" class="signal-pill px-3 py-1 rounded-full text-xs font-medium text-[#8b949e] hover:text-[#f8fafc] transition cursor-pointer">
+              BUY
+            </button>
+            <button type="button" data-signal="WATCH" class="signal-pill px-3 py-1 rounded-full text-xs font-medium text-[#8b949e] hover:text-[#f8fafc] transition cursor-pointer">
+              WATCH
+            </button>
+            <button type="button" data-signal="WAIT" class="signal-pill px-3 py-1 rounded-full text-xs font-medium text-[#8b949e] hover:text-[#f8fafc] transition cursor-pointer">
+              WAIT
+            </button>
+          </div>
+
+          <!-- Region Filter Pills -->
+          <div id="regionTabs" class="flex items-center gap-1 bg-[#0d0d0d] p-1 rounded-full border border-[#1f1f1f]">
+            <button type="button" data-region="ALL" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium bg-[#1f1f1f] text-[#f8fafc] transition cursor-pointer">
+              All Regions
+            </button>
+            <button type="button" data-region="CUSTOM" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium text-[#8b949e] hover:text-[#f8fafc] transition cursor-pointer">
+              CUSTOM
+            </button>
+            <button type="button" data-region="US" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium text-[#8b949e] hover:text-[#f8fafc] transition cursor-pointer">
+              US
+            </button>
+            <button type="button" data-region="WORLDWIDE" class="region-pill px-2.5 py-1 rounded-full text-xs font-medium text-[#8b949e] hover:text-[#f8fafc] transition cursor-pointer">
+              WORLDWIDE
+            </button>
+          </div>
         </div>
 
-        <!-- Sort Selector -->
+        <!-- Sort Dropdown -->
         <select
           id="sortSelect"
           aria-label="Sort opportunities"
-          class="px-3 py-1.5 rounded-full text-xs font-medium bg-[#0d0d0f] text-[#f8fafc] border border-[#1f1f23] focus:outline-none focus:border-[#2f3540] cursor-pointer"
+          class="px-3 py-1.5 rounded-full text-xs font-medium bg-[#0d0d0d] text-[#f8fafc] border border-[#1f1f1f] focus:outline-none focus:border-[#333333] cursor-pointer"
         >
-          <option value="default">Sort: Featured</option>
-          <option value="score">Sort: Highest Score</option>
-          <option value="winProb">Sort: Win Chance %</option>
+          <option value="featured">Sort: Featured</option>
+          <option value="score">Sort: Score (High-Low)</option>
+          <option value="winChance">Sort: Win Chance</option>
         </select>
       </div>
     </section>
 
-    <!-- 4. STOCK OPPORTUNITY CARDS (VERTICAL STACK) -->
-    <main id="cardsContainer" class="space-y-4">
-      <!-- Cards injected dynamically by JS -->
+    <!-- 4. OPPORTUNITY CARDS LIST (SINGLE COLUMN STACK, GAP 12PX) -->
+    <main id="cardsContainer" class="flex flex-col gap-[12px]">
+      <!-- Cards injected immediately on load -->
     </main>
 
     <!-- Empty Filter State -->
-    <div id="emptyState" class="hidden stock-card p-10 text-center mt-4">
+    <div id="emptyState" class="hidden stock-card p-10 text-center mt-3">
       <p class="text-sm font-medium text-[#f8fafc]">Nicio companie nu corespunde filtrelor selectate.</p>
-      <p class="text-xs text-mutedText mt-1">Încearcă să resetezi căutarea sau selectează tab-ul „All”.</p>
+      <p class="text-xs text-[#8b949e] mt-1">Încearcă să resetezi căutarea sau selectează tab-ul „All”.</p>
       <button
         id="resetFiltersBtn"
         type="button"
-        class="mt-4 px-4 py-1.5 rounded-full text-xs font-medium bg-[#0b2918] text-[#22c55e] hover:opacity-90 transition cursor-pointer"
+        class="mt-4 px-4 py-1.5 rounded-full text-xs font-medium bg-[#062814] text-[#22c55e] hover:opacity-90 transition cursor-pointer"
       >
         Resetează filtrele
       </button>
     </div>
 
-    <!-- Subtle Footer -->
-    <footer class="mt-10 pt-5 border-t border-[#1c1c1e] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-mutedText">
+    <!-- Footer -->
+    <footer class="mt-10 pt-5 border-t border-[#1f1f1f] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-[#8b949e]">
       <div>AI Trading Analyst &bull; Probabilități statistice bazate pe backtesting istoric + sentiment AI.</div>
       <div>Instrumente compatibile Trading 212 Invest / ISA (US &amp; Worldwide Equities).</div>
     </footer>
   </div>
 
-  <!-- 5. STOCK DETAIL MODAL -->
+  <!-- 5. INTERACTIVE DETAILS MODAL -->
   <div
     id="detailModal"
     class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xs"
     role="dialog"
     aria-modal="true"
   >
-    <div class="w-full max-w-2xl bg-[#0d0d0f] border border-[#2f3540] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div class="w-full max-w-2xl bg-[#0d0d0d] border border-[#333333] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <!-- Modal Header -->
-      <div class="flex items-start justify-between gap-4 pb-4 border-b border-[#1c1c1e]">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-[#1f1f1f]">
         <div>
           <div class="flex flex-wrap items-center gap-2.5">
             <h3 id="modalTicker" class="text-xl font-bold text-[#f8fafc]">MSFT</h3>
-            <span id="modalBadge" class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-pillGreenBg text-pillGreenText">
-              WATCH
+            <span id="modalBadge" class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-[#062814] text-[#22c55e]">
+              BUY
             </span>
-            <span id="modalScoreBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#18181b] text-[#f8fafc] border border-[#27272a]">
+            <span id="modalScoreBadge" class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-[#161616] text-[#f8fafc] border border-[#262626]">
               Score: 78/100
             </span>
-            <span id="modalRegionBadge" class="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#141418] text-mutedText border border-[#1f1f23]">
+            <span id="modalRegionBadge" class="text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-[#141414] text-[#8b949e] border border-[#1f1f1f]">
               US
             </span>
           </div>
-          <p id="modalCompanyName" class="text-xs text-mutedText mt-1.5">Microsoft Corp. &bull; Trading 212</p>
+          <p id="modalCompanyName" class="text-xs text-[#8b949e] mt-1.5">Microsoft Corporation &bull; Trading 212</p>
         </div>
         <button
           id="closeDetailModalBtn"
           type="button"
           aria-label="Close modal"
-          class="p-1.5 rounded-lg text-mutedText hover:text-[#f8fafc] hover:bg-[#18181b] transition cursor-pointer"
+          class="p-1.5 rounded-lg text-[#8b949e] hover:text-[#f8fafc] hover:bg-[#1a1a1a] transition cursor-pointer"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -264,17 +265,16 @@
         </button>
       </div>
 
-      <!-- Win / Loss Statistical Backtest Split -->
+      <!-- Win / Loss Probability Bar -->
       <div class="mt-5">
         <div class="flex items-center justify-between text-xs mb-2">
-          <span class="font-medium text-[#f8fafc]">Backtest History (Wins vs Losses)</span>
-          <span id="modalSampleInfo" class="text-mutedText">34 Wins vs 16 Losses (ultimii 3 ani)</span>
+          <span class="font-medium text-[#f8fafc]">Win / Loss Statistical Split</span>
+          <span id="modalBacktestStats" class="text-[#8b949e]">34 Wins vs 16 Losses (ultimii 3 ani)</span>
         </div>
 
-        <!-- Split Bar -->
-        <div class="w-full h-3 rounded-full bg-[#1f1f23] overflow-hidden flex">
+        <div class="w-full h-3 rounded-full bg-[#1a1a1a] overflow-hidden flex">
           <div id="modalWinBar" class="h-full bg-[#16a34a] transition-all duration-300" style="width: 68%"></div>
-          <div id="modalLossBar" class="h-full bg-[#dc2626]/80 transition-all duration-300" style="width: 32%"></div>
+          <div id="modalLossBar" class="h-full bg-[#dc2626] transition-all duration-300" style="width: 32%"></div>
         </div>
 
         <div class="flex items-center justify-between text-xs mt-2">
@@ -283,56 +283,52 @@
         </div>
       </div>
 
-      <!-- Trade Plan Levels (3 Columns) -->
-      <div class="mt-5 p-4 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
+      <!-- Price, Take Profit & Stop Loss Levels -->
+      <div class="mt-5 p-4 rounded-[10px] bg-[#000000] border border-[#1f1f1f]">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-semibold text-[#f8fafc]">Current Price &amp; Suggested Levels</span>
-          <span id="modalRRBadge" class="text-xs font-semibold text-[#22c55e]">R/R: 1 : 2.3</span>
+          <span class="text-xs font-semibold text-[#f8fafc]">Trade Levels &amp; Risk / Reward</span>
+          <span id="modalRRBadge" class="text-xs font-semibold text-[#22c55e]">R/R: 1 : 2.1</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-          <div class="p-2.5 rounded-lg bg-[#0a0a0c] border border-[#18181b]">
-            <div class="text-mutedText">Current Price</div>
+          <div class="p-2.5 rounded-lg bg-[#0d0d0d] border border-[#1f1f1f]">
+            <div class="text-[#8b949e]">Current Price</div>
             <div id="modalRefPrice" class="text-sm font-bold text-[#f8fafc] mt-1">$428.50</div>
           </div>
-          <div class="p-2.5 rounded-lg bg-[#0a0a0c] border border-[#18181b]">
-            <div class="text-mutedText">Take Profit Target</div>
+          <div class="p-2.5 rounded-lg bg-[#0d0d0d] border border-[#1f1f1f]">
+            <div class="text-[#8b949e]">Take Profit Target</div>
             <div id="modalTpPrice" class="text-sm font-bold text-[#22c55e] mt-1">+3.2% ($442.20)</div>
           </div>
-          <div class="p-2.5 rounded-lg bg-[#0a0a0c] border border-[#18181b]">
-            <div class="text-mutedText">Stop Loss Level</div>
-            <div id="modalSlPrice" class="text-sm font-bold text-[#ef4444] mt-1">-1.4% ($422.50)</div>
+          <div class="p-2.5 rounded-lg bg-[#0d0d0d] border border-[#1f1f1f]">
+            <div class="text-[#8b949e]">Stop Loss Target</div>
+            <div id="modalSlPrice" class="text-sm font-bold text-[#ef4444] mt-1">-1.5% ($422.07)</div>
           </div>
         </div>
       </div>
 
-      <!-- Technical Indicators Pills -->
+      <!-- Technical Indicator Pills -->
       <div class="mt-4">
-        <div class="text-xs font-semibold text-[#f8fafc] mb-2">Technical Indicators &amp; Platform Status</div>
-        <div id="modalIndicatorsList" class="flex flex-wrap gap-2">
-          <!-- Indicator pills injected dynamically -->
-        </div>
+        <div class="text-xs font-semibold text-[#f8fafc] mb-2">Technical Indicators</div>
+        <div id="modalIndicatorsList" class="flex flex-wrap gap-2"></div>
       </div>
 
-      <!-- AI Sentiment & Catalyst Summary -->
-      <div class="mt-4 p-4 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
+      <!-- Full AI Summary -->
+      <div class="mt-4 p-4 rounded-[10px] bg-[#000000] border border-[#1f1f1f]">
         <div class="flex items-center justify-between mb-1.5">
           <span class="text-xs font-semibold text-[#f8fafc]">AI &amp; Technical Summary</span>
-          <span id="modalSentimentTag" class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-pillGreenBg text-pillGreenText">
-            Analiză Automată
+          <span id="modalFeedTag" class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#062814] text-[#22c55e]">
+            Live Data
           </span>
         </div>
-        <p id="modalAiSummary" class="text-xs leading-relaxed text-[#cbd5e1]">
-          Analiză combinată bazată pe indicatorii tehnici zilnici și fluxul de știri financiare.
-        </p>
+        <p id="modalAiSummary" class="text-xs leading-relaxed text-[#9ca3af]"></p>
       </div>
 
       <!-- Modal Footer -->
-      <div class="mt-5 pt-3 border-t border-[#1c1c1e] flex items-center justify-between">
-        <span id="modalDisclaimer" class="text-[11px] text-mutedText">Date generate automat din scanarea zilnică.</span>
+      <div class="mt-5 pt-3 border-t border-[#1f1f1f] flex items-center justify-between">
+        <span class="text-[11px] text-[#8b949e]">Probabilități statistice istorice &bull; Nu reprezintă sfat financiar.</span>
         <button
           id="closeDetailModalBtn2"
           type="button"
-          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-[#18181b] text-[#f8fafc] hover:bg-[#27272a] transition cursor-pointer"
+          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-[#1a1a1a] text-[#f8fafc] hover:bg-[#262626] transition cursor-pointer"
         >
           Închide
         </button>
@@ -340,26 +336,26 @@
     </div>
   </div>
 
-  <!-- 6. JSON INTEGRATION MODAL -->
+  <!-- 6. INTERACTIVE JSON MODAL -->
   <div
-    id="importModal"
+    id="jsonModal"
     class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-xs"
     role="dialog"
     aria-modal="true"
   >
-    <div class="w-full max-w-2xl bg-[#0d0d0f] border border-[#2f3540] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="flex items-start justify-between gap-4 pb-4 border-b border-[#1c1c1e]">
+    <div class="w-full max-w-2xl bg-[#0d0d0d] border border-[#333333] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-[#1f1f1f]">
         <div>
-          <h3 class="text-lg font-bold text-[#f8fafc]">Manual JSON Testing / Import</h3>
-          <p class="text-xs text-mutedText mt-1">
-            Dashboard-ul încarcă automat <code>./data.json</code> la deschidere. Poți testa manual orice payload JSON aici.
+          <h3 class="text-lg font-bold text-[#f8fafc]">JSON Data &amp; Schema</h3>
+          <p class="text-xs text-[#8b949e] mt-1">
+            Vizualizează datele curente din <code>./data.json</code>, copiază schema sau testează un JSON personalizat.
           </p>
         </div>
         <button
-          id="closeImportModalBtn"
+          id="closeJsonModalBtn"
           type="button"
           aria-label="Close JSON modal"
-          class="p-1.5 rounded-lg text-mutedText hover:text-[#f8fafc] hover:bg-[#18181b] transition cursor-pointer"
+          class="p-1.5 rounded-lg text-[#8b949e] hover:text-[#f8fafc] hover:bg-[#1a1a1a] transition cursor-pointer"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -367,26 +363,20 @@
         </button>
       </div>
 
-      <!-- Action Strip -->
+      <!-- Action Buttons -->
       <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-[#f8fafc] border border-[#1f1f23] hover:border-[#2f3540] cursor-pointer transition">
-            <span>Upload .json</span>
-            <input id="jsonFileInput" type="file" accept=".json,application/json" class="hidden" />
-          </label>
-          <button
-            id="loadSchemaSampleBtn"
-            type="button"
-            class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-[#22c55e] border border-[#1f1f23] hover:border-[#2f3540] transition cursor-pointer"
-          >
-            Load Sample JSON
-          </button>
-        </div>
+        <button
+          id="loadSchemaSampleBtn"
+          type="button"
+          class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-[#000000] text-[#22c55e] border border-[#1f1f1f] hover:border-[#333333] transition cursor-pointer"
+        >
+          Load Sample Schema
+        </button>
 
         <button
           id="copySchemaBtn"
           type="button"
-          class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-mutedText hover:text-[#f8fafc] border border-[#1f1f23] transition cursor-pointer"
+          class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-[#000000] text-[#8b949e] hover:text-[#f8fafc] border border-[#1f1f1f] transition cursor-pointer"
         >
           Copy Schema
         </button>
@@ -398,27 +388,26 @@
           id="jsonTextarea"
           rows="11"
           spellcheck="false"
-          placeholder='Lipește aici conținutul din data.json sau apasă "Load Sample JSON"...'
-          class="w-full p-3.5 rounded-[10px] bg-pureBlack text-[#e2e8f0] font-mono text-xs border border-[#1f1f23] focus:outline-none focus:border-[#2f3540] leading-relaxed"
+          class="w-full p-3.5 rounded-[10px] bg-[#000000] text-[#e2e8f0] font-mono text-xs border border-[#1f1f1f] focus:outline-none focus:border-[#333333] leading-relaxed"
         ></textarea>
       </div>
 
-      <!-- Status Message Box -->
-      <div id="importFeedback" class="hidden mt-3 px-3.5 py-2.5 rounded-[8px] text-xs font-medium"></div>
+      <!-- Feedback Box -->
+      <div id="jsonFeedback" class="hidden mt-3 px-3.5 py-2 rounded-[8px] text-xs font-medium"></div>
 
-      <!-- Modal Actions -->
-      <div class="mt-4 pt-3 border-t border-[#1c1c1e] flex items-center justify-end gap-2.5">
+      <!-- Footer -->
+      <div class="mt-4 pt-3 border-t border-[#1f1f1f] flex items-center justify-end gap-2.5">
         <button
-          id="cancelImportBtn"
+          id="cancelJsonBtn"
           type="button"
-          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-pureBlack text-mutedText hover:text-[#f8fafc] border border-[#1f1f23] transition cursor-pointer"
+          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-[#000000] text-[#8b949e] hover:text-[#f8fafc] border border-[#1f1f1f] transition cursor-pointer"
         >
           Anulează
         </button>
         <button
           id="applyJsonBtn"
           type="button"
-          class="px-4 py-1.5 rounded-[10px] text-xs font-semibold bg-[#0b2918] text-[#22c55e] hover:opacity-90 transition cursor-pointer"
+          class="px-4 py-1.5 rounded-[10px] text-xs font-semibold bg-[#062814] text-[#22c55e] hover:opacity-90 transition cursor-pointer"
         >
           Aplică în Dashboard
         </button>
@@ -426,296 +415,240 @@
     </div>
   </div>
 
-  <!-- Application Logic -->
+  <!-- Application Script (Clean ES6, Zero Syntax Errors) -->
   <script>
-    // Normalize any opportunity object from analyzer.py or custom JSON so undefined/NaN never occurs
-    function normalizeOpportunity(item) {
-      const score = Number.isFinite(Number(item.score)) ? Math.max(0, Math.min(100, Math.round(Number(item.score)))) : 50;
-      const winChance = Number.isFinite(Number(item.winChance))
-        ? Number(item.winChance)
-        : (Number.isFinite(Number(item.winProb)) ? Number(item.winProb) : (Number.isFinite(Number(item.win_chance)) ? Number(item.win_chance) : 50));
-      const lossRisk = Number.isFinite(Number(item.lossRisk))
-        ? Number(item.lossRisk)
-        : (Number.isFinite(Number(item.lossProb)) ? Number(item.lossProb) : (100 - winChance));
-
-      const rawSignal = item.signal || item.status || item.badge || (score >= 74 ? 'BUY' : score >= 58 ? 'WATCH' : 'WAIT');
-      const signal = String(rawSignal).toUpperCase();
-
-      const riskReward = item.riskReward || item.rrRatio || item.rr || '1 : 1.5';
-      const price = item.price || item.currentPrice || item.refPrice || '—';
-      const name = item.name || item.company || item.ticker || '';
-      const isCustom = Boolean(item.isCustom);
-      const region = item.region || (isCustom ? 'CUSTOM • US' : 'US');
-
-      const takeProfit = item.takeProfit || (item.tpPct ? `${item.tpPct} ${item.tpPrice ? '(' + item.tpPrice + ')' : ''}`.trim() : '—');
-      const stopLoss = item.stopLoss || (item.slPct ? `${item.slPct} ${item.slPrice ? '(' + item.slPrice + ')' : ''}`.trim() : '—');
-      const backtestStats = item.backtestStats || (
-        (item.winsCount !== undefined && item.totalSetups !== undefined)
-          ? `${item.winsCount} Wins vs ${item.totalSetups - item.winsCount} Losses (${item.totalSetups} setup-uri)`
-          : `${winChance}% Win vs ${lossRisk}% Loss (backtest istoric)`
-      );
-
-      let indicators = Array.isArray(item.indicators) ? item.indicators : [];
-      if (indicators.length === 0) {
-        if (item.rsi) indicators.push(`RSI(14): ${item.rsi}`);
-        if (item.sma200) indicators.push(`SMA200: ${item.sma200}`);
-        if (item.rvol) indicators.push(`Volum: ${item.rvol}`);
-        if (item.atr) indicators.push(`ATR: ${item.atr}`);
+    const DEMO_DATA = [
+      {
+        ticker: 'MSFT',
+        name: 'Microsoft Corporation',
+        region: 'US',
+        isCustom: false,
+        signal: 'BUY',
+        score: 78,
+        winChance: 68,
+        lossRisk: 32,
+        riskReward: '1 : 2.1',
+        price: '$428.50',
+        takeProfit: '+3.2% ($442.20)',
+        stopLoss: '-1.5% ($422.07)',
+        backtestStats: '34 Wins vs 16 Losses (ultimii 3 ani)',
+        indicators: ['RSI(14): 44.2', 'SMA200: Deasupra', 'Volum: 1.32x', 'Trading 212: Activ'],
+        summary: 'Trend ascendent peste SMA200 cu revenire din zonă neutră RSI și raport Risk/Reward favorabil.'
+      },
+      {
+        ticker: 'NVDA',
+        name: 'NVIDIA Corporation',
+        region: 'US',
+        isCustom: false,
+        signal: 'WATCH',
+        score: 64,
+        winChance: 58,
+        lossRisk: 42,
+        riskReward: '1 : 1.9',
+        price: '$138.90',
+        takeProfit: '+4.5% ($145.15)',
+        stopLoss: '-2.4% ($135.57)',
+        backtestStats: '29 Wins vs 21 Losses (ultimii 3 ani)',
+        indicators: ['RSI(14): 53.8', 'SMA200: Deasupra', 'Volum: 1.15x', 'Trading 212: Activ'],
+        summary: 'Consolidare aproape de maximul local; așteptăm confirmare de volum peste medie.'
+      },
+      {
+        ticker: 'AAPL',
+        name: 'Apple Inc.',
+        region: 'US',
+        isCustom: false,
+        signal: 'BUY',
+        score: 74,
+        winChance: 65,
+        lossRisk: 35,
+        riskReward: '1 : 2.0',
+        price: '$229.40',
+        takeProfit: '+2.8% ($235.82)',
+        stopLoss: '-1.4% ($226.19)',
+        backtestStats: '39 Wins vs 21 Losses (ultimii 3 ani)',
+        indicators: ['RSI(14): 41.5', 'SMA200: Deasupra', 'Volum: 1.28x', 'Trading 212: Activ'],
+        summary: 'Suport solid testat pe media mobilă de 50 de zile cu probabilitate istorică ridicată.'
+      },
+      {
+        ticker: 'AMZN',
+        name: 'Amazon.com Inc.',
+        region: 'US',
+        isCustom: false,
+        signal: 'WAIT',
+        score: 48,
+        winChance: 45,
+        lossRisk: 55,
+        riskReward: '1 : 1.6',
+        price: '$201.10',
+        takeProfit: '+3.1% ($207.33)',
+        stopLoss: '-1.9% ($197.28)',
+        backtestStats: '22 Wins vs 27 Losses (ultimii 3 ani)',
+        indicators: ['RSI(14): 67.4', 'SMA200: Deasupra', 'Volum: 0.91x', 'Trading 212: Activ'],
+        summary: 'Apropiere de zona de supracumpărare pe termen scurt; risc crescut de corecție minoră.'
       }
+    ];
 
-      const summary = item.summary || item.aiSummary || item.caption || 'Analiză tehnică și statistică bazată pe datele istorice.';
+    const DEFAULT_PAYLOAD = {
+      marketStatus: 'Monitoring',
+      stocksScanned: 42,
+      signalsToday: 3,
+      updatedAt: 'Actualizat zilnic la 15:35 EET',
+      opportunities: DEMO_DATA
+    };
+
+    // Safe normalizer so 'undefined' can never appear anywhere in the UI
+    function mapOpportunity(raw) {
+      const item = raw || {};
+      const parsedScore = Number(item.score);
+      const score = Number.isFinite(parsedScore) ? Math.max(0, Math.min(100, Math.round(parsedScore))) : 50;
+
+      const parsedWin = Number(item.winChance ?? item.winProb ?? item.win_chance);
+      const winChance = Number.isFinite(parsedWin) ? Math.max(0, Math.min(100, Math.round(parsedWin))) : 50;
+
+      const parsedLoss = Number(item.lossRisk ?? item.lossProb ?? item.loss_risk);
+      const lossRisk = Number.isFinite(parsedLoss) ? Math.max(0, Math.min(100, Math.round(parsedLoss))) : (100 - winChance);
+
+      const signal = String(item.signal ?? item.status ?? 'WATCH').toUpperCase();
+      const isCustom = Boolean(item.isCustom);
+      const region = String(item.region ?? (isCustom ? 'CUSTOM • US' : 'US'));
 
       return {
-        ...item,
-        ticker: item.ticker || 'N/A',
-        name,
-        region,
-        isCustom,
-        signal,
-        score,
-        winChance,
-        lossRisk,
-        riskReward,
-        price,
-        takeProfit,
-        stopLoss,
-        backtestStats,
-        indicators,
-        summary
+        ticker: String(item.ticker ?? 'N/A'),
+        name: String(item.name ?? item.company ?? item.ticker ?? ''),
+        region: region,
+        isCustom: isCustom,
+        signal: signal,
+        score: score,
+        winChance: winChance,
+        lossRisk: lossRisk,
+        riskReward: String(item.riskReward ?? item.rrRatio ?? '1 : 1.8'),
+        price: String(item.price ?? item.currentPrice ?? '—'),
+        takeProfit: String(item.takeProfit ?? '—'),
+        stopLoss: String(item.stopLoss ?? '—'),
+        backtestStats: String(item.backtestStats ?? `${winChance}% Win vs ${lossRisk}% Loss (backtest istoric)`),
+        indicators: Array.isArray(item.indicators) ? item.indicators : [],
+        summary: String(item.summary ?? item.aiSummary ?? 'Analiză statistică și tehnică zilnică.')
       };
     }
 
-    // Realistic built-in fallback demo data matching exact analyzer.py schema
-    const DEFAULT_SCAN_DATA = {
-      isLive: false,
-      marketStatus: 'Monitoring',
-      stocksScanned: 69,
-      signalsToday: 2,
-      updatedAt: 'Demo fallback • Așteaptă data.json',
-      opportunities: [
-        {
-          ticker: 'PLTR',
-          name: 'Palantir Technologies Inc.',
-          region: 'CUSTOM • US',
-          isCustom: true,
-          signal: 'WATCH',
-          score: 68,
-          winChance: 61,
-          lossRisk: 39,
-          riskReward: '1 : 1.9',
-          price: '$64.80',
-          takeProfit: '+5.4% ($68.30)',
-          stopLoss: '-2.8% ($62.99)',
-          backtestStats: '48 Wins vs 31 Losses (ultimii 3 ani)',
-          indicators: ['RSI(14): 54.2', 'SMA200: Deasupra', 'Volum: 1.24x', 'Trading 212: Activ'],
-          summary: 'Probabilitate istorică 61% (48W/31L pe 3 ani). RSI la 54.2, preț peste SMA200, raport Risk/Reward 1:1.9.'
-        },
-        {
-          ticker: 'MSFT',
-          name: 'Microsoft Corporation',
-          region: 'US',
-          isCustom: false,
-          signal: 'BUY',
-          score: 82,
-          winChance: 71,
-          lossRisk: 29,
-          riskReward: '1 : 2.2',
-          price: '$428.50',
-          takeProfit: '+3.5% ($443.50)',
-          stopLoss: '-1.6% ($421.64)',
-          backtestStats: '52 Wins vs 21 Losses (ultimii 3 ani)',
-          indicators: ['RSI(14): 43.8', 'SMA200: Deasupra', 'Volum: 1.38x', 'Trading 212: Activ'],
-          summary: 'Probabilitate istorică 71% (52W/21L pe 3 ani). RSI la 43.8, preț peste SMA200, raport Risk/Reward 1:2.2.'
-        },
-        {
-          ticker: 'NVDA',
-          name: 'NVIDIA Corporation',
-          region: 'US',
-          isCustom: false,
-          signal: 'BUY',
-          score: 79,
-          winChance: 68,
-          lossRisk: 32,
-          riskReward: '1 : 2.0',
-          price: '$138.90',
-          takeProfit: '+4.8% ($145.57)',
-          stopLoss: '-2.4% ($135.57)',
-          backtestStats: '49 Wins vs 23 Losses (ultimii 3 ani)',
-          indicators: ['RSI(14): 49.5', 'SMA200: Deasupra', 'Volum: 1.19x', 'Trading 212: Activ'],
-          summary: 'Probabilitate istorică 68% (49W/23L pe 3 ani). RSI la 49.5, preț peste SMA200, raport Risk/Reward 1:2.0.'
-        },
-        {
-          ticker: 'ASML.AS',
-          name: 'ASML Holding N.V.',
-          region: 'CUSTOM • WORLDWIDE',
-          isCustom: true,
-          signal: 'WAIT',
-          score: 48,
-          winChance: 44,
-          lossRisk: 56,
-          riskReward: '1 : 1.8',
-          price: '€642.10',
-          takeProfit: '+4.1% (€668.43)',
-          stopLoss: '-2.3% (€627.33)',
-          backtestStats: '22 Wins vs 28 Losses (ultimii 3 ani)',
-          indicators: ['RSI(14): 42.0', 'SMA200: Sub', 'Volum: 0.95x', 'Trading 212: Activ'],
-          summary: 'Probabilitate istorică 44% (22W/28L pe 3 ani). RSI la 42.0, preț sub SMA200, raport Risk/Reward 1:1.8.'
-        }
-      ]
-    };
-
-    // State
-    let currentData = JSON.parse(JSON.stringify(DEFAULT_SCAN_DATA));
+    // Application State
+    let currentPayload = JSON.parse(JSON.stringify(DEFAULT_PAYLOAD));
     let isLiveFeed = false;
-    let activeFilter = 'ALL';
+    let activeSignal = 'ALL';
     let activeRegion = 'ALL';
     let searchQuery = '';
-    let sortMode = 'default';
+    let sortBy = 'featured';
 
-    // DOM Elements
+    // DOM References
     const cardsContainer = document.getElementById('cardsContainer');
     const emptyState = document.getElementById('emptyState');
     const searchInput = document.getElementById('searchInput');
     const sortSelect = document.getElementById('sortSelect');
-    const filterTabs = document.getElementById('filterTabs');
+    const signalTabs = document.getElementById('signalTabs');
     const regionTabs = document.getElementById('regionTabs');
+    const marketStatusValue = document.getElementById('marketStatusValue');
     const stocksScannedValue = document.getElementById('stocksScannedValue');
     const signalsTodayValue = document.getElementById('signalsTodayValue');
-    const marketStatusValue = document.getElementById('marketStatusValue');
+    const lastUpdatedLabel = document.getElementById('lastUpdatedLabel');
     const modeBadge = document.getElementById('modeBadge');
     const modeBadgeText = document.getElementById('modeBadgeText');
-    const lastUpdatedLabel = document.getElementById('lastUpdatedLabel');
     const visibleCountBadge = document.getElementById('visibleCountBadge');
     const reloadBtn = document.getElementById('reloadBtn');
     const reloadIcon = document.getElementById('reloadIcon');
 
-    // Badge styling helper (BUY in emerald green, WATCH in amber/orange, WAIT in crimson/slate)
-    function getStatusBadgeStyle(signal) {
-      const normalized = (signal || '').toUpperCase();
-      if (normalized === 'BUY') {
-        return {
-          bg: 'bg-[#0b2918] border border-[#22c55e]/30',
-          text: 'text-[#22c55e]',
-        };
+    function getSignalStyle(signal) {
+      if (signal === 'BUY') {
+        return 'bg-[#062814] text-[#22c55e] border border-[#22c55e]/30';
       }
-      if (normalized === 'WATCH') {
-        return {
-          bg: 'bg-pillAmberBg border border-[#f59e0b]/30',
-          text: 'text-pillAmberText',
-        };
+      if (signal === 'WATCH') {
+        return 'bg-[#271a06] text-[#f59e0b] border border-[#f59e0b]/30';
       }
-      return {
-        bg: 'bg-pillRedBg border border-[#ef4444]/30',
-        text: 'text-pillRedText',
-      };
+      return 'bg-[#260d10] text-[#ef4444] border border-[#ef4444]/30';
     }
 
-    // Progress bar fill color helper: green for >=72 / BUY, amber for 55-71 / WATCH, red for <55 / WAIT
-    function getScoreBarColor(score, signal) {
-      const s = (signal || '').toUpperCase();
-      if (score >= 72 || s === 'BUY') return '#16a34a';
-      if (score >= 55 || s === 'WATCH') return '#d97706';
+    function getBarColor(score) {
+      if (score >= 70) return '#16a34a';
+      if (score >= 50) return '#d97706';
       return '#dc2626';
     }
 
-    // Update top header mode badge ('Live Feed' in green vs 'Demo UI' in amber)
-    function updateModeBadge(live) {
+    function setFeedMode(live) {
       isLiveFeed = live;
       if (live) {
-        modeBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pillGreenBg text-pillGreenText tracking-wide';
+        modeBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#062814] text-[#22c55e] tracking-wide';
         modeBadgeText.textContent = 'Live Feed';
       } else {
-        modeBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pillAmberBg text-pillAmberText tracking-wide';
+        modeBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#271a06] text-[#f59e0b] tracking-wide';
         modeBadgeText.textContent = 'Demo UI';
       }
     }
 
-    // Update KPI summary row
-    function updateKpis() {
-      const list = (currentData.opportunities || []).map(normalizeOpportunity);
-      stocksScannedValue.textContent = currentData.stocksScanned ?? list.length;
+    function updateHeaderStats() {
+      const list = Array.isArray(currentPayload.opportunities)
+        ? currentPayload.opportunities.map(mapOpportunity)
+        : [];
 
-      // Count BUY signals (or use signalsToday from backend)
-      const buyCount = list.filter(item => item.signal === 'BUY').length;
-      signalsTodayValue.textContent = currentData.signalsToday ?? buyCount;
-      marketStatusValue.textContent = currentData.marketStatus || 'Monitoring';
+      marketStatusValue.textContent = currentPayload.marketStatus ?? 'Monitoring';
+      stocksScannedValue.textContent = currentPayload.stocksScanned ?? list.length;
 
-      const timestampText = currentData.updatedAt || currentData.lastUpdated;
-      if (timestampText) {
-        lastUpdatedLabel.textContent = timestampText;
+      const buyCount = list.filter((x) => x.signal === 'BUY').length;
+      signalsTodayValue.textContent = currentPayload.signalsToday ?? buyCount;
+
+      if (currentPayload.updatedAt) {
+        lastUpdatedLabel.textContent = currentPayload.updatedAt;
       }
     }
 
-    // Fetch ./data.json?t=Date.now() with no-cache on load & reload
-    async function loadDataFeed(isManualReload = false) {
-      if (isManualReload) {
-        reloadIcon.classList.add('animate-spin');
+    function renderRegionBadges(item) {
+      const parts = item.region
+        .split('•')
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      if (item.isCustom && !parts.some((p) => p.toUpperCase() === 'CUSTOM')) {
+        parts.unshift('CUSTOM');
       }
 
-      try {
-        const response = await fetch(`./data.json?t=${Date.now()}`, {
-          cache: 'no-store',
-          headers: {
-            'Cache-Control': 'no-cache'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status}`);
-        }
-
-        const parsed = await response.json();
-        if (!parsed || !Array.isArray(parsed.opportunities)) {
-          throw new Error('Invalid JSON structure');
-        }
-
-        currentData = parsed;
-        updateModeBadge(true);
-      } catch (err) {
-        currentData = JSON.parse(JSON.stringify(DEFAULT_SCAN_DATA));
-        updateModeBadge(false);
-      } finally {
-        updateKpis();
-        renderCards();
-        if (isManualReload) {
-          setTimeout(() => reloadIcon.classList.remove('animate-spin'), 350);
-        }
-      }
+      return parts
+        .map((tag) => {
+          const upper = tag.toUpperCase();
+          const isHighlight = upper === 'CUSTOM' || upper === 'IN PORTFOLIO';
+          const cls = isHighlight
+            ? 'bg-[#172554]/60 text-[#60a5fa] border border-[#3b82f6]/30'
+            : 'bg-[#141414] text-[#8b949e] border border-[#1f1f1f]';
+          return `<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide ${cls}">${tag}</span>`;
+        })
+        .join('');
     }
 
-    // Render Opportunity Cards
     function renderCards() {
-      let items = (currentData.opportunities || []).map(normalizeOpportunity);
+      const rawList = Array.isArray(currentPayload.opportunities) ? currentPayload.opportunities : [];
+      let items = rawList.map(mapOpportunity);
 
-      // Filter by Signal tab: ALL, BUY, WATCH, WAIT
-      if (activeFilter !== 'ALL') {
-        items = items.filter(i => i.signal === activeFilter);
+      if (activeSignal !== 'ALL') {
+        items = items.filter((item) => item.signal === activeSignal);
       }
 
-      // Filter by Region tab: ALL, CUSTOM, US, WORLDWIDE
       if (activeRegion !== 'ALL') {
-        items = items.filter(i => {
-          const reg = i.region.toUpperCase();
-          if (activeRegion === 'CUSTOM') return i.isCustom || reg.includes('CUSTOM');
-          if (activeRegion === 'WORLDWIDE') return reg.includes('WORLDWIDE');
-          if (activeRegion === 'US') return reg.includes('US') && !reg.includes('WORLDWIDE');
+        items = items.filter((item) => {
+          const regUpper = item.region.toUpperCase();
+          if (activeRegion === 'CUSTOM') return item.isCustom || regUpper.includes('CUSTOM');
+          if (activeRegion === 'WORLDWIDE') return regUpper.includes('WORLDWIDE');
+          if (activeRegion === 'US') return regUpper.includes('US') && !regUpper.includes('WORLDWIDE');
           return true;
         });
       }
 
-      // Filter by search query (ticker or company name)
       if (searchQuery.trim() !== '') {
         const q = searchQuery.trim().toLowerCase();
-        items = items.filter(i =>
-          i.ticker.toLowerCase().includes(q) ||
-          i.name.toLowerCase().includes(q)
+        items = items.filter(
+          (item) => item.ticker.toLowerCase().includes(q) || item.name.toLowerCase().includes(q)
         );
       }
 
-      // Sort
-      if (sortMode === 'score') {
+      if (sortBy === 'score') {
         items.sort((a, b) => b.score - a.score);
-      } else if (sortMode === 'winProb') {
+      } else if (sortBy === 'winChance') {
         items.sort((a, b) => b.winChance - a.winChance);
       }
 
@@ -729,148 +662,181 @@
 
       emptyState.classList.add('hidden');
 
-      cardsContainer.innerHTML = items.map((stock) => {
-        const badge = getStatusBadgeStyle(stock.signal);
-        const barColor = getScoreBarColor(stock.score, stock.signal);
-        const isHighlightedTag = stock.isCustom || stock.region.includes('CUSTOM') || stock.region.includes('PORTFOLIO');
-        const regionBadgeClass = isHighlightedTag
-          ? 'bg-[#172554]/60 text-[#60a5fa] border border-[#3b82f6]/30'
-          : 'bg-[#141418] text-mutedText border border-[#1f1f23]';
+      cardsContainer.innerHTML = items
+        .map((stock) => {
+          const signalCls = getSignalStyle(stock.signal);
+          const fillHex = getBarColor(stock.score);
+          const badgesHtml = renderRegionBadges(stock);
 
-        return `
-          <article
-            data-ticker="${stock.ticker}"
-            class="stock-card group px-5 sm:px-6 py-5 cursor-pointer select-none"
-            tabindex="0"
-            role="button"
-            aria-label="Vezi detalii analiză pentru ${stock.ticker}"
-          >
-            <!-- Row 1: Ticker + Company Name + Region Badge on left & Signal pill badge on right -->
-            <div class="flex items-center justify-between gap-3">
-              <div class="flex flex-wrap items-center gap-2 min-w-0">
-                <span class="text-[17px] font-bold text-[#f8fafc] tracking-tight">${stock.ticker}</span>
-                <span class="text-xs text-mutedText truncate max-w-[180px] sm:max-w-xs">${stock.name}</span>
-                <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold tracking-wide ${regionBadgeClass}">
-                  ${stock.region}
-                </span>
-              </div>
-              <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide shrink-0 ${badge.bg} ${badge.text}">
-                ${stock.signal}
-              </span>
-            </div>
-
-            <!-- Row 2: 'Technical & Win score' on left and 'XX/100' on right -->
-            <div class="mt-3 flex items-center justify-between text-xs sm:text-[13px]">
-              <span class="text-mutedText font-medium">Technical &amp; Win score</span>
-              <span class="font-bold text-[#f8fafc] text-sm">${stock.score}/100</span>
-            </div>
-
-            <!-- Row 3: Smooth horizontal progress bar -->
-            <div class="mt-2.5 w-full h-[6px] rounded-full bg-[#1f1f23] overflow-hidden">
-              <div
-                class="h-full rounded-full transition-all duration-500"
-                style="width: ${stock.score}%; background-color: ${barColor};"
-              ></div>
-            </div>
-
-            <!-- Row 4: Compact metrics row ('Win chance', 'Loss risk', 'R/R', current price) -->
-            <div class="mt-3.5 pt-3 border-t border-[#18181b] flex flex-wrap items-center justify-between gap-y-1.5 gap-x-4 text-xs">
-              <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
-                <span>
-                  <span class="text-mutedText">Win chance:</span>
-                  <span class="font-semibold text-[#22c55e] ml-1">${stock.winChance}%</span>
-                </span>
-                <span>
-                  <span class="text-mutedText">Loss risk:</span>
-                  <span class="font-semibold text-[#ef4444]/90 ml-1">${stock.lossRisk}%</span>
-                </span>
-                <span class="hidden sm:inline text-[#2f3540]">|</span>
-                <span>
-                  <span class="text-mutedText">R/R:</span>
-                  <span class="font-medium text-[#f8fafc] ml-1">${stock.riskReward}</span>
-                </span>
-                <span class="hidden sm:inline text-[#2f3540]">|</span>
-                <span>
-                  <span class="text-mutedText">Price:</span>
-                  <span class="font-semibold text-[#f8fafc] ml-1">${stock.price}</span>
+          return `
+            <article
+              data-ticker="${stock.ticker}"
+              class="stock-card group px-5 sm:px-6 py-4 sm:py-5 cursor-pointer select-none"
+              tabindex="0"
+              role="button"
+              aria-label="Vezi detalii pentru ${stock.ticker}"
+            >
+              <!-- Top row -->
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex flex-wrap items-center gap-2 min-w-0">
+                  <span class="text-[17px] font-bold text-[#f8fafc] tracking-tight">${stock.ticker}</span>
+                  <span class="text-xs text-[#8b949e] truncate max-w-[180px] sm:max-w-xs">${stock.name}</span>
+                  <div class="flex flex-wrap items-center gap-1.5">${badgesHtml}</div>
+                </div>
+                <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold tracking-wide shrink-0 ${signalCls}">
+                  ${stock.signal}
                 </span>
               </div>
 
-              <span class="text-[11px] font-medium text-mutedText group-hover:text-[#f8fafc] transition">
-                Details &rarr;
-              </span>
-            </div>
+              <!-- Sub-row -->
+              <div class="mt-3 flex items-center justify-between text-xs sm:text-[13px]">
+                <span class="text-[#8b949e] font-medium">Technical &amp; Win score</span>
+                <span class="font-bold text-[#f8fafc] text-sm">${stock.score}/100</span>
+              </div>
 
-            <!-- Row 5: 1-2 line concise summary at the bottom -->
-            <p class="mt-2.5 text-xs text-[#9ca3af] leading-relaxed line-clamp-2">
-              ${stock.summary}
-            </p>
-          </article>
-        `;
-      }).join('');
+              <!-- Progress bar -->
+              <div class="mt-2 w-full h-[6px] rounded-full bg-[#1a1a1a] overflow-hidden">
+                <div
+                  class="h-full rounded-full transition-all duration-500"
+                  style="width: ${stock.score}%; background-color: ${fillHex};"
+                ></div>
+              </div>
 
-      // Attach click/keyboard listeners to cards
-      document.querySelectorAll('.stock-card[data-ticker]').forEach(card => {
-        const openHandler = () => {
+              <!-- Metrics row -->
+              <div class="mt-3.5 pt-3 border-t border-[#1f1f1f] flex flex-wrap items-center justify-between gap-y-1.5 gap-x-4 text-xs">
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
+                  <span>
+                    <span class="text-[#8b949e]">Win chance:</span>
+                    <span class="font-semibold text-[#22c55e] ml-1">${stock.winChance}%</span>
+                  </span>
+                  <span>
+                    <span class="text-[#8b949e]">Loss risk:</span>
+                    <span class="font-semibold text-[#ef4444] ml-1">${stock.lossRisk}%</span>
+                  </span>
+                  <span class="hidden sm:inline text-[#333333]">|</span>
+                  <span>
+                    <span class="text-[#8b949e]">R/R:</span>
+                    <span class="font-medium text-[#f8fafc] ml-1">${stock.riskReward}</span>
+                  </span>
+                  <span class="hidden sm:inline text-[#333333]">|</span>
+                  <span>
+                    <span class="text-[#8b949e]">Price:</span>
+                    <span class="font-semibold text-[#f8fafc] ml-1">${stock.price}</span>
+                  </span>
+                </div>
+
+                <span class="text-[11px] font-medium text-[#8b949e] group-hover:text-[#f8fafc] transition">
+                  Details &rarr;
+                </span>
+              </div>
+
+              <!-- Summary line -->
+              <p class="mt-2.5 text-xs text-[#9ca3af] leading-relaxed line-clamp-2">
+                ${stock.summary}
+              </p>
+            </article>
+          `;
+        })
+        .join('');
+
+      document.querySelectorAll('.stock-card[data-ticker]').forEach((card) => {
+        const openCard = () => {
           const ticker = card.getAttribute('data-ticker');
-          const rawObj = (currentData.opportunities || []).find(s => s.ticker === ticker);
-          if (rawObj) openDetailModal(normalizeOpportunity(rawObj));
+          const found = (currentPayload.opportunities || []).find((x) => x.ticker === ticker);
+          if (found) openDetailModal(mapOpportunity(found));
         };
-        card.addEventListener('click', openHandler);
+        card.addEventListener('click', openCard);
         card.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
-            openHandler();
+            openCard();
           }
         });
       });
     }
 
-    // Detail Modal Controls
+    // Fetch ./data.json seamlessly in background after initial render
+    async function fetchLiveJson(manual = false) {
+      if (manual) {
+        reloadIcon.classList.add('animate-spin');
+      }
+
+      try {
+        const res = await fetch(`./data.json?t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        if (!data || !Array.isArray(data.opportunities)) {
+          throw new Error('Invalid JSON structure');
+        }
+
+        currentPayload = data;
+        setFeedMode(true);
+        updateHeaderStats();
+        renderCards();
+      } catch (err) {
+        if (!isLiveFeed) {
+          currentPayload = JSON.parse(JSON.stringify(DEFAULT_PAYLOAD));
+          setFeedMode(false);
+          updateHeaderStats();
+          renderCards();
+        }
+      } finally {
+        if (manual) {
+          setTimeout(() => reloadIcon.classList.remove('animate-spin'), 350);
+        }
+      }
+    }
+
+    // Interactive Details Modal
     const detailModal = document.getElementById('detailModal');
+
     function openDetailModal(stock) {
       document.getElementById('modalTicker').textContent = stock.ticker;
       document.getElementById('modalCompanyName').textContent = `${stock.name} • Trading 212`;
       document.getElementById('modalScoreBadge').textContent = `Score: ${stock.score}/100`;
       document.getElementById('modalRegionBadge').textContent = stock.region;
 
-      const badgeEl = document.getElementById('modalBadge');
-      const style = getStatusBadgeStyle(stock.signal);
-      badgeEl.className = `inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold ${style.bg} ${style.text}`;
-      badgeEl.textContent = stock.signal;
+      const badge = document.getElementById('modalBadge');
+      badge.className = `inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold ${getSignalStyle(stock.signal)}`;
+      badge.textContent = stock.signal;
 
       document.getElementById('modalWinPct').textContent = `${stock.winChance}%`;
       document.getElementById('modalLossPct').textContent = `${stock.lossRisk}%`;
       document.getElementById('modalWinBar').style.width = `${stock.winChance}%`;
       document.getElementById('modalLossBar').style.width = `${stock.lossRisk}%`;
-      document.getElementById('modalSampleInfo').textContent = stock.backtestStats;
+      document.getElementById('modalBacktestStats').textContent = stock.backtestStats;
 
       document.getElementById('modalRRBadge').textContent = `R/R: ${stock.riskReward}`;
       document.getElementById('modalRefPrice').textContent = stock.price;
       document.getElementById('modalTpPrice').textContent = stock.takeProfit;
       document.getElementById('modalSlPrice').textContent = stock.stopLoss;
 
-      const indicatorsContainer = document.getElementById('modalIndicatorsList');
-      if (stock.indicators && stock.indicators.length > 0) {
-        indicatorsContainer.innerHTML = stock.indicators.map(ind => `
-          <span class="px-3 py-1 rounded-full text-xs font-medium bg-pureBlack text-[#e2e8f0] border border-[#1f1f23]">
-            ${ind}
-          </span>
-        `).join('');
+      const indList = document.getElementById('modalIndicatorsList');
+      if (stock.indicators.length > 0) {
+        indList.innerHTML = stock.indicators
+          .map(
+            (ind) =>
+              `<span class="px-3 py-1 rounded-full text-xs font-medium bg-[#000000] text-[#e2e8f0] border border-[#1f1f1f]">${ind}</span>`
+          )
+          .join('');
       } else {
-        indicatorsContainer.innerHTML = `<span class="text-xs text-mutedText">Indicatori calculați automat în analiză.</span>`;
+        indList.innerHTML = '<span class="text-xs text-[#8b949e]">Indicatori calculați automat la scanare.</span>';
       }
 
-      const sentTag = document.getElementById('modalSentimentTag');
-      sentTag.textContent = isLiveFeed ? 'Live Scan Data' : 'Demo Preview';
-      sentTag.className = isLiveFeed
-        ? 'text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-pillGreenBg text-pillGreenText'
-        : 'text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-pillAmberBg text-pillAmberText';
+      const feedTag = document.getElementById('modalFeedTag');
+      feedTag.textContent = isLiveFeed ? 'Live Feed' : 'Demo Preview';
+      feedTag.className = isLiveFeed
+        ? 'text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#062814] text-[#22c55e]'
+        : 'text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#271a06] text-[#f59e0b]';
 
       document.getElementById('modalAiSummary').textContent = stock.summary;
-      document.getElementById('modalDisclaimer').textContent = isLiveFeed
-        ? 'Probabilități statistice bazate pe backtest 3 ani & analiză știri.'
-        : 'Exemplu demonstrativ — rulează GitHub Action pentru date live.';
 
       detailModal.classList.remove('hidden');
       detailModal.classList.add('flex');
@@ -887,244 +853,151 @@
       if (e.target === detailModal) closeDetailModal();
     });
 
-    // Signal Filter Pill Tabs Logic
-    filterTabs.addEventListener('click', (e) => {
-      const btn = e.target.closest('.filter-pill');
+    // Signal Filter Pills
+    signalTabs.addEventListener('click', (e) => {
+      const btn = e.target.closest('.signal-pill');
       if (!btn) return;
-      activeFilter = btn.getAttribute('data-filter');
+      activeSignal = btn.getAttribute('data-signal');
 
-      document.querySelectorAll('.filter-pill').forEach(p => {
-        p.classList.remove('bg-[#1f1f23]', 'text-[#f8fafc]');
-        p.classList.add('text-mutedText');
+      document.querySelectorAll('.signal-pill').forEach((pill) => {
+        pill.classList.remove('bg-[#1f1f1f]', 'text-[#f8fafc]');
+        pill.classList.add('text-[#8b949e]');
       });
-      btn.classList.add('bg-[#1f1f23]', 'text-[#f8fafc]');
-      btn.classList.remove('text-mutedText');
+      btn.classList.add('bg-[#1f1f1f]', 'text-[#f8fafc]');
+      btn.classList.remove('text-[#8b949e]');
 
       renderCards();
     });
 
-    // Region Filter Pill Tabs Logic
+    // Region Filter Pills
     regionTabs.addEventListener('click', (e) => {
       const btn = e.target.closest('.region-pill');
       if (!btn) return;
       activeRegion = btn.getAttribute('data-region');
 
-      document.querySelectorAll('.region-pill').forEach(p => {
-        p.classList.remove('bg-[#1f1f23]', 'text-[#f8fafc]');
-        p.classList.add('text-mutedText');
+      document.querySelectorAll('.region-pill').forEach((pill) => {
+        pill.classList.remove('bg-[#1f1f1f]', 'text-[#f8fafc]');
+        pill.classList.add('text-[#8b949e]');
       });
-      btn.classList.add('bg-[#1f1f23]', 'text-[#f8fafc]');
-      btn.classList.remove('text-mutedText');
+      btn.classList.add('bg-[#1f1f1f]', 'text-[#f8fafc]');
+      btn.classList.remove('text-[#8b949e]');
 
       renderCards();
     });
 
-    // Search & Sort Listeners
+    // Search & Sort Events
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value;
       renderCards();
     });
 
     sortSelect.addEventListener('change', (e) => {
-      sortMode = e.target.value;
+      sortBy = e.target.value;
       renderCards();
     });
 
     document.getElementById('resetFiltersBtn').addEventListener('click', () => {
-      activeFilter = 'ALL';
+      activeSignal = 'ALL';
       activeRegion = 'ALL';
       searchQuery = '';
-      sortMode = 'default';
+      sortBy = 'featured';
       searchInput.value = '';
-      sortSelect.value = 'default';
-      document.querySelectorAll('.filter-pill').forEach((p, idx) => {
-        if (idx === 0) {
-          p.classList.add('bg-[#1f1f23]', 'text-[#f8fafc]');
-          p.classList.remove('text-mutedText');
-        } else {
-          p.classList.remove('bg-[#1f1f23]', 'text-[#f8fafc]');
-          p.classList.add('text-mutedText');
-        }
+      sortSelect.value = 'featured';
+
+      document.querySelectorAll('.signal-pill').forEach((pill, i) => {
+        pill.classList.toggle('bg-[#1f1f1f]', i === 0);
+        pill.classList.toggle('text-[#f8fafc]', i === 0);
+        pill.classList.toggle('text-[#8b949e]', i !== 0);
       });
-      document.querySelectorAll('.region-pill').forEach((p, idx) => {
-        if (idx === 0) {
-          p.classList.add('bg-[#1f1f23]', 'text-[#f8fafc]');
-          p.classList.remove('text-mutedText');
-        } else {
-          p.classList.remove('bg-[#1f1f23]', 'text-[#f8fafc]');
-          p.classList.add('text-mutedText');
-        }
+
+      document.querySelectorAll('.region-pill').forEach((pill, i) => {
+        pill.classList.toggle('bg-[#1f1f1f]', i === 0);
+        pill.classList.toggle('text-[#f8fafc]', i === 0);
+        pill.classList.toggle('text-[#8b949e]', i !== 0);
       });
+
       renderCards();
     });
 
-    // Reload Button: re-fetches ./data.json?t=Date.now()
+    // Reload Button
     reloadBtn.addEventListener('click', () => {
-      loadDataFeed(true);
+      fetchLiveJson(true);
     });
 
-    // JSON Import Modal Logic
-    const importModal = document.getElementById('importModal');
+    // Interactive JSON Modal
+    const jsonModal = document.getElementById('jsonModal');
     const jsonTextarea = document.getElementById('jsonTextarea');
-    const importFeedback = document.getElementById('importFeedback');
+    const jsonFeedback = document.getElementById('jsonFeedback');
 
-    function showImportFeedback(msg, isError = false) {
-      importFeedback.textContent = msg;
-      importFeedback.classList.remove('hidden', 'bg-pillGreenBg', 'text-pillGreenText', 'bg-pillRedBg', 'text-pillRedText');
-      if (isError) {
-        importFeedback.classList.add('bg-pillRedBg', 'text-pillRedText');
-      } else {
-        importFeedback.classList.add('bg-pillGreenBg', 'text-pillGreenText');
-      }
+    function showJsonFeedback(msg, isError) {
+      jsonFeedback.textContent = msg;
+      jsonFeedback.className = isError
+        ? 'mt-3 px-3.5 py-2 rounded-[8px] text-xs font-medium bg-[#260d10] text-[#ef4444]'
+        : 'mt-3 px-3.5 py-2 rounded-[8px] text-xs font-medium bg-[#062814] text-[#22c55e]';
     }
 
-    document.getElementById('openImportBtn').addEventListener('click', () => {
-      importFeedback.classList.add('hidden');
-      jsonTextarea.value = JSON.stringify(currentData, null, 2);
-      importModal.classList.remove('hidden');
-      importModal.classList.add('flex');
+    document.getElementById('openJsonBtn').addEventListener('click', () => {
+      jsonFeedback.className = 'hidden';
+      jsonTextarea.value = JSON.stringify(currentPayload, null, 2);
+      jsonModal.classList.remove('hidden');
+      jsonModal.classList.add('flex');
     });
 
-    function closeImportModal() {
-      importModal.classList.add('hidden');
-      importModal.classList.remove('flex');
+    function closeJsonModal() {
+      jsonModal.classList.add('hidden');
+      jsonModal.classList.remove('flex');
     }
 
-    document.getElementById('closeImportModalBtn').addEventListener('click', closeImportModal);
-    document.getElementById('cancelImportBtn').addEventListener('click', closeImportModal);
-    importModal.addEventListener('click', (e) => {
-      if (e.target === importModal) closeImportModal();
+    document.getElementById('closeJsonModalBtn').addEventListener('click', closeJsonModal);
+    document.getElementById('cancelJsonBtn').addEventListener('click', closeJsonModal);
+    jsonModal.addEventListener('click', (e) => {
+      if (e.target === jsonModal) closeJsonModal();
     });
-
-    // Sample JSON Schema for Python Backend integration
-    const SAMPLE_BACKEND_JSON = {
-      marketStatus: "Monitoring",
-      stocksScanned: 50,
-      lastUpdated: "Live Scan • 15:35 EET",
-      opportunities: [
-        {
-          ticker: "MSFT",
-          company: "Microsoft Corp.",
-          sector: "Technology",
-          status: "BUY",
-          score: 84,
-          winProb: 73,
-          lossProb: 27,
-          rrRatio: "1 : 2.4",
-          tpPct: "+3.3%",
-          slPct: "-1.4%",
-          currentPrice: "$431.20",
-          tpPrice: "$445.43",
-          slPrice: "$425.16",
-          winsCount: 38,
-          totalSetups: 52,
-          rsi: "39.4",
-          rsiNote: "Revenire din supravândut",
-          sma200: "+7.1% vs SMA200",
-          smaNote: "Peste media 200 zile",
-          rvol: "1.45x",
-          rvolNote: "Volum instituțional ridicat",
-          atr: "$7.30 (1.7%)",
-          atrNote: "Volatilitate optimă",
-          sentimentLabel: "AI Bullish (+0.82)",
-          sentimentType: "positive",
-          summary: "Semnal statistic confirmat pe backtest 3 ani + știri pozitive pe segmentul Cloud AI.",
-          aiSummary: "Date reale din scriptul Python: semnal statistic confirmat pe backtest 3 ani + știri pozitive pe segmentul Cloud AI."
-        },
-        {
-          ticker: "NVDA",
-          company: "NVIDIA Corp.",
-          sector: "Semiconductors",
-          status: "WATCH",
-    // Sample JSON Schema matching analyzer.py output
-    const SAMPLE_BACKEND_JSON = {
-      marketStatus: "Active Scan",
-      stocksScanned: 69,
-      signalsToday: 2,
-      updatedAt: "25 Nov 2026, 22:52 EET",
-      opportunities: [
-        {
-          ticker: "PLTR",
-          name: "Palantir Technologies Inc.",
-          region: "CUSTOM • US",
-          isCustom: true,
-          signal: "BUY",
-          score: 78,
-          winChance: 66,
-          lossRisk: 34,
-          riskReward: "1 : 2.1",
-          price: "$65.40",
-          takeProfit: "+5.2% ($68.80)",
-          stopLoss: "-2.5% ($63.76)",
-          backtestStats: "52 Wins vs 27 Losses (ultimii 3 ani)",
-          indicators: ["RSI(14): 51.4", "SMA200: Deasupra", "Volum: 1.32x", "Trading 212: Activ"],
-          summary: "Probabilitate istorică 66% (52W/27L pe 3 ani). RSI la 51.4, preț peste SMA200, raport Risk/Reward 1:2.1."
-        }
-      ]
-    };
 
     document.getElementById('loadSchemaSampleBtn').addEventListener('click', () => {
-      jsonTextarea.value = JSON.stringify(SAMPLE_BACKEND_JSON, null, 2);
-      showImportFeedback('Exemplu JSON încărcat. Apasă „Aplică în Dashboard” pentru a-l vizualiza.');
+      jsonTextarea.value = JSON.stringify(DEFAULT_PAYLOAD, null, 2);
+      showJsonFeedback('Schema exemplu încărcată.', false);
     });
 
     document.getElementById('copySchemaBtn').addEventListener('click', () => {
-      const textToCopy = jsonTextarea.value.trim() || JSON.stringify(SAMPLE_BACKEND_JSON, null, 2);
-      jsonTextarea.value = textToCopy;
       jsonTextarea.select();
       try {
         document.execCommand('copy');
-        showImportFeedback('Schema JSON a fost copiată în clipboard!');
+        showJsonFeedback('JSON copiat în clipboard!', false);
       } catch (err) {
-        showImportFeedback('Nu s-a putut copia automat; selectează textul și copiază-l manual.', true);
+        showJsonFeedback('Selectează manual textul pentru copiere.', true);
       }
     });
 
-    // File Upload Handler
-    document.getElementById('jsonFileInput').addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        jsonTextarea.value = evt.target.result;
-        showImportFeedback(`Fișierul „${file.name}” a fost încărcat. Apasă „Aplică în Dashboard”.`);
-      };
-      reader.readAsText(file);
-    });
-
-    // Apply JSON to Dashboard
     document.getElementById('applyJsonBtn').addEventListener('click', () => {
-      const raw = jsonTextarea.value.trim();
-      if (!raw) {
-        showImportFeedback('Te rog introdu un JSON valid sau apasă „Load Sample JSON”.', true);
-        return;
-      }
-
       try {
-        const parsed = JSON.parse(raw);
+        const parsed = JSON.parse(jsonTextarea.value.trim());
         if (!parsed || !Array.isArray(parsed.opportunities)) {
-          throw new Error('JSON-ul trebuie să conțină o listă "opportunities".');
+          throw new Error('JSON-ul trebuie să conțină lista "opportunities".');
         }
-        currentData = parsed;
-        updateModeBadge(true);
-        updateKpis();
+        currentPayload = parsed;
+        setFeedMode(true);
+        updateHeaderStats();
         renderCards();
-        closeImportModal();
+        closeJsonModal();
       } catch (err) {
-        showImportFeedback(`Eroare de format JSON: ${err.message}`, true);
+        showJsonFeedback(`Eroare JSON: ${err.message}`, true);
       }
     });
 
-    // Close modals with Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeDetailModal();
-        closeImportModal();
+        closeJsonModal();
       }
     });
 
-    // Automatically load ./data.json on startup (falls back gracefully to Demo UI)
-    loadDataFeed(false);
+    // 1. Render immediately with fallback data so UI is never blank
+    updateHeaderStats();
+    renderCards();
+
+    // 2. Fetch live ./data.json seamlessly
+    fetchLiveJson(false);
   </script>
 </body>
 </html>
