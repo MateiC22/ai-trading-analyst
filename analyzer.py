@@ -48,17 +48,28 @@ TOP_WORLDWIDE = [
     "SONY"        # Sony (Japonia/US)
 ]
 
+T212_EXCHANGE_SUFFIX = {
+    "_US_EQ": "",
+    "_DE_EQ": ".DE",
+    "_NL_EQ": ".AS",
+    "_FR_EQ": ".PA",
+    "_UK_EQ": ".L",
+    "_CH_EQ": ".SW",
+    "_DK_EQ": ".CO",
+    "_IT_EQ": ".MI",
+    "_ES_EQ": ".MC",
+    "_BE_EQ": ".BR",
+    "_PT_EQ": ".LS",
+    "_AT_EQ": ".VI",
+    "_SE_EQ": ".ST",
+    "_CA_EQ": ".TO"
+}
+
 TZ_RO = ZoneInfo("Europe/Bucharest")
 TZ_NY = ZoneInfo("America/New_York")
 
 
 def detect_scan_phase():
-    """
-    Identifica faza curenta a zilei pe baza orei din Bucuresti si New York:
-    - PREP (in jur de 15:30 RO): Pregatire si analiza context
-    - PREMARKET (in jur de 16:15 RO): Scanare miscari Pre-Market inainte de deschiderea SUA
-    - OPEN_CONFIRM (in jur de 16:45 RO): Confirmare directie si volum in primele 15 min de la deschidere
-    """
     now_ro = datetime.now(TZ_RO)
     now_ny = datetime.now(TZ_NY)
     event_name = os.getenv("GITHUB_EVENT_NAME", "manual")
@@ -102,38 +113,59 @@ def load_custom_watchlist(filepath="watchlist.txt"):
 def load_previous_scan(filepath="data.json"):
     """Citeste scanarea anterioara pentru a evita notificari duplicate in aceeasi zi."""
     if not os.path.exists(filepath):
-        return "", {}
+        return "", {}, {}
     try:
         with open(filepath, "r", encoding="utf-8") as f:
             old_data = json.load(f)
         updated_at = old_data.get("updatedAt", "")
         prev_date = updated_at.split(",")[0].strip() if "," in updated_at else ""
-        prev_map = {
+        prev_sig_map = {
             item["ticker"]: item.get("signal", "WAIT")
             for item in old_data.get("opportunities", [])
             if "ticker" in item
         }
-        return prev_date, prev_map
+        prev_exit_map = {
+            item["ticker"]: item.get("exitSignal", "HOLD")
+            for item in old_data.get("portfolioPositions", [])
+            if "ticker" in item
+        }
+        return prev_date, prev_sig_map, prev_exit_map
     except Exception:
-        return "", {}
+        return "", {}, {}
 
 
-def get_trading212_data():
+def t212_raw_to_yf(raw_ticker, short_name, known_tickers_by_base):
+    """Mapeaza simbolul din Trading 212 (ex: PLTR_US_EQ, ASML_NL_EQ) la simbolul Yahoo Finance."""
+    raw = (raw_ticker or "").upper()
+    base = (short_name or raw.split("_")[0]).upper().replace(".", "-")
+
+    if base in known_tickers_by_base:
+        return known_tickers_by_base[base]
+
+    for suffix, yf_ext in T212_EXCHANGE_SUFFIX.items():
+        if raw.endswith(suffix):
+            return f"{base}{yf_ext}"
+
+    return base
+
+
+def get_trading212_data(known_tickers_by_base):
     """
-    Se conecteaza la Trading 212 API (Live sau Demo) pentru a verifica:
+    Se conecteaza la Trading 212 API (Live sau Demo) pentru a extrage:
     1. Lista instrumentelor disponibile pe platforma.
-    2. Pozitiile detinute in portofoliu.
+    2. Pozitiile reale din portofoliu (cantitate, pret mediu, P&L) + moneda contului.
     """
     api_key = os.getenv("T212_API_KEY", "").strip()
     api_secret = os.getenv("T212_API_SECRET", "").strip()
 
     if not api_key:
         print("Info: T212_API_KEY nu este setat. Rulez analiza pe baza listelor standard.")
-        return set(), set()
+        return set(), {}, "USD"
 
     base_urls = ["https://live.trading212.com/api/v0", "https://demo.trading212.com/api/v0"]
     available_tickers = set()
-    portfolio_tickers = set()
+    portfolio_map = {}
+    account_currency = "USD"
 
     for base in base_urls:
         try:
@@ -143,6 +175,7 @@ def get_trading212_data():
             resp = requests.get(f"{base}/equity/metadata/instruments", auth=auth, headers=headers, timeout=15)
             if resp.status_code == 200:
                 instruments = resp.json()
+                raw_to_short = {}
                 for item in instruments:
                     short_name = item.get("shortName", "").upper()
                     ticker_raw = item.get("ticker", "").upper()
@@ -150,20 +183,46 @@ def get_trading212_data():
                         available_tickers.add(short_name)
                     if ticker_raw:
                         available_tickers.add(ticker_raw.split("_")[0])
+                        raw_to_short[ticker_raw] = short_name
 
+                # Aflam moneda contului Trading 212 (RON, EUR, USD, GBP)
+                acc_resp = requests.get(f"{base}/equity/account/info", auth=auth, headers=headers, timeout=15)
+                if acc_resp.status_code == 200:
+                    account_currency = acc_resp.json().get("currencyCode", "USD")
+
+                # Citim pozitiile deschise din portofoliu
                 port_resp = requests.get(f"{base}/equity/portfolio", auth=auth, headers=headers, timeout=15)
                 if port_resp.status_code == 200:
                     for pos in port_resp.json():
-                        t = pos.get("ticker", "").upper().split("_")[0]
-                        if t:
-                            portfolio_tickers.add(t)
+                        raw_t = pos.get("ticker", "").upper()
+                        if not raw_t:
+                            continue
+                        short_n = raw_to_short.get(raw_t, raw_t.split("_")[0])
+                        yf_sym = t212_raw_to_yf(raw_t, short_n, known_tickers_by_base)
+                        qty = float(pos.get("quantity") or 0)
+                        avg_p = float(pos.get("averagePrice") or 0)
+                        cur_p = float(pos.get("currentPrice") or 0)
+                        ppl = float(pos.get("ppl") or 0)
 
-                print(f"Conectat cu succes la Trading 212 ({base}). Instrumente gasite: {len(available_tickers)}")
+                        portfolio_map[yf_sym] = {
+                            "rawTicker": raw_t,
+                            "yfTicker": yf_sym,
+                            "quantity": round(qty, 4),
+                            "avgPrice": round(avg_p, 2),
+                            "t212CurrentPrice": round(cur_p, 2),
+                            "ppl": round(ppl, 2),
+                            "accountCurrency": account_currency
+                        }
+
+                print(
+                    f"Conectat cu succes la Trading 212 ({base}). "
+                    f"Instrumente: {len(available_tickers)} | Pozitii in portofoliu: {len(portfolio_map)}"
+                )
                 break
         except Exception as e:
             print(f"Eroare conexiune {base}: {e}")
 
-    return available_tickers, portfolio_tickers
+    return available_tickers, portfolio_map, account_currency
 
 
 def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
@@ -396,6 +455,68 @@ def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase
     }
 
 
+def evaluate_portfolio_exit(ticker, name, pos_info, stats, sym):
+    """
+    Evalueaza o pozitie detinuta in Trading 212 si decide daca merita
+    marcat profitul (Take Profit) sau protejata pozitia (Stop Loss / Trend rupt).
+    """
+    avg_p = pos_info["avgPrice"]
+    cur_p = stats["price"]
+    qty = pos_info["quantity"]
+    ppl = pos_info["ppl"]
+    acc_curr = pos_info["accountCurrency"]
+
+    if avg_p > 0:
+        pnl_pct = round(((cur_p - avg_p) / avg_p) * 100, 2)
+    else:
+        pnl_pct = 0.0
+
+    tp_target = max(stats["tp_pct"], 5.5)
+    sl_limit = max(stats["sl_pct"], 4.0)
+
+    if pnl_pct >= tp_target:
+        exit_signal = "TAKE PROFIT"
+        is_alert = True
+        reason = f"Profit +{pnl_pct}% — a atins ținta de Take Profit (+{stats['tp_pct']}%). Poți marca câștigul."
+    elif stats["rsi"] >= 74 and pnl_pct >= 2.0:
+        exit_signal = "TAKE PROFIT / TRIM"
+        is_alert = True
+        reason = f"Supracumpărat (RSI {stats['rsi']}) la +{pnl_pct}% profit. Risc crescut de corecție scurtă."
+    elif pnl_pct <= -sl_limit:
+        exit_signal = "SELL / STOP LOSS"
+        is_alert = True
+        reason = f"Pierdere {pnl_pct}% — a depășit pragul de protecție (-{stats['sl_pct']}%)."
+    elif not stats["sma50_above"] and stats["rsi"] < 44:
+        exit_signal = "SELL / PROTECT"
+        is_alert = True
+        reason = f"Trend mediu pierdut (sub SMA50, RSI {stats['rsi']}). Risc de continuare a scăderii."
+    elif stats["above_vwap"] is False and stats["change_pct"] <= -2.2:
+        exit_signal = "WATCH EXIT"
+        is_alert = True
+        reason = f"Presiune de vânzare intraday ({stats['change_pct']}%) sub VWAP."
+    else:
+        exit_signal = "HOLD"
+        is_alert = False
+        reason = f"Trend stabil ({'peste' if stats['sma50_above'] else 'sub'} SMA50, RSI {stats['rsi']}). Păstrează poziția."
+
+    pnl_sign = "+" if pnl_pct >= 0 else ""
+    ppl_sign = "+" if ppl >= 0 else ""
+
+    return {
+        "ticker": ticker,
+        "name": name,
+        "quantity": qty,
+        "avgPrice": f"{sym}{avg_p:.2f}",
+        "currentPrice": f"{sym}{cur_p:.2f}",
+        "pnlPct": pnl_pct,
+        "pnlPctFormatted": f"{pnl_sign}{pnl_pct}%",
+        "pplFormatted": f"{ppl_sign}{ppl:.2f} {acc_curr}",
+        "exitSignal": exit_signal,
+        "isAlert": is_alert,
+        "reason": reason
+    }
+
+
 def get_ai_news_insight(ticker, name, headlines, stats, phase):
     gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
 
@@ -437,10 +558,12 @@ def get_ai_news_insight(ticker, name, headlines, stats, phase):
     return fallback_text
 
 
-def send_notifications(results, status_label, phase, today_str, prev_date, prev_signal_map):
+def send_notifications(results, portfolio_positions, status_label, phase, today_str, prev_date, prev_sig_map, prev_exit_map):
     """
-    Trimite alerta pe Telegram si/sau Discord daca exista semnale BUY
-    sau miscari relevante pe actiunile din watchlist.txt (CUSTOM).
+    Trimite carduri vizuale Discord Embeds (si/sau Telegram) pentru:
+    1. Alerte de iesire / Take Profit pe pozitiile din portofoliul Trading 212
+    2. Semnale noi BUY
+    3. Miscari importante pe actiunile din watchlist.txt (CUSTOM)
     """
     tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
     tg_chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
@@ -449,112 +572,148 @@ def send_notifications(results, status_label, phase, today_str, prev_date, prev_
     event_name = os.getenv("GITHUB_EVENT_NAME", "manual")
 
     if not ((tg_token and tg_chat_id) or discord_webhook):
-        print("Info: Nu sunt configurate chei Telegram sau Discord. Sar peste notificari.")
+        print("Info: Nu sunt configurate chei Discord sau Telegram. Sar peste notificari.")
         return
 
     is_new_day = (today_str != prev_date)
+    exit_alerts = []
     buy_alerts = []
     custom_alerts = []
+
+    for pos in portfolio_positions:
+        if pos["isAlert"]:
+            prev_ex = prev_exit_map.get(pos["ticker"], "HOLD")
+            if is_new_day or prev_ex != pos["exitSignal"] or phase == "OPEN_CONFIRM" or event_name != "schedule":
+                exit_alerts.append(pos)
 
     for item in results:
         t = item["ticker"]
         sig = item["signal"]
-        prev_sig = prev_signal_map.get(t, "WAIT")
+        prev_sig = prev_sig_map.get(t, "WAIT")
         chg = abs(item.get("_changePct", 0.0))
         pm_chg = abs(item.get("_premarketPct") or 0.0)
         strong_move = max(chg, pm_chg) >= 2.0
 
         if sig == "BUY":
-            # Trimitem daca e zi noua, daca abia a urcat in BUY, daca e confirmarea de la 16:45 sau test manual
             if is_new_day or prev_sig != "BUY" or phase == "OPEN_CONFIRM" or event_name != "schedule":
                 buy_alerts.append(item)
         elif item["isCustom"] and (item["score"] >= 62 or strong_move):
             if is_new_day or phase in ("PREMARKET", "OPEN_CONFIRM") or event_name != "schedule":
                 custom_alerts.append(item)
 
-    if not buy_alerts and not custom_alerts:
-        print("Nu exista semnale BUY noi sau miscari majore pe watchlist pentru notificare.")
+    if not exit_alerts and not buy_alerts and not custom_alerts:
+        print("Nu exista alerte noi (Portofoliu / BUY / Watchlist) pentru notificare.")
         return
 
-    # 1. Trimitere pe TELEGRAM (format HTML curat)
+    # 1. Trimitere pe DISCORD folosind Embeds colorate
+    if discord_webhook:
+        embeds = []
+
+        if exit_alerts:
+            desc_lines = []
+            for p in exit_alerts[:6]:
+                desc_lines.append(
+                    f"• **{p['ticker']}** — **`{p['exitSignal']}`** ({p['pnlPctFormatted']} | {p['pplFormatted']})\n"
+                    f"  Preț: `{p['currentPrice']}` (Mediu: `{p['avgPrice']}`) — {p['reason']}"
+                )
+            embeds.append({
+                "title": f"🚨 Alerte Portofoliu Trading 212 • {status_label}",
+                "description": "\n".join(desc_lines),
+                "color": 15680580,  # Coral Red (#ef4444)
+                "url": dashboard_url if dashboard_url else None
+            })
+
+        if buy_alerts:
+            desc_lines = []
+            for x in buy_alerts[:6]:
+                badge = " ⭐" if x["isCustom"] else ""
+                desc_lines.append(
+                    f"• **{x['ticker']}**{badge} | Scor: **{x['score']}/100** (Win **{x['winChance']}%**)\n"
+                    f"  Preț: `{x['price']}` | TP: `{x['takeProfit']}` | SL: `{x['stopLoss']}`"
+                )
+            embeds.append({
+                "title": f"🟢 Semnale BUY Detectate • {status_label}",
+                "description": "\n".join(desc_lines),
+                "color": 1096065,  # Emerald Green (#10b981)
+                "url": dashboard_url if dashboard_url else None
+            })
+
+        if custom_alerts:
+            desc_lines = []
+            for x in custom_alerts[:5]:
+                desc_lines.append(
+                    f"• **{x['ticker']}** [`{x['signal']}`] — Scor **{x['score']}/100**\n"
+                    f"  Preț: `{x['price']}` — {x['summary']}"
+                )
+            embeds.append({
+                "title": f"⭐ Alerte Watchlist (CUSTOM) • {status_label}",
+                "description": "\n".join(desc_lines),
+                "color": 3899638,  # Sky Blue (#3b82f6)
+                "url": dashboard_url if dashboard_url else None
+            })
+
+        # Curatam cheile None din embeds
+        for emb in embeds:
+            if emb.get("url") is None:
+                emb.pop("url", None)
+
+        payload = {
+            "username": "AI Trading Analyst",
+            "embeds": embeds
+        }
+        if dashboard_url:
+            payload["content"] = f"📊 **Dashboard Live:** {dashboard_url}"
+
+        try:
+            r = requests.post(discord_webhook, json=payload, timeout=15)
+            if r.status_code in (200, 204):
+                print("Notificare Discord Embed trimisa cu succes!")
+            else:
+                print(f"Eroare Discord ({r.status_code}): {r.text}")
+        except Exception as e:
+            print(f"Exceptie Discord: {e}")
+
+    # 2. Trimitere optionala pe TELEGRAM (daca e configurat)
     if tg_token and tg_chat_id:
         lines = [f"📊 <b>AI Trading Analyst</b> — {html.escape(status_label)}"]
+
+        if exit_alerts:
+            lines.append("\n🚨 <b>Alerte Portofoliu Trading 212:</b>")
+            for p in exit_alerts[:6]:
+                lines.append(
+                    f"• <b>{html.escape(p['ticker'])}</b> — <b>{html.escape(p['exitSignal'])}</b> ({html.escape(p['pnlPctFormatted'])})\n"
+                    f"  {html.escape(p['reason'])}"
+                )
 
         if buy_alerts:
             lines.append("\n🟢 <b>Semnale BUY detectate:</b>")
             for x in buy_alerts[:6]:
-                badge = " ⭐" if x["isCustom"] else ""
                 lines.append(
-                    f"• <b>{html.escape(x['ticker'])}</b>{badge} | Scor: <b>{x['score']}/100</b> (Win {x['winChance']}%)\n"
+                    f"• <b>{html.escape(x['ticker'])}</b> | Scor: <b>{x['score']}/100</b> (Win {x['winChance']}%)\n"
                     f"  Preț: {html.escape(x['price'])} | TP: {html.escape(x['takeProfit'])} | SL: {html.escape(x['stopLoss'])}"
                 )
 
         if custom_alerts:
-            lines.append("\n⭐ <b>Alerte Watchlist (CUSTOM):</b>")
+            lines.append("\n⭐ <b>Alerte Watchlist:</b>")
             for x in custom_alerts[:5]:
-                lines.append(
-                    f"• <b>{html.escape(x['ticker'])}</b> [{x['signal']}] — Scor {x['score']}/100\n"
-                    f"  Preț: {html.escape(x['price'])} | {html.escape(x['summary'])}"
-                )
+                lines.append(f"• <b>{html.escape(x['ticker'])}</b> [{x['signal']}] — {html.escape(x['price'])}")
 
         if dashboard_url:
             lines.append(f"\n🔗 <a href=\"{html.escape(dashboard_url)}\">Deschide Dashboard-ul Live</a>")
 
-        tg_text = "\n".join(lines)
         try:
-            r = requests.post(
+            requests.post(
                 f"https://api.telegram.org/bot{tg_token}/sendMessage",
                 json={
                     "chat_id": tg_chat_id,
-                    "text": tg_text,
+                    "text": "\n".join(lines),
                     "parse_mode": "HTML",
                     "disable_web_page_preview": True
                 },
                 timeout=15
             )
-            if r.status_code == 200:
-                print("Notificare Telegram trimisa cu succes!")
-            else:
-                print(f"Eroare Telegram ({r.status_code}): {r.text}")
         except Exception as e:
             print(f"Exceptie Telegram: {e}")
-
-    # 2. Trimitere pe DISCORD (format Markdown)
-    if discord_webhook:
-        d_lines = [f"📊 **AI Trading Analyst** — `{status_label}`"]
-
-        if buy_alerts:
-            d_lines.append("\n🟢 **Semnale BUY detectate:**")
-            for x in buy_alerts[:6]:
-                badge = " ⭐" if x["isCustom"] else ""
-                d_lines.append(
-                    f"• **{x['ticker']}**{badge} | Scor: **{x['score']}/100** (Win {x['winChance']}%)\n"
-                    f"  Preț: `{x['price']}` | TP: `{x['takeProfit']}` | SL: `{x['stopLoss']}`"
-                )
-
-        if custom_alerts:
-            d_lines.append("\n⭐ **Alerte Watchlist (CUSTOM):**")
-            for x in custom_alerts[:5]:
-                d_lines.append(
-                    f"• **{x['ticker']}** [`{x['signal']}`] — Scor {x['score']}/100\n"
-                    f"  Preț: `{x['price']}` — {x['summary']}"
-                )
-
-        if dashboard_url:
-            d_lines.append(f"\n🔗 Deschide Dashboard-ul: {dashboard_url}")
-
-        try:
-            r = requests.post(
-                discord_webhook,
-                json={"content": "\n".join(d_lines)[:1950]},
-                timeout=15
-            )
-            if r.status_code in (200, 204):
-                print("Notificare Discord trimisa cu succes!")
-            else:
-                print(f"Eroare Discord ({r.status_code}): {r.text}")
-        except Exception as e:
-            print(f"Exceptie Discord: {e}")
 
 
 def main():
@@ -563,16 +722,22 @@ def main():
         print(f"Ora curenta RO ({now_ro.strftime('%H:%M')}) este in afara ferestrelor 15:30/16:15/16:45. Iesire rapida.")
         return
 
-    prev_date, prev_signal_map = load_previous_scan("data.json")
+    prev_date, prev_sig_map, prev_exit_map = load_previous_scan("data.json")
     print(f"Pornire scanare in faza: {phase} ({status_label}) | RO: {now_ro.strftime('%H:%M')} | NY: {now_ny.strftime('%H:%M')}")
 
     custom_tickers = load_custom_watchlist("watchlist.txt")
-    t212_available, t212_portfolio = get_trading212_data()
+    base_list = list(dict.fromkeys(custom_tickers + TOP_50_US + TOP_WORLDWIDE))
+    known_by_base = {t.split(".")[0]: t for t in base_list}
 
-    all_tickers = list(dict.fromkeys(custom_tickers + TOP_50_US + TOP_WORLDWIDE))
+    t212_available, t212_portfolio_map, _ = get_trading212_data(known_by_base)
+
+    # Includem automat si orice actiune detinuta in portofoliu care nu era in listele standard
+    portfolio_yf_tickers = list(t212_portfolio_map.keys())
+    all_tickers = list(dict.fromkeys(portfolio_yf_tickers + custom_tickers + TOP_50_US + TOP_WORLDWIDE))
     print(f"Scanez {len(all_tickers)} companii...")
 
     results = []
+    portfolio_positions = []
     signals_count = 0
 
     for ticker in all_tickers:
@@ -618,10 +783,11 @@ def main():
 
             is_custom = ticker in custom_tickers
             base_sym = ticker.split(".")[0]
-            in_portfolio = base_sym in t212_portfolio
+            pos_info = t212_portfolio_map.get(ticker)
+            in_portfolio = pos_info is not None
             on_t212 = (base_sym in t212_available) if t212_available else True
 
-            if t212_available and not on_t212 and not is_custom:
+            if t212_available and not on_t212 and not is_custom and not in_portfolio:
                 continue
 
             if stats["score"] >= 68 and stats["win_chance"] >= 54:
@@ -634,12 +800,17 @@ def main():
 
             summary = get_ai_news_insight(ticker, company_name, headlines, stats, phase)
 
+            portfolio_eval = None
+            if in_portfolio:
+                portfolio_eval = evaluate_portfolio_exit(ticker, company_name, pos_info, stats, sym)
+                portfolio_positions.append(portfolio_eval)
+
             region = "WORLDWIDE" if not is_us or ticker in TOP_WORLDWIDE else "US"
             tags = []
-            if is_custom:
-                tags.append("CUSTOM")
             if in_portfolio:
                 tags.append("IN PORTFOLIO")
+            if is_custom:
+                tags.append("CUSTOM")
             tags.append(region)
 
             indicators_list = [
@@ -662,6 +833,8 @@ def main():
                 "name": company_name,
                 "region": " • ".join(tags),
                 "isCustom": is_custom,
+                "inPortfolio": in_portfolio,
+                "portfolio": portfolio_eval,
                 "signal": signal,
                 "score": stats["score"],
                 "winChance": stats["win_chance"],
@@ -682,14 +855,18 @@ def main():
         except Exception as e:
             print(f"Eroare la {ticker}: {e}")
 
-    results.sort(key=lambda x: (not x["isCustom"], -x["score"]))
+    # Ordonam: intai pozitiile din portofoliu, apoi custom watchlist, apoi scorul descrescator
+    results.sort(key=lambda x: (not x["inPortfolio"], not x["isCustom"], -x["score"]))
+    portfolio_positions.sort(key=lambda x: (not x["isAlert"], -abs(x["pnlPct"])))
 
     tz_abbr = now_ro.tzname() or "EET"
     today_str = now_ro.strftime("%d %b %Y")
     ro_time = now_ro.strftime(f"%d %b %Y, %H:%M {tz_abbr}")
 
-    # Trimitem notificarile pe Telegram / Discord inainte de a curata campurile interne
-    send_notifications(results, status_label, phase, today_str, prev_date, prev_signal_map)
+    send_notifications(
+        results, portfolio_positions, status_label, phase,
+        today_str, prev_date, prev_sig_map, prev_exit_map
+    )
 
     for item in results:
         item.pop("_changePct", None)
@@ -700,13 +877,17 @@ def main():
         "stocksScanned": len(results),
         "signalsToday": signals_count,
         "updatedAt": ro_time,
+        "portfolioPositions": portfolio_positions,
         "opportunities": results
     }
 
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-    print(f"Gata! Salvat {len(output_data['opportunities'])} oportunitati in data.json ({status_label}).")
+    print(
+        f"Gata! Salvat {len(results)} oportunitati si {len(portfolio_positions)} "
+        f"pozitii din portofoliu in data.json ({status_label})."
+    )
 
 
 if __name__ == "__main__":
