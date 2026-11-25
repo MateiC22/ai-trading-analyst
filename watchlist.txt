@@ -1,0 +1,7 @@
+# Adauga mai jos simbolurile companiilor pe care vrei sa le urmaresti zilnic (cate unul pe rand).
+# Exemple SUA: PLTR, RKLB, SOFI, COIN, AMD, NFLX
+# Exemple Europa/Worldwide (foloseste sufixul bursei din Yahoo Finance): ASML.AS, SAP.DE, AIR.PA, NOVO-B.CO
+
+PLTR
+AMD
+ASML.AS
