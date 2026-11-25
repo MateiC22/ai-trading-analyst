@@ -1,7 +1,8 @@
 import os
 import json
 import time
-from datetime import datetime, timezone, timedelta
+from datetime import datetime
+from zoneinfo import ZoneInfo
 import requests
 import numpy as np
 import pandas as pd
@@ -46,6 +47,48 @@ TOP_WORLDWIDE = [
     "SONY"        # Sony (Japonia/US)
 ]
 
+TZ_RO = ZoneInfo("Europe/Bucharest")
+TZ_NY = ZoneInfo("America/New_York")
+
+
+def detect_scan_phase():
+    """
+    Identifica faza curenta a zilei pe baza orei din Bucuresti si New York:
+    - PREP (in jur de 15:30 RO): Pregatire si analiza context
+    - PREMARKET (in jur de 16:15 RO): Scanare miscari Pre-Market inainte de deschiderea SUA
+    - OPEN_CONFIRM (in jur de 16:45 RO): Confirmare directie si volum in primele 15 min de la deschidere
+    """
+    now_ro = datetime.now(TZ_RO)
+    now_ny = datetime.now(TZ_NY)
+    event_name = os.getenv("GITHUB_EVENT_NAME", "manual")
+
+    # Daca rularea este automata (schedule), verificam sa fie in una din cele 3 ferestre din Bucuresti
+    # (Acest filtru rezolva automat trecerea la ora de vara/iarna fara a modifica cron-ul)
+    if event_name == "schedule":
+        mins_ro = now_ro.hour * 60 + now_ro.minute
+        in_prep = (15 * 60 + 5) <= mins_ro <= (15 * 60 + 50)
+        in_pre = (15 * 60 + 55) <= mins_ro <= (16 * 60 + 32)
+        in_open = (16 * 60 + 35) <= mins_ro <= (17 * 60 + 25)
+        if not (in_prep or in_pre or in_open):
+            return None, None, now_ro, now_ny
+
+    # Determinam faza activa in functie de ora bursei din New York (deschidere la 09:30 ET)
+    ny_mins = now_ny.hour * 60 + now_ny.minute
+    if ny_mins < 9 * 60:
+        phase = "PREP"
+        status_label = "15:30 • Pregătire Piață"
+    elif ny_mins < 9 * 60 + 32:
+        phase = "PREMARKET"
+        status_label = "16:15 • Pre-Market Scan"
+    elif ny_mins <= 11 * 60:
+        phase = "OPEN_CONFIRM"
+        status_label = "16:45 • Open Confirm"
+    else:
+        phase = "INTRADAY"
+        status_label = "Live Market Scan"
+
+    return phase, status_label, now_ro, now_ny
+
 
 def load_custom_watchlist(filepath="watchlist.txt"):
     custom = []
@@ -62,7 +105,7 @@ def get_trading212_data():
     """
     Se conecteaza la Trading 212 API (Live sau Demo) pentru a verifica:
     1. Lista instrumentelor disponibile pe platforma.
-    2. Pozitiile pe care le detii deja in portofoliu.
+    2. Pozitiile detinute in portofoliu.
     """
     api_key = os.getenv("T212_API_KEY", "").strip()
     api_secret = os.getenv("T212_API_SECRET", "").strip()
@@ -91,7 +134,6 @@ def get_trading212_data():
                     if ticker_raw:
                         available_tickers.add(ticker_raw.split("_")[0])
 
-                # Preluam si portofoliul curent (optional)
                 port_resp = requests.get(f"{base}/equity/portfolio", auth=auth, headers=headers, timeout=15)
                 if port_resp.status_code == 200:
                     for pos in port_resp.json():
@@ -107,70 +149,166 @@ def get_trading212_data():
     return available_tickers, portfolio_tickers
 
 
-def compute_indicators_and_backtest(df):
+def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
     """
-    Calculeaza indicatorii tehnici si simuleaza statistic pe ultimii 3 ani
-    de cate ori configuratia actuala a atins Take Profit inainte de Stop Loss.
+    Extrage datele intraday pe 15 minute (inclusiv Pre-Market) pentru a masura:
+    - Pretul live exact (inclusiv in Pre-Market)
+    - Variatia procentuala fata de inchiderea de ieri
+    - Raportul de volum la deschidere (primele 15 min vs media ultimelor 4 zile)
+    - Pozitia fata de VWAP intraday
     """
-    close = df["Close"]
-    high = df["High"]
-    low = df["Low"]
-    volume = df["Volume"]
+    result = {
+        "live_price": prev_close,
+        "change_pct": 0.0,
+        "premarket_pct": None,
+        "open_vol_ratio": None,
+        "above_vwap": None,
+        "has_premarket": False,
+        "has_open_15m": False
+    }
 
-    # Medii mobile
-    df["SMA20"] = close.rolling(20).mean()
-    df["SMA50"] = close.rolling(50).mean()
-    df["SMA200"] = close.rolling(200).mean()
+    try:
+        intra = stock.history(period="5d", interval="15m", prepost=True)
+        if intra is None or intra.empty:
+            return result
 
-    # RSI (14 zile)
+        # Convertim indexul in fusul orar al pietei relevante
+        target_tz = TZ_NY if is_us else TZ_RO
+        if intra.index.tz is None:
+            intra.index = intra.index.tz_localize("UTC").tz_convert(target_tz)
+        else:
+            intra.index = intra.index.tz_convert(target_tz)
+
+        today_date = now_ny.date() if is_us else now_ro.date()
+        today_bars = intra[intra.index.date == today_date].copy()
+
+        if today_bars.empty:
+            return result
+
+        live_price = float(today_bars["Close"].iloc[-1])
+        result["live_price"] = live_price
+        if prev_close > 0:
+            result["change_pct"] = round(((live_price - prev_close) / prev_close) * 100, 2)
+
+        if is_us:
+            # Separam barele din Pre-Market (< 09:30 ET) de cele din sesiunea normala (>= 09:30 ET)
+            mins_of_day = today_bars.index.hour * 60 + today_bars.index.minute
+            pre_bars = today_bars[mins_of_day < (9 * 60 + 30)]
+            reg_bars = today_bars[mins_of_day >= (9 * 60 + 30)]
+
+            if not pre_bars.empty and prev_close > 0:
+                last_pre_price = float(pre_bars["Close"].iloc[-1])
+                result["premarket_pct"] = round(((last_pre_price - prev_close) / prev_close) * 100, 2)
+                result["has_premarket"] = True
+
+            if not reg_bars.empty:
+                result["has_open_15m"] = True
+                # Calculam VWAP pentru sesiunea de azi
+                typical_price = (reg_bars["High"] + reg_bars["Low"] + reg_bars["Close"]) / 3.0
+                total_vol = reg_bars["Volume"].sum()
+                if total_vol > 0:
+                    vwap = float((typical_price * reg_bars["Volume"]).sum() / total_vol)
+                    result["above_vwap"] = live_price >= vwap
+
+                # Comparam volumul primei lumanari de 15m (09:30) cu media primelor 15m din zilele trecute
+                first_bar_vol = float(reg_bars["Volume"].iloc[0])
+                past_bars = intra[intra.index.date < today_date]
+                if not past_bars.empty and first_bar_vol > 0:
+                    past_open_bars = past_bars[
+                        (past_bars.index.hour == 9) & (past_bars.index.minute == 30)
+                    ]
+                    if not past_open_bars.empty:
+                        avg_open_vol = float(past_open_bars["Volume"].mean())
+                        if avg_open_vol > 0:
+                            result["open_vol_ratio"] = round(first_bar_vol / avg_open_vol, 2)
+        else:
+            # Pentru actiuni europene/worldwide, calculam VWAP pe sesiunea curenta
+            typical_price = (today_bars["High"] + today_bars["Low"] + today_bars["Close"]) / 3.0
+            total_vol = today_bars["Volume"].sum()
+            if total_vol > 0:
+                vwap = float((typical_price * today_bars["Volume"]).sum() / total_vol)
+                result["above_vwap"] = live_price >= vwap
+
+    except Exception as e:
+        print(f"Info intraday indisponibil: {e}")
+
+    return result
+
+
+def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase):
+    """
+    Combina analiza istorica pe 3 ani (backtest Win/Loss) cu semnalele live
+    din Pre-Market si din primele 15 minute de la deschidere.
+    """
+    df = df.copy()
+    if df.index.tz is None:
+        df.index = df.index.tz_localize("UTC")
+    df_local = df.tz_convert(TZ_NY if is_us else TZ_RO)
+    today_date = now_ny.date() if is_us else now_ro.date()
+
+    # Pastram doar zilele inchise pentru calculul indicatorilor zilnici si al backtest-ului
+    closed_df = df_local[df_local.index.date < today_date].copy()
+    if len(closed_df) < 220:
+        closed_df = df_local.copy()
+    if len(closed_df) < 220:
+        return None
+
+    close = closed_df["Close"]
+    high = closed_df["High"]
+    low = closed_df["Low"]
+    volume = closed_df["Volume"]
+
+    closed_df["SMA20"] = close.rolling(20).mean()
+    closed_df["SMA50"] = close.rolling(50).mean()
+    closed_df["SMA200"] = close.rolling(200).mean()
+
     delta = close.diff()
     gain = delta.clip(lower=0).rolling(14).mean()
     loss = (-delta.clip(upper=0)).rolling(14).mean()
     rs = gain / loss.replace(0, np.nan)
-    df["RSI"] = 100 - (100 / (1 + rs))
+    closed_df["RSI"] = 100 - (100 / (1 + rs))
 
-    # ATR (14 zile) pentru calculul dinamic de risc/recompensa
     tr1 = high - low
     tr2 = (high - close.shift()).abs()
     tr3 = (low - close.shift()).abs()
     tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
-    df["ATR"] = tr.rolling(14).mean()
+    closed_df["ATR"] = tr.rolling(14).mean()
 
-    # Volum relativ
-    df["VolRatio"] = volume / volume.rolling(20).mean()
+    closed_df["VolRatio"] = volume / volume.rolling(20).mean()
 
-    df = df.dropna().copy()
-    if len(df) < 220:
+    closed_df = closed_df.dropna().copy()
+    if len(closed_df) < 200:
         return None
 
-    latest = df.iloc[-1]
-    price = float(latest["Close"])
+    latest = closed_df.iloc[-1]
+    prev_close = float(latest["Close"])
+    live_price = intra_info["live_price"] if intra_info["live_price"] > 0 else prev_close
+
     rsi = float(latest["RSI"])
     atr = float(latest["ATR"])
     sma50 = float(latest["SMA50"])
     sma200 = float(latest["SMA200"])
     vol_ratio = float(latest["VolRatio"])
 
-    # Definim praguri dinamice bazate pe volatilitatea reala (ATR)
-    tp_pct = min(max((2.2 * atr) / price, 0.025), 0.12)   # Take Profit intre +2.5% si +12%
-    sl_pct = min(max((1.2 * atr) / price, 0.015), 0.06)   # Stop Loss intre -1.5% si -6%
+    # Praguri dinamice Take Profit / Stop Loss bazate pe volatilitatea ATR
+    tp_pct = min(max((2.2 * atr) / live_price, 0.025), 0.12)
+    sl_pct = min(max((1.2 * atr) / live_price, 0.015), 0.06)
     rr_ratio = round(tp_pct / sl_pct, 2)
 
-    # Identificam regimul curent al actiunii pentru a cauta situatii similare in trecut
-    above_200 = price > sma200
+    above_200 = live_price > sma200
+    above_50 = live_price > sma50
     rsi_low = rsi < 45
     rsi_mid = 45 <= rsi <= 65
 
     wins = 0
     losses = 0
-    closes_arr = df["Close"].values
-    highs_arr = df["High"].values
-    lows_arr = df["Low"].values
-    rsi_arr = df["RSI"].values
-    sma200_arr = df["SMA200"].values
+    closes_arr = closed_df["Close"].values
+    highs_arr = closed_df["High"].values
+    lows_arr = closed_df["Low"].values
+    rsi_arr = closed_df["RSI"].values
+    sma200_arr = closed_df["SMA200"].values
 
-    # Backtest pe ultimii ~3 ani (lasam ultimele 15 zile pentru evaluarea rezultatului)
-    for i in range(len(df) - 16):
+    for i in range(len(closed_df) - 16):
         hist_above_200 = closes_arr[i] > sma200_arr[i]
         hist_rsi = rsi_arr[i]
 
@@ -185,7 +323,6 @@ def compute_indicators_and_backtest(df):
             tp_level = entry * (1 + tp_pct)
             sl_level = entry * (1 - sl_pct)
 
-            # Verificam urmatoarele 15 zile de tranzactionare
             for j in range(i + 1, i + 16):
                 if lows_arr[j] <= sl_level:
                     losses += 1
@@ -203,25 +340,52 @@ def compute_indicators_and_backtest(df):
     win_chance = max(25, min(88, win_chance))
     loss_risk = 100 - win_chance
 
-    # Scorul tehnic compus (0 - 100)
-    score = int(win_chance * 0.65)
+    # 1. Scorul de baza (tehnic + statistic)
+    score = int(win_chance * 0.62)
     if above_200:
-        score += 15
-    if price > sma50:
-        score += 8
-    if 32 <= rsi <= 58:
-        score += 10
+        score += 14
+    if above_50:
+        score += 7
+    if 34 <= rsi <= 60:
+        score += 9
     elif rsi > 74:
-        score -= 10  # Supracumparat
+        score -= 10
     if vol_ratio > 1.15:
-        score += 5
+        score += 4
+
+    # 2. Ajustari specifice pentru fazele 16:15 (Pre-Market) si 16:45 (Open Confirm)
+    pre_pct = intra_info.get("premarket_pct")
+    open_vol = intra_info.get("open_vol_ratio")
+    above_vwap = intra_info.get("above_vwap")
+    change_pct = intra_info.get("change_pct", 0.0)
+
+    if phase == "PREMARKET" and pre_pct is not None:
+        if 0.6 <= pre_pct <= 6.5 and above_200:
+            score += 8   # Gap pozitiv sanatos sustinut de trend
+        elif pre_pct > 9.0:
+            score -= 6   # Risc de marcari de profit la deschidere (gap prea mare)
+        elif pre_pct < -2.5:
+            score -= 8   # Presiune de vanzare in pre-market
+
+    elif phase in ("OPEN_CONFIRM", "INTRADAY"):
+        if open_vol is not None and open_vol >= 1.35 and change_pct > 0.3:
+            score += 8   # Explozie de volum la deschidere pe crestere
+        if above_vwap is True and change_pct > 0:
+            score += 6   # Cumparatorii apara pretul peste VWAP
+        elif above_vwap is False and pre_pct is not None and pre_pct > 1.0:
+            score -= 9   # Capcana (Gap & Fade): a deschis sus, dar a cazut sub VWAP
 
     score = max(15, min(96, score))
 
     return {
-        "price": price,
+        "price": live_price,
+        "prev_close": prev_close,
+        "change_pct": change_pct,
+        "premarket_pct": pre_pct,
+        "open_vol_ratio": open_vol,
+        "above_vwap": above_vwap,
         "rsi": round(rsi, 1),
-        "sma50_above": price > sma50,
+        "sma50_above": above_50,
         "sma200_above": above_200,
         "vol_ratio": round(vol_ratio, 2),
         "tp_pct": round(tp_pct * 100, 1),
@@ -235,16 +399,25 @@ def compute_indicators_and_backtest(df):
     }
 
 
-def get_ai_news_insight(ticker, name, headlines, stats):
+def get_ai_news_insight(ticker, name, headlines, stats, phase):
     """
-    Foloseste Gemini AI (daca GEMINI_API_KEY este setat) pentru a interpreta stirile
-    si a genera un rezumat scurt in romana. Altfel genereaza un rezumat tehnic clar.
+    Genereaza rezumatul scurt in romana folosind Gemini AI (daca exista GEMINI_API_KEY)
+    sau construieste automat rezumatul tehnic + intraday.
     """
     gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
+
+    live_context = ""
+    if stats["premarket_pct"] is not None:
+        sign = "+" if stats["premarket_pct"] >= 0 else ""
+        live_context += f" Pre-market: {sign}{stats['premarket_pct']}%."
+    if stats["open_vol_ratio"] is not None:
+        live_context += f" Volum deschidere: {stats['open_vol_ratio']}x."
+    if stats["above_vwap"] is not None:
+        live_context += f" {'Peste' if stats['above_vwap'] else 'Sub'} VWAP."
+
     fallback_text = (
-        f"Probabilitate istorică {stats['win_chance']}% ({stats['wins']}W/{stats['losses']}L pe 3 ani). "
-        f"RSI la {stats['rsi']}, preț {'peste' if stats['sma200_above'] else 'sub'} SMA200, "
-        f"raport Risk/Reward 1:{stats['rr_ratio']}."
+        f"Win istoric {stats['win_chance']}% ({stats['wins']}W/{stats['losses']}L). "
+        f"RSI {stats['rsi']}, {'peste' if stats['sma200_above'] else 'sub'} SMA200.{live_context}"
     )
 
     if not gemini_key or genai is None or not headlines:
@@ -253,11 +426,11 @@ def get_ai_news_insight(ticker, name, headlines, stats):
     try:
         client = genai.Client(api_key=gemini_key)
         prompt = (
-            f"Esti un analist financiar concis. Analizeaza compania {name} ({ticker}) in maximum 2 propozitii scurte in romana (max 180 caractere). "
-            f"Date tehnice: scor {stats['score']}/100, sanse statistice Win {stats['win_chance']}%, RSI {stats['rsi']}, "
-            f"trend {'ascendent' if stats['sma200_above'] else 'descendent'}. "
-            f"Ultimele stiri: {'; '.join(headlines[:4])}. "
-            f"Mentioneaza daca stirile sustin miscarea sau aduc risc de volatilitate. Fara introduceri."
+            f"Esti un analist bursier concis. Analizeaza {name} ({ticker}) in maximum 2 propozitii scurte in romana (max 190 caractere). "
+            f"Faza zilei: {phase}. Scor: {stats['score']}/100, Win istoric: {stats['win_chance']}%, "
+            f"variatie azi: {stats['change_pct']}%, pre-market: {stats['premarket_pct']}%, volum open: {stats['open_vol_ratio']}x. "
+            f"Stiri recente: {'; '.join(headlines[:4])}. "
+            f"Spune direct daca miscarea este confirmata de stiri sau prezinta risc. Fara introduceri."
         )
         response = client.models.generate_content(
             model="gemini-2.5-flash",
@@ -272,24 +445,43 @@ def get_ai_news_insight(ticker, name, headlines, stats):
 
 
 def main():
+    phase, status_label, now_ro, now_ny = detect_scan_phase()
+    if phase is None:
+        print(f"Ora curenta RO ({now_ro.strftime('%H:%M')}) este in afara ferestrelor 15:30/16:15/16:45. Iesire rapida.")
+        return
+
+    print(f"Pornire scanare in faza: {phase} ({status_label}) | RO: {now_ro.strftime('%H:%M')} | NY: {now_ny.strftime('%H:%M')}")
+
     custom_tickers = load_custom_watchlist("watchlist.txt")
     t212_available, t212_portfolio = get_trading212_data()
 
-    # Combinam listele fara duplicate, pastrand custom_tickers primele
     all_tickers = list(dict.fromkeys(custom_tickers + TOP_50_US + TOP_WORLDWIDE))
-    print(f"Incep scanarea pentru {len(all_tickers)} companii...")
+    print(f"Scanez {len(all_tickers)} companii...")
 
     results = []
     signals_count = 0
 
     for ticker in all_tickers:
         try:
+            is_us = "." not in ticker
             stock = yf.Ticker(ticker)
             hist = stock.history(period="3y", interval="1d")
             if hist.empty or len(hist) < 220:
                 continue
 
-            stats = compute_indicators_and_backtest(hist)
+            # Luam ultimul pret de inchidere anterior zilei de azi pentru calculul exact al variatiei
+            temp_df = hist.copy()
+            if temp_df.index.tz is None:
+                temp_df.index = temp_df.index.tz_localize("UTC")
+            temp_df = temp_df.tz_convert(TZ_NY if is_us else TZ_RO)
+            today_d = now_ny.date() if is_us else now_ro.date()
+            prev_rows = temp_df[temp_df.index.date < today_d]
+            prev_close = float(prev_rows["Close"].iloc[-1]) if not prev_rows.empty else float(temp_df["Close"].iloc[-1])
+
+            # Analizam miscarile live din Pre-Market si primele 15 min
+            intra_info = analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro)
+
+            stats = compute_indicators_and_backtest(hist, is_us, now_ny, now_ro, intra_info, phase)
             if not stats:
                 continue
 
@@ -303,7 +495,6 @@ def main():
             currency = info.get("currency", "USD")
             sym = "$" if currency == "USD" else ("€" if currency == "EUR" else f"{currency} ")
 
-            # Extragem ultimele titluri de stiri
             headlines = []
             try:
                 news_items = stock.news or []
@@ -319,28 +510,44 @@ def main():
             in_portfolio = base_sym in t212_portfolio
             on_t212 = (base_sym in t212_available) if t212_available else True
 
-            # Daca API-ul T212 este activ si compania nu e in watchlist-ul custom si nu e pe T212, o sarim
             if t212_available and not on_t212 and not is_custom:
                 continue
 
-            # Stabilim semnalul
-            if stats["score"] >= 68 and stats["win_chance"] >= 56:
+            # Praguri semnal calibrate
+            if stats["score"] >= 68 and stats["win_chance"] >= 54:
                 signal = "BUY"
                 signals_count += 1
-            elif stats["score"] >= 52:
+            elif stats["score"] >= 54:
                 signal = "WATCH"
             else:
                 signal = "WAIT"
 
-            summary = get_ai_news_insight(ticker, company_name, headlines, stats)
+            summary = get_ai_news_insight(ticker, company_name, headlines, stats, phase)
 
-            region = "WORLDWIDE" if "." in ticker or ticker in TOP_WORLDWIDE else "US"
+            region = "WORLDWIDE" if not is_us or ticker in TOP_WORLDWIDE else "US"
             tags = []
             if is_custom:
                 tags.append("CUSTOM")
             if in_portfolio:
                 tags.append("IN PORTFOLIO")
             tags.append(region)
+
+            # Construim badge-urile de indicatori inclusiv datele live Pre-Market / Open
+            indicators_list = [
+                f"RSI(14): {stats['rsi']}",
+                f"SMA200: {'Deasupra' if stats['sma200_above'] else 'Sub'}"
+            ]
+            if stats["premarket_pct"] is not None:
+                s_pm = "+" if stats["premarket_pct"] >= 0 else ""
+                indicators_list.append(f"Pre-Market: {s_pm}{stats['premarket_pct']}%")
+            if stats["open_vol_ratio"] is not None:
+                indicators_list.append(f"Vol Open 15m: {stats['open_vol_ratio']}x")
+            if stats["above_vwap"] is not None:
+                indicators_list.append(f"VWAP: {'Deasupra' if stats['above_vwap'] else 'Sub'}")
+
+            # Formatam pretul cu variatia de azi intre paranteze
+            chg = stats["change_pct"]
+            chg_str = f" ({'+' if chg >= 0 else ''}{chg}%)" if chg != 0 else ""
 
             results.append({
                 "ticker": ticker,
@@ -352,42 +559,36 @@ def main():
                 "winChance": stats["win_chance"],
                 "lossRisk": stats["loss_risk"],
                 "riskReward": f"1 : {stats['rr_ratio']}",
-                "price": f"{sym}{stats['price']:.2f}",
+                "price": f"{sym}{stats['price']:.2f}{chg_str}",
                 "takeProfit": f"+{stats['tp_pct']}% ({sym}{stats['price'] * (1 + stats['tp_pct']/100):.2f})",
                 "stopLoss": f"-{stats['sl_pct']}% ({sym}{stats['price'] * (1 - stats['sl_pct']/100):.2f})",
                 "backtestStats": f"{stats['wins']} Wins vs {stats['losses']} Losses (ultimii 3 ani)",
-                "indicators": [
-                    f"RSI(14): {stats['rsi']}",
-                    f"SMA200: {'Deasupra' if stats['sma200_above'] else 'Sub'}",
-                    f"Volum: {stats['vol_ratio']}x",
-                    f"Trading 212: {'Activ' if on_t212 else 'Verifica simbol'}"
-                ],
+                "indicators": indicators_list,
                 "summary": summary
             })
 
-            time.sleep(0.25)  # Pauza scurta pentru a evita blocarea de catre Yahoo Finance
+            time.sleep(0.25)
 
         except Exception as e:
             print(f"Eroare la {ticker}: {e}")
 
-    # Sortam astfel incat companiile tale din watchlist.txt sa fie primele, apoi dupa scor descrescator
     results.sort(key=lambda x: (not x["isCustom"], -x["score"]))
 
-    # Ora Romaniei (UTC+2 / UTC+3)
-    ro_time = datetime.now(timezone(timedelta(hours=2))).strftime("%d %b %Y, %H:%M EET")
+    tz_abbr = now_ro.tzname() or "EET"
+    ro_time = now_ro.strftime(f"%d %b %Y, %H:%M {tz_abbr}")
 
     output_data = {
-        "marketStatus": "Active Scan",
+        "marketStatus": status_label,
         "stocksScanned": len(results),
         "signalsToday": signals_count,
         "updatedAt": ro_time,
-        "opportunities": results[:35]  # Pastram top 35 cele mai relevante oportunitati in dashboard
+        "opportunities": results[:35]
     }
 
     with open("data.json", "w", encoding="utf-8") as f:
         json.dump(output_data, f, ensure_ascii=False, indent=2)
 
-    print(f"Gata! Salvat {len(output_data['opportunities'])} oportunitati in data.json.")
+    print(f"Gata! Salvat {len(output_data['opportunities'])} oportunitati in data.json ({status_label}).")
 
 
 if __name__ == "__main__":
