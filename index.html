@@ -9,32 +9,35 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg-base: #07080a;
-      --bg-surface: #0e1015;
-      --bg-elevated: #14171f;
-      --bg-hover: #1a1e29;
-      --border: #1e222d;
-      --border-strong: #2c3242;
-      --text-primary: #f3f4f6;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
+      --bg-base: #050608;
+      --bg-surface: #0c0f15;
+      --bg-elevated: #121620;
+      --bg-hover: #171c28;
+      --border: rgba(255, 255, 255, 0.075);
+      --border-strong: rgba(255, 255, 255, 0.14);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
       --green: #10b981;
-      --green-bg: rgba(16, 185, 129, 0.12);
-      --green-border: rgba(16, 185, 129, 0.35);
+      --green-bg: rgba(16, 185, 129, 0.13);
+      --green-border: rgba(16, 185, 129, 0.38);
       --amber: #f59e0b;
-      --amber-bg: rgba(245, 158, 11, 0.12);
+      --amber-bg: rgba(245, 158, 11, 0.13);
       --amber-border: rgba(245, 158, 11, 0.35);
       --red: #ef4444;
       --red-bg: rgba(239, 68, 68, 0.12);
-      --red-border: rgba(239, 68, 68, 0.35);
-      --blue: #3b82f6;
-      --blue-bg: rgba(59, 130, 246, 0.12);
+      --red-border: rgba(239, 68, 68, 0.34);
+      --blue: #38bdf8;
+      --blue-bg: rgba(56, 189, 248, 0.12);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: radial-gradient(circle at 18% 0%, #0f151c 0%, var(--bg-base) 48%);
+      background:
+        radial-gradient(ellipse 75% 45% at 15% -5%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 40% at 85% 0%, rgba(56, 189, 248, 0.05) 0%, transparent 55%),
+        var(--bg-base);
       color: var(--text-primary);
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
@@ -43,9 +46,9 @@
     }
 
     .container {
-      max-width: 1380px;
+      max-width: 1420px;
       margin: 0 auto;
-      padding: 20px 24px 60px;
+      padding: 22px 28px 64px;
     }
 
     /* HEADER */
@@ -60,37 +63,66 @@
     }
 
     .brand h1 {
-      font-size: 1.45rem;
+      font-size: 1.48rem;
       font-weight: 700;
-      letter-spacing: -0.02em;
+      letter-spacing: -0.025em;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .brand p {
-      font-size: 0.82rem;
+    .brand-meta {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
       color: var(--text-secondary);
-      margin-top: 2px;
+      margin-top: 4px;
+    }
+
+    .t212-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+    }
+
+    .t212-pill.connected {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green);
+    }
+
+    .t212-pill.warn {
+      background: var(--amber-bg);
+      border-color: var(--amber-border);
+      color: var(--amber);
     }
 
     .header-meta {
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
 
     .live-pill {
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      padding: 5px 12px;
+      padding: 6px 12px;
       border-radius: 999px;
       background: var(--green-bg);
       border: 1px solid var(--green-border);
       color: var(--green);
-      font-size: 0.78rem;
+      font-size: 0.77rem;
       font-weight: 600;
     }
 
@@ -109,12 +141,13 @@
     }
 
     .scan-timer {
-      font-size: 0.78rem;
+      font-size: 0.77rem;
       color: var(--text-secondary);
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      padding: 5px 11px;
-      border-radius: 8px;
+      padding: 6px 12px;
+      border-radius: 9px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
     }
 
     .scan-timer strong {
@@ -124,23 +157,23 @@
     }
 
     .icon-btn {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
       color: var(--text-primary);
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
+      padding: 6px 13px;
+      border-radius: 9px;
+      font-size: 0.78rem;
+      font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: all 0.15s ease;
+      transition: all 0.16s ease;
     }
 
     .icon-btn:hover {
-      background: var(--bg-elevated);
-      border-color: var(--border-strong);
+      background: var(--bg-hover);
+      border-color: var(--green-border);
     }
 
     /* QUICK STATS */
@@ -152,38 +185,39 @@
     }
 
     .stat-card {
-      background: var(--bg-surface);
+      background: linear-gradient(180deg, rgba(255,255,255,0.025) 0%, var(--bg-surface) 100%);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      border-radius: 14px;
+      padding: 15px 20px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.04);
     }
 
     .stat-label {
-      font-size: 0.75rem;
+      font-size: 0.71rem;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--text-muted);
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .stat-value {
-      font-size: 1.25rem;
+      font-size: 1.32rem;
       font-weight: 700;
       font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
     }
 
     .stat-value.green { color: var(--green); }
 
     /* PORTFOLIO MONITORING STRIP */
     .portfolio-section {
-      background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, var(--bg-surface) 60%);
-      border: 1px solid var(--border-strong);
-      border-radius: 14px;
-      padding: 16px 18px;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.07) 0%, rgba(12, 15, 21, 0.96) 55%);
+      border: 1px solid var(--green-border);
+      border-radius: 16px;
+      padding: 16px 20px;
       margin-bottom: 24px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255,255,255,0.05);
     }
 
     .portfolio-header {
@@ -194,8 +228,8 @@
     }
 
     .portfolio-header h2 {
-      font-size: 0.92rem;
-      font-weight: 600;
+      font-size: 0.94rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -203,32 +237,32 @@
 
     .portfolio-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
       gap: 12px;
     }
 
     .port-card {
       background: var(--bg-elevated);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 14px;
+      border: 1px solid var(--border-strong);
+      border-radius: 12px;
+      padding: 13px 15px;
       cursor: pointer;
       transition: all 0.16s ease;
     }
 
     .port-card:hover {
-      border-color: var(--border-strong);
-      transform: translateY(-1px);
+      border-color: var(--green);
+      transform: translateY(-2px);
     }
 
     .port-card.alert-exit {
       border-color: var(--red-border);
-      background: linear-gradient(180deg, rgba(239, 68, 68, 0.07) 0%, var(--bg-elevated) 100%);
+      background: linear-gradient(180deg, rgba(239, 68, 68, 0.09) 0%, var(--bg-elevated) 100%);
     }
 
     .port-card.alert-tp {
       border-color: var(--green-border);
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-elevated) 100%);
+      background: linear-gradient(180deg, rgba(16, 185, 129, 0.10) 0%, var(--bg-elevated) 100%);
     }
 
     .port-top {
@@ -242,18 +276,18 @@
     .port-ticker {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 0.96rem;
+      font-size: 1rem;
     }
 
     .exit-pill {
       font-size: 0.68rem;
       font-weight: 700;
-      padding: 2px 8px;
+      padding: 3px 8px;
       border-radius: 6px;
       text-transform: uppercase;
     }
 
-    .exit-HOLD { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,0.3); }
+    .exit-HOLD { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(56,189,248,0.32); }
     .exit-TP { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
     .exit-WATCH { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
     .exit-SELL { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
@@ -269,22 +303,22 @@
     }
 
     .port-reason {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       color: var(--text-secondary);
-      line-height: 1.38;
+      line-height: 1.4;
     }
 
-    /* MAIN WORKSPACE LAYOUT (Varianta 1: Spotlight Left + 2-Col Grid Right) */
+    /* MAIN WORKSPACE LAYOUT */
     .workspace {
       display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 22px;
+      grid-template-columns: 350px 1fr;
+      gap: 24px;
       align-items: start;
     }
 
     .section-title {
-      font-size: 0.95rem;
-      font-weight: 600;
+      font-size: 0.94rem;
+      font-weight: 700;
       color: var(--text-primary);
       margin-bottom: 12px;
       display: flex;
@@ -293,44 +327,46 @@
     }
 
     .section-title span {
-      font-size: 0.75rem;
+      font-size: 0.73rem;
       color: var(--text-muted);
-      font-weight: 400;
+      font-weight: 500;
     }
 
     /* SPOTLIGHT COLUMN */
     .spotlight-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 13px;
     }
 
     .spot-card {
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.06) 0%, var(--bg-surface) 100%);
+      background: linear-gradient(165deg, rgba(16, 185, 129, 0.08) 0%, var(--bg-surface) 60%);
       border: 1px solid var(--green-border);
-      border-radius: 14px;
-      padding: 16px;
+      border-radius: 15px;
+      padding: 16px 18px;
       cursor: pointer;
-      transition: transform 0.16s ease, box-shadow 0.16s ease;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255,255,255,0.05);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
     }
 
-    .spot-card.watch-spot {
-      background: var(--bg-surface);
+    .spot-card.neutral-spot {
+      background: linear-gradient(165deg, rgba(255, 255, 255, 0.03) 0%, var(--bg-surface) 70%);
       border-color: var(--border-strong);
     }
 
     .spot-card:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.48);
     }
 
     .spot-tags {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.7rem;
+      font-size: 0.69rem;
+      letter-spacing: 0.04em;
       color: var(--amber);
-      font-weight: 600;
+      font-weight: 700;
       margin-bottom: 8px;
     }
 
@@ -343,15 +379,16 @@
     }
 
     .spot-ticker {
-      font-size: 1.15rem;
+      font-size: 1.18rem;
       font-weight: 700;
       font-family: 'JetBrains Mono', monospace;
+      letter-spacing: -0.02em;
     }
 
     .spot-name {
       font-size: 0.78rem;
       color: var(--text-secondary);
-      max-width: 195px;
+      max-width: 205px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -367,7 +404,7 @@
 
     .price-text {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 0.92rem;
+      font-size: 0.94rem;
       font-weight: 600;
     }
 
@@ -375,9 +412,10 @@
       background: var(--bg-elevated);
       border: 1px solid var(--border-strong);
       color: var(--text-secondary);
-      font-size: 0.72rem;
-      padding: 3px 8px;
-      border-radius: 6px;
+      font-size: 0.71rem;
+      font-weight: 600;
+      padding: 4px 9px;
+      border-radius: 7px;
       cursor: pointer;
       transition: all 0.15s;
     }
@@ -391,55 +429,54 @@
       font-size: 0.78rem;
       color: var(--text-secondary);
       margin-top: 10px;
-      line-height: 1.42;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      line-height: 1.45;
     }
 
-    /* CONTROLS & FILTER BAR */
+    /* CONTROLS & FILTER BAR (SINGLE CRISP ROW) */
     .controls-bar {
       display: flex;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 14px;
     }
 
     .search-box {
-      flex: 1;
-      min-width: 190px;
+      flex: 1 1 200px;
+      min-width: 150px;
       background: var(--bg-surface);
       border: 1px solid var(--border);
       color: var(--text-primary);
       padding: 8px 12px;
-      border-radius: 9px;
-      font-size: 0.83rem;
+      border-radius: 10px;
+      font-size: 0.81rem;
       outline: none;
+      transition: border-color 0.15s;
     }
 
     .search-box:focus { border-color: var(--border-strong); }
 
     .pill-group {
       display: inline-flex;
+      align-items: center;
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      border-radius: 9px;
+      border-radius: 10px;
       padding: 3px;
       gap: 2px;
-      flex-wrap: wrap;
+      flex-shrink: 0;
     }
 
     .filter-btn {
       background: transparent;
       border: none;
       color: var(--text-secondary);
-      padding: 5px 10px;
-      border-radius: 6px;
-      font-size: 0.76rem;
+      padding: 5px 9px;
+      border-radius: 7px;
+      font-size: 0.74rem;
       font-weight: 500;
       cursor: pointer;
+      white-space: nowrap;
       transition: all 0.15s;
     }
 
@@ -448,6 +485,7 @@
       background: var(--bg-elevated);
       color: var(--text-primary);
       font-weight: 600;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     .sort-select {
@@ -455,26 +493,28 @@
       border: 1px solid var(--border);
       color: var(--text-primary);
       padding: 7px 10px;
-      border-radius: 9px;
-      font-size: 0.78rem;
+      border-radius: 10px;
+      font-size: 0.76rem;
       outline: none;
       cursor: pointer;
+      flex-shrink: 0;
     }
 
     /* 2-COLUMN CARDS GRID */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
+      gap: 13px;
     }
 
     .stock-card {
-      background: var(--bg-surface);
+      background: linear-gradient(180deg, rgba(255,255,255,0.02) 0%, var(--bg-surface) 100%);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px 16px;
+      border-radius: 14px;
+      padding: 15px 17px;
       cursor: pointer;
-      transition: all 0.16s ease;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255,255,255,0.035);
+      transition: all 0.18s ease;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -483,16 +523,14 @@
     .stock-card:hover {
       background: var(--bg-elevated);
       border-color: var(--border-strong);
-      transform: translateY(-1px);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.38);
     }
 
     .stock-card.sig-BUY {
       border-color: var(--green-border);
-      background: linear-gradient(180deg, rgba(16, 185, 129, 0.045) 0%, var(--bg-surface) 100%);
+      background: linear-gradient(165deg, rgba(16, 185, 129, 0.06) 0%, var(--bg-surface) 70%);
     }
-
-    .stock-card.sig-WAIT { opacity: 0.82; }
-    .stock-card.sig-WAIT:hover { opacity: 1; }
 
     .card-top {
       display: flex;
@@ -512,36 +550,61 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-size: 1rem;
+      font-size: 1.05rem;
       cursor: pointer;
       padding: 0 2px;
       line-height: 1;
-      transition: color 0.15s;
+      transition: color 0.15s, transform 0.15s;
     }
 
-    .pin-btn.pinned, .pin-btn:hover { color: var(--amber); }
+    .pin-btn.pinned, .pin-btn:hover {
+      color: var(--amber);
+      transform: scale(1.1);
+    }
 
     .card-ticker {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 1.02rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mini-tag {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+    }
+
+    .mini-tag.port {
+      background: var(--green-bg);
+      border-color: var(--green-border);
+      color: var(--green);
     }
 
     .card-company {
-      font-size: 0.75rem;
+      font-size: 0.76rem;
       color: var(--text-secondary);
-      max-width: 165px;
+      max-width: 195px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      margin-top: 1px;
     }
 
     .badge {
-      font-size: 0.7rem;
+      font-size: 0.69rem;
       font-weight: 700;
       padding: 3px 9px;
-      border-radius: 6px;
-      letter-spacing: 0.03em;
+      border-radius: 7px;
+      letter-spacing: 0.04em;
       text-transform: uppercase;
     }
 
@@ -554,7 +617,7 @@
       justify-content: space-between;
       font-size: 0.74rem;
       color: var(--text-secondary);
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .score-row strong {
@@ -565,7 +628,7 @@
     .progress-track {
       width: 100%;
       height: 5px;
-      background: #1b1f2a;
+      background: rgba(255,255,255,0.06);
       border-radius: 999px;
       overflow: hidden;
       margin-bottom: 10px;
@@ -576,14 +639,31 @@
       border-radius: 999px;
     }
 
+    .card-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.68rem;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      padding: 2px 7px;
+      border-radius: 5px;
+    }
+
     .card-bottom {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       color: var(--text-secondary);
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      padding-top: 9px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
 
     .win-txt { color: var(--green); font-weight: 600; font-family: 'JetBrains Mono', monospace; }
@@ -592,8 +672,8 @@
     .drawer-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(3px);
+      background: rgba(0, 0, 0, 0.68);
+      backdrop-filter: blur(4px);
       z-index: 90;
       display: none;
     }
@@ -605,12 +685,12 @@
       top: 0;
       right: -520px;
       width: 100%;
-      max-width: 490px;
+      max-width: 500px;
       height: 100vh;
-      background: #0b0d12;
+      background: #0a0d13;
       border-left: 1px solid var(--border-strong);
       z-index: 100;
-      padding: 20px 22px 36px;
+      padding: 22px 24px 36px;
       overflow-y: auto;
       transition: right 0.24s cubic-bezier(0.16, 1, 0.3, 1);
       display: flex;
@@ -636,21 +716,21 @@
       width: 32px;
       height: 32px;
       border-radius: 8px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       cursor: pointer;
     }
 
     .drawer-box {
       background: var(--bg-surface);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 13px;
+      padding: 15px;
     }
 
     .drawer-box h4 {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       text-transform: uppercase;
-      letter-spacing: 0.04em;
+      letter-spacing: 0.05em;
       color: var(--text-secondary);
       margin-bottom: 10px;
       display: flex;
@@ -658,18 +738,15 @@
       justify-content: space-between;
     }
 
-    .tf-switch {
-      display: inline-flex;
-      gap: 4px;
-    }
+    .tf-switch { display: inline-flex; gap: 4px; }
 
     .tf-btn {
       background: var(--bg-elevated);
       border: 1px solid var(--border);
       color: var(--text-secondary);
       font-size: 0.7rem;
-      padding: 2px 7px;
-      border-radius: 5px;
+      padding: 2px 8px;
+      border-radius: 6px;
       cursor: pointer;
     }
 
@@ -681,9 +758,9 @@
     .tv-container {
       width: 100%;
       height: 270px;
-      border-radius: 8px;
+      border-radius: 9px;
       overflow: hidden;
-      background: #07080a;
+      background: #06070a;
     }
 
     .levels-grid {
@@ -696,7 +773,7 @@
     .level-pill {
       padding: 8px 10px;
       border-radius: 8px;
-      font-size: 0.78rem;
+      font-size: 0.77rem;
       font-family: 'JetBrains Mono', monospace;
     }
 
@@ -717,7 +794,7 @@
       border: 1px solid var(--border-strong);
       color: var(--text-primary);
       padding: 6px 10px;
-      border-radius: 7px;
+      border-radius: 8px;
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.88rem;
       text-align: right;
@@ -755,10 +832,9 @@
       padding: 12px;
       border-radius: 10px;
       background: var(--green);
-      color: #04130d;
+      color: #03150e;
       font-weight: 700;
       font-size: 0.88rem;
-      text-decoration: none;
       border: none;
       cursor: pointer;
       transition: opacity 0.15s;
@@ -788,6 +864,10 @@
       transform: translateX(-50%) translateY(0);
     }
 
+    @media (max-width: 1240px) {
+      .controls-bar { flex-wrap: wrap; }
+    }
+
     @media (max-width: 1024px) {
       .workspace { grid-template-columns: 1fr; }
       .spotlight-list { display: grid; grid-template-columns: repeat(2, 1fr); }
@@ -806,7 +886,10 @@
     <header class="topbar">
       <div class="brand">
         <h1>AI Trading Analyst</h1>
-        <p id="subHeader">Trading 212 • US & Worldwide Scanner</p>
+        <div class="brand-meta">
+          <span id="subHeader">Trading 212 • US &amp; Worldwide Scanner</span>
+          <span class="t212-pill" id="t212StatusPill">Trading 212: se verifică...</span>
+        </div>
       </div>
       <div class="header-meta">
         <span class="live-pill"><span class="pulse-dot"></span><span id="liveBadge">Live Feed</span></span>
@@ -818,30 +901,24 @@
     <!-- QUICK STATS -->
     <section class="stats-row">
       <div class="stat-card">
-        <div>
-          <div class="stat-label">Fază piață</div>
-          <div class="stat-value" id="marketStatusText" style="font-size:1.05rem;">Se încarcă...</div>
-        </div>
+        <div class="stat-label">Fază piață</div>
+        <div class="stat-value" id="marketStatusText" style="font-size:1.08rem;">Se încarcă...</div>
       </div>
       <div class="stat-card">
-        <div>
-          <div class="stat-label">Acțiuni scanate</div>
-          <div class="stat-value" id="scannedCount">0</div>
-        </div>
+        <div class="stat-label">Acțiuni scanate</div>
+        <div class="stat-value" id="scannedCount">0</div>
       </div>
       <div class="stat-card">
-        <div>
-          <div class="stat-label">Semnale BUY azi</div>
-          <div class="stat-value green" id="signalsCount">0</div>
-        </div>
+        <div class="stat-label">Semnale BUY azi</div>
+        <div class="stat-value green" id="signalsCount">0</div>
       </div>
     </section>
 
     <!-- PORTFOLIO MONITORING BAR (Trading 212) -->
     <section class="portfolio-section" id="portfolioSection" style="display:none;">
       <div class="portfolio-header">
-        <h2>💼 Portofoliul Tău Trading 212 <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;">(Monitorizare Take Profit &amp; Stop Loss)</span></h2>
-        <span id="portfolioCountBadge" style="font-size:0.75rem;color:var(--text-secondary);"></span>
+        <h2>💼 Portofoliul Tău Trading 212 <span style="font-size:0.75rem;color:var(--text-secondary);font-weight:400;">(Monitorizare Take Profit &amp; Stop Loss)</span></h2>
+        <span id="portfolioCountBadge" style="font-size:0.76rem;color:var(--green);font-weight:600;"></span>
       </div>
       <div class="portfolio-grid" id="portfolioGrid"></div>
     </section>
@@ -852,7 +929,7 @@
       <aside>
         <div class="section-title">
           În atenția ta azi
-          <span>BUY • Pinned • Custom</span>
+          <span>BUY • Portfolio • ★ Pinned</span>
         </div>
         <div class="spotlight-list" id="spotlightList"></div>
       </aside>
@@ -860,7 +937,7 @@
       <!-- RIGHT MAIN SCANNER -->
       <section>
         <div class="controls-bar">
-          <input type="text" id="searchInput" class="search-box" placeholder="Caută simbol sau companie (ex: PLTR, NVDA)..." />
+          <input type="text" id="searchInput" class="search-box" placeholder="Caută simbol sau companie..." />
 
           <div class="pill-group" id="signalFilters">
             <button class="filter-btn active" data-sig="ALL">All</button>
@@ -871,18 +948,18 @@
 
           <div class="pill-group" id="regionFilters">
             <button class="filter-btn active" data-reg="ALL">Toate</button>
-            <button class="filter-btn" data-reg="FAV">★ Favorites</button>
+            <button class="filter-btn" data-reg="FAV">★ Fav</button>
             <button class="filter-btn" data-reg="PORTFOLIO">Portfolio</button>
-            <button class="filter-btn" data-reg="CUSTOM">CUSTOM</button>
+            <button class="filter-btn" data-reg="CUSTOM">Custom</button>
             <button class="filter-btn" data-reg="US">US</button>
             <button class="filter-btn" data-reg="WORLDWIDE">World</button>
           </div>
 
           <select id="sortSelect" class="sort-select">
-            <option value="featured">Sortare: Recomandate</option>
-            <option value="score">Scor Tehnic (Max)</option>
-            <option value="win">Win Chance (%)</option>
-            <option value="ticker">Alfabetic (A-Z)</option>
+            <option value="featured">Sort: Recomandate</option>
+            <option value="score">Scor Max</option>
+            <option value="win">Win %</option>
+            <option value="ticker">A - Z</option>
           </select>
         </div>
 
@@ -905,8 +982,7 @@
       <button class="close-drawer" onclick="closeDrawer()">✕</button>
     </div>
 
-    <!-- PORTFOLIO POSITION BOX IN DRAWER -->
-    <div class="drawer-box" id="dPortfolioBox" style="display:none;border-color:var(--border-strong);">
+    <div class="drawer-box" id="dPortfolioBox" style="display:none;border-color:var(--green-border);">
       <h4>
         <span>💼 Poziția ta activă Trading 212</span>
         <span id="dExitPill" class="exit-pill exit-HOLD">HOLD</span>
@@ -919,7 +995,6 @@
       <p id="dPortReason" style="font-size:0.78rem;color:var(--text-secondary);"></p>
     </div>
 
-    <!-- TRADINGVIEW LIVE CHART -->
     <div class="drawer-box">
       <h4>
         <span>Grafic Live TradingView</span>
@@ -936,7 +1011,6 @@
       </div>
     </div>
 
-    <!-- PROFIT CALCULATOR -->
     <div class="drawer-box">
       <h4><span>Calculator rapid de profit</span><span id="dBacktest" style="font-size:0.7rem;text-transform:none;"></span></h4>
       <div class="calc-input-row">
@@ -953,7 +1027,6 @@
       </div>
     </div>
 
-    <!-- INDICATORS & AI SUMMARY -->
     <div class="drawer-box">
       <h4><span>Indicatori &amp; Analiză AI</span><span id="dRr" style="font-family:'JetBrains Mono',monospace;">R/R 1:2</span></h4>
       <div class="ind-tags" id="dIndicators" style="margin-bottom:10px;"></div>
@@ -1072,7 +1145,7 @@
         theme: "dark",
         style: "1",
         locale: "ro",
-        backgroundColor: "#07080a",
+        backgroundColor: "#06070a",
         gridColor: "rgba(30, 34, 45, 0.4)",
         hide_top_toolbar: true,
         hide_legend: false,
@@ -1119,7 +1192,6 @@
       badge.textContent = item.signal;
       badge.className = `badge badge-${item.signal}`;
 
-      // Portfolio section in drawer
       const portBox = document.getElementById("dPortfolioBox");
       if (item.portfolio) {
         portBox.style.display = "block";
@@ -1183,7 +1255,7 @@
       sec.style.display = "block";
       const alertsNum = portfolioPositions.filter(p => p.isAlert).length;
       badge.textContent = alertsNum > 0
-        ? `${portfolioPositions.length} poziții • ${alertsNum} alerte active`
+        ? `${portfolioPositions.length} poziții active • ${alertsNum} alerte`
         : `${portfolioPositions.length} poziții active`;
 
       grid.innerHTML = portfolioPositions.map(p => {
@@ -1208,11 +1280,17 @@
       }).join("");
     }
 
-    function renderSpotlight() {
+    function getSpotlightItems() {
+      // Evitam poluarea zonei Spotlight cu actiuni WAIT (doar BUY, Portfolio, Pinned sau WATCH din Custom)
+      const priority = allOpportunities.filter(
+        x => x.signal === "BUY" || x.inPortfolio || pinnedTickers.includes(x.ticker) || (x.isCustom && x.signal !== "WAIT")
+      );
+      if (priority.length > 0) return priority.slice(0, 4);
+      return allOpportunities.slice(0, 2);
+    }
+
+    function renderSpotlight(spotlights) {
       const wrap = document.getElementById("spotlightList");
-      const spotlights = allOpportunities.filter(
-        x => x.signal === "BUY" || pinnedTickers.includes(x.ticker) || x.isCustom || x.inPortfolio
-      ).slice(0, 5);
 
       if (spotlights.length === 0) {
         wrap.innerHTML = `<div class="drawer-box" style="font-size:0.8rem;color:var(--text-secondary);">Apasă pe steluța ★ a oricărei acțiuni pentru a o fixa aici.</div>`;
@@ -1222,9 +1300,12 @@
       wrap.innerHTML = spotlights.map(item => {
         const isBuy = item.signal === "BUY";
         const isPinned = pinnedTickers.includes(item.ticker);
-        const topLabel = isPinned ? "★ PINNED" : (item.inPortfolio ? "💼 IN PORTFOLIO" : (item.isCustom ? "⭐ CUSTOM WATCHLIST" : "🟢 TOP BUY SIGNAL"));
+        const topLabel = item.inPortfolio
+          ? "💼 IN PORTFOLIO"
+          : (isPinned ? "★ PINNED" : (isBuy ? "🟢 TOP BUY SIGNAL" : "⭐ WATCHLIST"));
+
         return `
-          <div class="spot-card ${isBuy ? "" : "watch-spot"}" onclick="openDrawer('${escapeHtml(item.ticker)}')">
+          <div class="spot-card ${isBuy ? "" : "neutral-spot"}" onclick="openDrawer('${escapeHtml(item.ticker)}')">
             <div class="spot-tags">
               <span>${topLabel}</span>
               <span>Win ${item.winChance}%</span>
@@ -1253,12 +1334,17 @@
       }).join("");
     }
 
-    function renderGrid() {
+    function renderGrid(spotlights) {
       const grid = document.getElementById("cardsGrid");
       const q = document.getElementById("searchInput").value.trim().toLowerCase();
       const sortBy = document.getElementById("sortSelect").value;
+      const spotSet = new Set(spotlights.map(s => s.ticker));
 
       let filtered = allOpportunities.filter(item => {
+        // Daca nu filtram explicit, nu dublam cardurile care sunt deja afisate in Spotlight-ul din stanga
+        if (!q && currentSignalFilter === "ALL" && currentRegionFilter === "ALL" && spotSet.has(item.ticker)) {
+          return false;
+        }
         if (q && !item.ticker.toLowerCase().includes(q) && !item.name.toLowerCase().includes(q)) return false;
         if (currentSignalFilter !== "ALL" && item.signal !== currentSignalFilter) return false;
         if (currentRegionFilter === "FAV" && !pinnedTickers.includes(item.ticker)) return false;
@@ -1281,6 +1367,11 @@
       grid.innerHTML = filtered.map(item => {
         const isPinned = pinnedTickers.includes(item.ticker);
         const barColor = item.signal === "BUY" ? "var(--green)" : (item.signal === "WATCH" ? "var(--amber)" : "var(--red)");
+        const chipsHtml = (item.indicators || [])
+          .slice(0, 3)
+          .map(ind => `<span class="chip">${escapeHtml(ind)}</span>`)
+          .join("");
+
         return `
           <div class="stock-card sig-${item.signal}" onclick="openDrawer('${escapeHtml(item.ticker)}')">
             <div>
@@ -1288,7 +1379,11 @@
                 <div class="ticker-wrap">
                   <button class="pin-btn ${isPinned ? "pinned" : ""}" title="Fixează sus" onclick="togglePin('${escapeHtml(item.ticker)}', event)">★</button>
                   <div>
-                    <div class="card-ticker">${escapeHtml(item.ticker)} ${item.inPortfolio ? '<span style="font-size:0.65rem;color:var(--green);">●</span>' : ''}</div>
+                    <div class="card-ticker">
+                      ${escapeHtml(item.ticker)}
+                      ${item.inPortfolio ? '<span class="mini-tag port">PORTFOLIO</span>' : ''}
+                      ${item.isCustom ? '<span class="mini-tag">CUSTOM</span>' : ''}
+                    </div>
                     <div class="card-company">${escapeHtml(item.name)}</div>
                   </div>
                 </div>
@@ -1302,12 +1397,14 @@
               <div class="progress-track">
                 <div class="progress-fill" style="width:${item.score}%;background:${barColor};"></div>
               </div>
+
+              <div class="card-chips">${chipsHtml}</div>
             </div>
 
             <div class="card-bottom">
               <span>Win: <span class="win-txt">${item.winChance}%</span></span>
-              <span style="font-family:'JetBrains Mono',monospace;">${escapeHtml(item.price)}</span>
-              <span style="color:var(--text-primary);">Details →</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--text-primary);">${escapeHtml(item.price)}</span>
+              <span style="color:var(--text-secondary);">Details →</span>
             </div>
           </div>
         `;
@@ -1316,8 +1413,9 @@
 
     function renderAll() {
       renderPortfolioBar();
-      renderSpotlight();
-      renderGrid();
+      const spotlights = getSpotlightItems();
+      renderSpotlight(spotlights);
+      renderGrid(spotlights);
     }
 
     async function loadMarketData(manual = false) {
@@ -1332,7 +1430,14 @@
         document.getElementById("marketStatusText").textContent = data.marketStatus || "Active Scan";
         document.getElementById("scannedCount").textContent = data.stocksScanned ?? allOpportunities.length;
         document.getElementById("signalsCount").textContent = data.signalsToday ?? 0;
-        document.getElementById("subHeader").textContent = `Trading 212 • Actualizat: ${data.updatedAt || "recent"}`;
+        document.getElementById("subHeader").textContent = `Actualizat: ${data.updatedAt || "recent"}`;
+
+        const pill = document.getElementById("t212StatusPill");
+        const st = data.t212Status || "";
+        if (st) {
+          pill.textContent = st;
+          pill.className = st.includes("Conectat") ? "t212-pill connected" : "t212-pill warn";
+        }
 
         renderAll();
         if (manual) showToast("Date actualizate!");
@@ -1342,15 +1447,15 @@
       }
     }
 
-    document.getElementById("searchInput").addEventListener("input", renderGrid);
-    document.getElementById("sortSelect").addEventListener("change", renderGrid);
+    document.getElementById("searchInput").addEventListener("input", () => renderGrid(getSpotlightItems()));
+    document.getElementById("sortSelect").addEventListener("change", () => renderGrid(getSpotlightItems()));
 
     document.querySelectorAll("#signalFilters .filter-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         document.querySelectorAll("#signalFilters .filter-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         currentSignalFilter = btn.dataset.sig;
-        renderGrid();
+        renderGrid(getSpotlightItems());
       });
     });
 
@@ -1359,7 +1464,7 @@
         document.querySelectorAll("#regionFilters .filter-btn").forEach(b => b.classList.remove("active"));
         btn.classList.add("active");
         currentRegionFilter = btn.dataset.reg;
-        renderGrid();
+        renderGrid(getSpotlightItems());
       });
     });
 
