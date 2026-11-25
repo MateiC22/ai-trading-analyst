@@ -51,7 +51,7 @@
       background: #000000;
     }
     ::-webkit-scrollbar-thumb {
-      background: #1f2228;
+      background: #1f1f23;
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
@@ -59,14 +59,14 @@
     }
 
     .stock-card {
-      background-color: #07080a;
-      border: 1px solid #1f2228;
-      border-radius: 10px;
+      background-color: #0d0d0f;
+      border: 1px solid #1f1f23;
+      border-radius: 12px;
       transition: border-color 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
     }
     .stock-card:hover {
       border-color: #2f3540;
-      background-color: #0a0c0f;
+      background-color: #121215;
     }
 
     @keyframes pulseDot {
@@ -86,41 +86,41 @@
     <!-- 1. TOP HEADER -->
     <header class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <div class="flex items-center gap-3">
-          <h1 class="text-[22px] font-bold tracking-tight text-[#f8fafc] leading-tight">
-            AI Trading Analyst
-          </h1>
-          <span id="modeBadge" class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-pillGreenBg text-pillGreenText tracking-wide">
-            Demo UI
-          </span>
-        </div>
+        <h1 class="text-[22px] font-bold tracking-tight text-[#f8fafc] leading-tight">
+          AI Trading Analyst
+        </h1>
         <p class="text-xs text-mutedText mt-1">
           Trading 212 &bull; US Top Equities Scanner &bull; <span id="lastUpdatedLabel">Actualizat zilnic la 15:35 EET</span>
         </p>
       </div>
 
-      <!-- Minimalist Dark Action Buttons -->
+      <!-- Right Status Badge & Compact Controls -->
       <div class="flex items-center gap-2.5 self-start sm:self-auto">
+        <span id="modeBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pillAmberBg text-pillAmberText tracking-wide">
+          <span id="modeBadgeDot" class="w-1.5 h-1.5 rounded-full bg-current"></span>
+          <span id="modeBadgeText">Demo UI</span>
+        </span>
+
         <button
-          id="simulateBtn"
+          id="reloadBtn"
           type="button"
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-[10px] text-xs font-medium bg-[#07080a] text-[#f8fafc] border border-[#1f2228] hover:border-[#2f3540] hover:bg-[#0d0f13] active:scale-[0.99] transition cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium bg-[#0d0d0f] text-[#f8fafc] border border-[#1f1f23] hover:border-[#2f3540] hover:bg-[#141418] active:scale-[0.99] transition cursor-pointer"
         >
-          <svg id="simulateIcon" class="w-3.5 h-3.5 text-[#22c55e]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <svg id="reloadIcon" class="w-3.5 h-3.5 text-[#22c55e]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <span>Simulate Scan</span>
+          <span>Reload</span>
         </button>
 
         <button
           id="openImportBtn"
           type="button"
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-[10px] text-xs font-medium bg-[#07080a] text-[#f8fafc] border border-[#1f2228] hover:border-[#2f3540] hover:bg-[#0d0f13] active:scale-[0.99] transition cursor-pointer"
+          class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[10px] text-xs font-medium bg-[#0d0d0f] text-[#f8fafc] border border-[#1f1f23] hover:border-[#2f3540] hover:bg-[#141418] active:scale-[0.99] transition cursor-pointer"
         >
           <svg class="w-3.5 h-3.5 text-[#8b949e]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
           </svg>
-          <span>Import JSON</span>
+          <span>JSON</span>
         </button>
       </div>
     </header>
@@ -150,13 +150,13 @@
     </section>
 
     <!-- Horizontal Divider -->
-    <hr class="border-0 border-t border-divider my-7" />
+    <hr class="border-0 border-t border-[#1c1c1e] my-7" />
 
     <!-- 3. FILTER & CONTROLS BAR -->
     <section class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
       <div class="flex items-center justify-between">
         <h2 class="text-[18px] font-bold text-[#f8fafc] tracking-tight">Top opportunities</h2>
-        <span id="visibleCountBadge" class="md:hidden text-xs text-mutedText">10 afișate</span>
+        <span id="visibleCountBadge" class="md:hidden text-xs text-mutedText">4 afișate</span>
       </div>
 
       <div class="flex flex-wrap items-center gap-2.5">
@@ -168,24 +168,24 @@
           <input
             id="searchInput"
             type="text"
-            placeholder="Filter ticker..."
-            class="w-full sm:w-40 pl-8 pr-3 py-1.5 rounded-full text-xs bg-[#07080a] text-[#f8fafc] placeholder-[#8b949e] border border-[#1f2228] focus:outline-none focus:border-[#2f3540] transition"
+            placeholder="Search ticker..."
+            class="w-full sm:w-44 pl-8 pr-3 py-1.5 rounded-full text-xs bg-[#0d0d0f] text-[#f8fafc] placeholder-[#8b949e] border border-[#1f1f23] focus:outline-none focus:border-[#2f3540] transition"
           />
         </div>
 
         <!-- Compact Pill Filter Tabs -->
-        <div id="filterTabs" class="flex items-center gap-1 bg-[#07080a] p-1 rounded-full border border-[#1f2228]">
-          <button type="button" data-filter="ALL" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-[#181b21] text-[#f8fafc] transition cursor-pointer">
+        <div id="filterTabs" class="flex items-center gap-1 bg-[#0d0d0f] p-1 rounded-full border border-[#1f1f23]">
+          <button type="button" data-filter="ALL" class="filter-pill px-3 py-1 rounded-full text-xs font-medium bg-[#1f1f23] text-[#f8fafc] transition cursor-pointer">
             All
           </button>
-          <button type="button" data-filter="ACTIONABLE" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            Watch / Buy
+          <button type="button" data-filter="BUY" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
+            BUY
+          </button>
+          <button type="button" data-filter="WATCH" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
+            WATCH
           </button>
           <button type="button" data-filter="WAIT" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            Wait
-          </button>
-          <button type="button" data-filter="HIGH_RISK" class="filter-pill px-3 py-1 rounded-full text-xs font-medium text-mutedText hover:text-[#f8fafc] transition cursor-pointer">
-            High Risk
+            WAIT
           </button>
         </div>
 
@@ -193,11 +193,11 @@
         <select
           id="sortSelect"
           aria-label="Sort opportunities"
-          class="px-3 py-1.5 rounded-full text-xs font-medium bg-[#07080a] text-[#f8fafc] border border-[#1f2228] focus:outline-none focus:border-[#2f3540] cursor-pointer"
+          class="px-3 py-1.5 rounded-full text-xs font-medium bg-[#0d0d0f] text-[#f8fafc] border border-[#1f1f23] focus:outline-none focus:border-[#2f3540] cursor-pointer"
         >
           <option value="default">Sort: Featured</option>
-          <option value="score">Sort: Technical Score</option>
-          <option value="winProb">Sort: Win Probability</option>
+          <option value="score">Sort: Score</option>
+          <option value="winProb">Sort: Win Chance</option>
         </select>
       </div>
     </section>
@@ -221,7 +221,7 @@
     </div>
 
     <!-- Subtle Footer -->
-    <footer class="mt-10 pt-5 border-t border-divider flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-mutedText">
+    <footer class="mt-10 pt-5 border-t border-[#1c1c1e] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-mutedText">
       <div>AI Trading Analyst &bull; Probabilități statistice bazate pe backtesting istoric + sentiment AI.</div>
       <div>Instrumente compatibile Trading 212 Invest / ISA (US Equities).</div>
     </footer>
@@ -234,9 +234,9 @@
     role="dialog"
     aria-modal="true"
   >
-    <div class="w-full max-w-2xl bg-[#07080a] border border-[#2f3540] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+    <div class="w-full max-w-2xl bg-[#0d0d0f] border border-[#2f3540] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <!-- Modal Header -->
-      <div class="flex items-start justify-between gap-4 pb-4 border-b border-divider">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-[#1c1c1e]">
         <div>
           <div class="flex items-center gap-3">
             <h3 id="modalTicker" class="text-xl font-bold text-[#f8fafc]">MSFT</h3>
@@ -245,13 +245,13 @@
             </span>
             <span id="modalSector" class="text-xs text-mutedText hidden sm:inline">Technology</span>
           </div>
-          <p id="modalCompanyName" class="text-xs text-mutedText mt-1">Microsoft Corp. &bull; NASDAQ &bull; Trading 212 Fractional</p>
+          <p id="modalCompanyName" class="text-xs text-mutedText mt-1">Microsoft Corp. &bull; NASDAQ &bull; Trading 212</p>
         </div>
         <button
           id="closeDetailModalBtn"
           type="button"
           aria-label="Close modal"
-          class="p-1.5 rounded-lg text-mutedText hover:text-[#f8fafc] hover:bg-[#14171d] transition cursor-pointer"
+          class="p-1.5 rounded-lg text-mutedText hover:text-[#f8fafc] hover:bg-[#18181b] transition cursor-pointer"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -262,12 +262,12 @@
       <!-- Win / Loss Statistical Backtest Split -->
       <div class="mt-5">
         <div class="flex items-center justify-between text-xs mb-2">
-          <span class="font-medium text-[#f8fafc]">Probabilitate statistică (Backtest istoric)</span>
+          <span class="font-medium text-[#f8fafc]">Backtest Results (Wins vs Losses)</span>
           <span id="modalSampleInfo" class="text-mutedText">34 Wins vs 16 Losses în 50 setup-uri similare</span>
         </div>
 
         <!-- Split Bar -->
-        <div class="w-full h-3 rounded-full bg-[#1f2228] overflow-hidden flex">
+        <div class="w-full h-3 rounded-full bg-[#1f1f23] overflow-hidden flex">
           <div id="modalWinBar" class="h-full bg-[#16a34a] transition-all duration-300" style="width: 68%"></div>
           <div id="modalLossBar" class="h-full bg-[#dc2626]/80 transition-all duration-300" style="width: 32%"></div>
         </div>
@@ -280,22 +280,22 @@
 
       <!-- Key Technical Metrics Grid -->
       <div class="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f2228]">
+        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
           <div class="text-[11px] text-mutedText">RSI (14)</div>
           <div id="modalRsi" class="text-sm font-bold text-[#f8fafc] mt-1">41.8</div>
           <div id="modalRsiNote" class="text-[11px] text-[#22c55e] mt-0.5">Zona neutru-supravândut</div>
         </div>
-        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f2228]">
-          <div class="text-[11px] text-mutedText">Trend vs SMA200</div>
+        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
+          <div class="text-[11px] text-mutedText">SMA Trend</div>
           <div id="modalSma" class="text-sm font-bold text-[#f8fafc] mt-1">+6.4%</div>
           <div id="modalSmaNote" class="text-[11px] text-[#22c55e] mt-0.5">Uptrend primar activ</div>
         </div>
-        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f2228]">
+        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
           <div class="text-[11px] text-mutedText">Relative Volume</div>
           <div id="modalRvol" class="text-sm font-bold text-[#f8fafc] mt-1">1.38x</div>
           <div id="modalRvolNote" class="text-[11px] text-mutedText mt-0.5">Peste media 20 zile</div>
         </div>
-        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f2228]">
+        <div class="p-3 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
           <div class="text-[11px] text-mutedText">ATR (14) Volatilitate</div>
           <div id="modalAtr" class="text-sm font-bold text-[#f8fafc] mt-1">$7.45 (1.7%)</div>
           <div id="modalAtrNote" class="text-[11px] text-mutedText mt-0.5">Volatilitate moderată</div>
@@ -303,31 +303,31 @@
       </div>
 
       <!-- Trade Plan Levels -->
-      <div class="mt-4 p-4 rounded-[10px] bg-pureBlack border border-[#1f2228]">
+      <div class="mt-4 p-4 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-semibold text-[#f8fafc]">Plan statistic de tranzacționare (Setup ATR)</span>
-          <span id="modalRRBadge" class="text-xs font-semibold text-[#22c55e]">Risk / Reward: 1 : 2.3</span>
+          <span class="text-xs font-semibold text-[#f8fafc]">Entry / Current Price &amp; Suggested Levels</span>
+          <span id="modalRRBadge" class="text-xs font-semibold text-[#22c55e]">R/R: 1 : 2.3</span>
         </div>
         <div class="grid grid-cols-3 gap-3 text-xs">
           <div>
-            <div class="text-mutedText">Reference Price</div>
+            <div class="text-mutedText">Entry / Current</div>
             <div id="modalRefPrice" class="text-sm font-bold text-[#f8fafc] mt-0.5">$428.50</div>
           </div>
           <div>
-            <div class="text-mutedText">Take Profit Target</div>
+            <div class="text-mutedText">Suggested Take Profit</div>
             <div id="modalTpPrice" class="text-sm font-bold text-[#22c55e] mt-0.5">$442.20 (+3.2%)</div>
           </div>
           <div>
-            <div class="text-mutedText">Stop Loss Level</div>
+            <div class="text-mutedText">Suggested Stop Loss</div>
             <div id="modalSlPrice" class="text-sm font-bold text-[#ef4444] mt-0.5">$422.50 (-1.4%)</div>
           </div>
         </div>
       </div>
 
       <!-- AI Sentiment & Catalyst Summary -->
-      <div class="mt-4 p-4 rounded-[10px] bg-pureBlack border border-[#1f2228]">
+      <div class="mt-4 p-4 rounded-[10px] bg-pureBlack border border-[#1f1f23]">
         <div class="flex items-center justify-between mb-1.5">
-          <span class="text-xs font-semibold text-[#f8fafc]">AI Sentiment &amp; Catalyst Summary</span>
+          <span class="text-xs font-semibold text-[#f8fafc]">Full AI &amp; Technical Analysis</span>
           <span id="modalSentimentTag" class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-pillGreenBg text-pillGreenText">
             Sentiment Pozitiv (+0.74)
           </span>
@@ -338,12 +338,12 @@
       </div>
 
       <!-- Modal Footer -->
-      <div class="mt-5 pt-3 border-t border-divider flex items-center justify-between">
+      <div class="mt-5 pt-3 border-t border-[#1c1c1e] flex items-center justify-between">
         <span id="modalDisclaimer" class="text-[11px] text-mutedText">Exemplu fictiv — scorul nu este o analiză actuală.</span>
         <button
           id="closeDetailModalBtn2"
           type="button"
-          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-[#14171d] text-[#f8fafc] hover:bg-[#1f2228] transition cursor-pointer"
+          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-[#18181b] text-[#f8fafc] hover:bg-[#27272a] transition cursor-pointer"
         >
           Închide
         </button>
@@ -358,19 +358,19 @@
     role="dialog"
     aria-modal="true"
   >
-    <div class="w-full max-w-2xl bg-[#07080a] border border-[#2f3540] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
-      <div class="flex items-start justify-between gap-4 pb-4 border-b border-divider">
+    <div class="w-full max-w-2xl bg-[#0d0d0f] border border-[#2f3540] rounded-[12px] p-5 sm:p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between gap-4 pb-4 border-b border-[#1c1c1e]">
         <div>
-          <h3 class="text-lg font-bold text-[#f8fafc]">Import Daily Scan JSON</h3>
+          <h3 class="text-lg font-bold text-[#f8fafc]">Manual JSON Testing / Import</h3>
           <p class="text-xs text-mutedText mt-1">
-            Conectează scriptul Python (Trading 212 + yfinance + Gemini) încărcând fișierul JSON zilnic.
+            Dashboard-ul încarcă automat <code>./data.json</code> la deschidere. Poți testa manual orice payload JSON aici.
           </p>
         </div>
         <button
           id="closeImportModalBtn"
           type="button"
           aria-label="Close JSON modal"
-          class="p-1.5 rounded-lg text-mutedText hover:text-[#f8fafc] hover:bg-[#14171d] transition cursor-pointer"
+          class="p-1.5 rounded-lg text-mutedText hover:text-[#f8fafc] hover:bg-[#18181b] transition cursor-pointer"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -381,14 +381,14 @@
       <!-- Action Strip -->
       <div class="mt-4 flex flex-wrap items-center justify-between gap-2">
         <div class="flex items-center gap-2">
-          <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-[#f8fafc] border border-[#1f2228] hover:border-[#2f3540] cursor-pointer transition">
-            <span>Încarcă fișier .json</span>
+          <label class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-[#f8fafc] border border-[#1f1f23] hover:border-[#2f3540] cursor-pointer transition">
+            <span>Upload .json</span>
             <input id="jsonFileInput" type="file" accept=".json,application/json" class="hidden" />
           </label>
           <button
             id="loadSchemaSampleBtn"
             type="button"
-            class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-[#22c55e] border border-[#1f2228] hover:border-[#2f3540] transition cursor-pointer"
+            class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-[#22c55e] border border-[#1f1f23] hover:border-[#2f3540] transition cursor-pointer"
           >
             Load Sample JSON
           </button>
@@ -397,7 +397,7 @@
         <button
           id="copySchemaBtn"
           type="button"
-          class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-mutedText hover:text-[#f8fafc] border border-[#1f2228] transition cursor-pointer"
+          class="px-3 py-1.5 rounded-[8px] text-xs font-medium bg-pureBlack text-mutedText hover:text-[#f8fafc] border border-[#1f1f23] transition cursor-pointer"
         >
           Copy Schema
         </button>
@@ -409,8 +409,8 @@
           id="jsonTextarea"
           rows="11"
           spellcheck="false"
-          placeholder='Lipește aici JSON-ul generat de scriptul Python sau apasă "Load Sample JSON"...'
-          class="w-full p-3.5 rounded-[10px] bg-pureBlack text-[#e2e8f0] font-mono text-xs border border-[#1f2228] focus:outline-none focus:border-[#2f3540] leading-relaxed"
+          placeholder='Lipește aici conținutul din data.json sau apasă "Load Sample JSON"...'
+          class="w-full p-3.5 rounded-[10px] bg-pureBlack text-[#e2e8f0] font-mono text-xs border border-[#1f1f23] focus:outline-none focus:border-[#2f3540] leading-relaxed"
         ></textarea>
       </div>
 
@@ -418,11 +418,11 @@
       <div id="importFeedback" class="hidden mt-3 px-3.5 py-2.5 rounded-[8px] text-xs font-medium"></div>
 
       <!-- Modal Actions -->
-      <div class="mt-4 pt-3 border-t border-divider flex items-center justify-end gap-2.5">
+      <div class="mt-4 pt-3 border-t border-[#1c1c1e] flex items-center justify-end gap-2.5">
         <button
           id="cancelImportBtn"
           type="button"
-          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-pureBlack text-mutedText hover:text-[#f8fafc] border border-[#1f2228] transition cursor-pointer"
+          class="px-4 py-1.5 rounded-[10px] text-xs font-medium bg-pureBlack text-mutedText hover:text-[#f8fafc] border border-[#1f1f23] transition cursor-pointer"
         >
           Anulează
         </button>
@@ -439,12 +439,12 @@
 
   <!-- Application Logic -->
   <script>
-    // Default realistic dataset featuring MSFT & NVDA first as in the reference UI
+    // Fallback sample data used gracefully when ./data.json is not yet present
     const DEFAULT_SCAN_DATA = {
-      mode: 'Demo UI',
+      isLive: false,
       marketStatus: 'Monitoring',
       stocksScanned: 42,
-      updatedAt: 'Actualizat zilnic la 15:35 EET',
+      lastUpdated: 'Demo fallback • Așteaptă data.json',
       opportunities: [
         {
           ticker: 'MSFT',
@@ -454,17 +454,17 @@
           score: 78,
           winProb: 68,
           lossProb: 32,
-          rrRatio: '1:2.3',
+          rrRatio: '1 : 2.3',
           tpPct: '+3.2%',
           slPct: '-1.4%',
-          refPrice: '$428.50',
+          currentPrice: '$428.50',
           tpPrice: '$442.20',
           slPrice: '$422.50',
           winsCount: 34,
           totalSetups: 50,
           rsi: '41.8',
           rsiNote: 'Zona neutru-supravândut',
-          sma200: '+6.4%',
+          sma200: '+6.4% vs SMA200',
           smaNote: 'Uptrend primar activ',
           rvol: '1.38x',
           rvolNote: 'Peste media 20 zile',
@@ -472,6 +472,7 @@
           atrNote: 'Volatilitate moderată',
           sentimentLabel: 'Sentiment Pozitiv (+0.74)',
           sentimentType: 'positive',
+          summary: 'Cererea instituțională pentru cloud Azure și AI rămâne solidă; prețul retestează suportul dinamic EMA21 cu volum în creștere.',
           aiSummary: 'Cererea instituțională pentru infrastructura cloud Azure și AI rămâne solidă. Prețul a retestat suportul dinamic EMA21 cu volum în creștere și fără presiune de vânzare.',
           caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
         },
@@ -483,17 +484,17 @@
           score: 61,
           winProb: 54,
           lossProb: 46,
-          rrRatio: '1:1.6',
+          rrRatio: '1 : 1.6',
           tpPct: '+4.5%',
           slPct: '-2.8%',
-          refPrice: '$136.40',
+          currentPrice: '$136.40',
           tpPrice: '$142.54',
           slPrice: '$132.58',
           winsCount: 27,
           totalSetups: 50,
           rsi: '58.4',
           rsiNote: 'Momentum neutru',
-          sma200: '+18.2%',
+          sma200: '+18.2% vs SMA200',
           smaNote: 'Extins față de media 200d',
           rvol: '0.92x',
           rvolNote: 'Volum ușor sub medie',
@@ -501,6 +502,7 @@
           atrNote: 'Volatilitate ridicată',
           sentimentLabel: 'Sentiment Mixt (+0.22)',
           sentimentType: 'neutral',
+          summary: 'Trendul primar rămâne ascendent, însă prețul consolidează sub o rezistență pe termen scurt; așteaptă retragere spre suport.',
           aiSummary: 'Trendul pe termen lung rămâne puternic, însă prețul consolidează aproape de o zonă de rezistență pe termen scurt. Modelul recomandă așteptarea unei retrageri spre suport.',
           caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
         },
@@ -512,17 +514,17 @@
           score: 82,
           winProb: 72,
           lossProb: 28,
-          rrRatio: '1:2.5',
+          rrRatio: '1 : 2.5',
           tpPct: '+3.0%',
           slPct: '-1.2%',
-          refPrice: '$229.10',
+          currentPrice: '$229.10',
           tpPrice: '$235.97',
           slPrice: '$226.35',
           winsCount: 36,
           totalSetups: 50,
           rsi: '38.2',
           rsiNote: 'Revenire din supravândut',
-          sma200: '+8.1%',
+          sma200: '+8.1% vs SMA200',
           smaNote: 'Suport instituțional clar',
           rvol: '1.51x',
           rvolNote: 'Acumulare pe scădere',
@@ -530,6 +532,7 @@
           atrNote: 'Volatilitate scăzută',
           sentimentLabel: 'Sentiment Pozitiv (+0.81)',
           sentimentType: 'positive',
+          summary: 'Marjele din segmentul Services și fluxul constant de răscumpărări susțin revenirea tehnică după o corecție scurtă de 4 zile.',
           aiSummary: 'Marjele din segmentul Services și fluxul constant de răscumpărări susțin revenirea tehnică după o corecție scurtă de 4 zile pe volum scăzut.',
           caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
         },
@@ -541,17 +544,17 @@
           score: 74,
           winProb: 65,
           lossProb: 35,
-          rrRatio: '1:2.1',
+          rrRatio: '1 : 2.1',
           tpPct: '+3.4%',
           slPct: '-1.6%',
-          refPrice: '$204.80',
+          currentPrice: '$204.80',
           tpPrice: '$211.76',
           slPrice: '$201.52',
           winsCount: 31,
           totalSetups: 48,
           rsi: '46.5',
           rsiNote: 'Echilibru cumpărători',
-          sma200: '+11.0%',
+          sma200: '+11.0% vs SMA200',
           smaNote: 'Canal ascendent curat',
           rvol: '1.19x',
           rvolNote: 'Interes peste medie',
@@ -559,181 +562,8 @@
           atrNote: 'Volatilitate normală',
           sentimentLabel: 'Sentiment Pozitiv (+0.66)',
           sentimentType: 'positive',
+          summary: 'Accelerarea profitabilității AWS menține bias-ul pozitiv; se urmărește confirmarea depășirii maximului local cu volum.',
           aiSummary: 'Accelerarea profitabilității AWS și optimizarea costurilor logistice mențin bias-ul pozitiv. Se urmărește confirmarea depășirii maximului local.',
-          caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
-        },
-        {
-          ticker: 'META',
-          company: 'Meta Platforms Inc.',
-          sector: 'Communication',
-          status: 'WAIT',
-          score: 64,
-          winProb: 57,
-          lossProb: 43,
-          rrRatio: '1:1.8',
-          tpPct: '+3.6%',
-          slPct: '-2.0%',
-          refPrice: '$582.00',
-          tpPrice: '$602.95',
-          slPrice: '$570.36',
-          winsCount: 25,
-          totalSetups: 44,
-          rsi: '61.2',
-          rsiNote: 'Aproape de supracumpărat',
-          sma200: '+14.7%',
-          smaNote: 'Trend ascendent intact',
-          rvol: '0.88x',
-          rvolNote: 'Volum în scădere',
-          atr: '$12.80 (2.2%)',
-          atrNote: 'Oscilații zilnice medii',
-          sentimentLabel: 'Sentiment Neutru (+0.35)',
-          sentimentType: 'neutral',
-          aiSummary: 'Veniturile din publicitate sunt susținute de algoritmii AI, dar raportul Risc/Recompensă actual nu justifică intrarea imediată fără o corecție.',
-          caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
-        },
-        {
-          ticker: 'GOOGL',
-          company: 'Alphabet Inc.',
-          sector: 'Technology',
-          status: 'WATCH',
-          score: 71,
-          winProb: 63,
-          lossProb: 37,
-          rrRatio: '1:2.0',
-          tpPct: '+3.0%',
-          slPct: '-1.5%',
-          refPrice: '$176.20',
-          tpPrice: '$181.49',
-          slPrice: '$173.56',
-          winsCount: 30,
-          totalSetups: 48,
-          rsi: '44.0',
-          rsiNote: 'Spațiu bun de creștere',
-          sma200: '+5.3%',
-          smaNote: 'Rebounds frecvente din SMA200',
-          rvol: '1.14x',
-          rvolNote: 'Flux constant',
-          atr: '$3.25 (1.8%)',
-          atrNote: 'Volatilitate controlată',
-          sentimentLabel: 'Sentiment Pozitiv (+0.52)',
-          sentimentType: 'positive',
-          aiSummary: 'Evaluarea P/E atractivă raportată la ceilalți giganți Big Tech atrage cumpărători în apropierea mediei mobile de 50 de zile.',
-          caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
-        },
-        {
-          ticker: 'PLTR',
-          company: 'Palantir Technologies',
-          sector: 'AI Software',
-          status: 'WAIT',
-          score: 56,
-          winProb: 51,
-          lossProb: 49,
-          rrRatio: '1:1.4',
-          tpPct: '+5.2%',
-          slPct: '-3.7%',
-          refPrice: '$61.50',
-          tpPrice: '$64.70',
-          slPrice: '$59.22',
-          winsCount: 21,
-          totalSetups: 41,
-          rsi: '71.5',
-          rsiNote: 'Supracumpărat pe termen scurt',
-          sma200: '+42.0%',
-          smaNote: 'Foarte extins față de medie',
-          rvol: '1.65x',
-          rvolNote: 'Activitate speculativă ridicată',
-          atr: '$2.65 (4.3%)',
-          atrNote: 'Volatilitate foarte mare',
-          sentimentLabel: 'Sentiment Pozitiv (+0.79)',
-          sentimentType: 'positive',
-          aiSummary: 'Contractele comerciale AI generează entuziasm puternic, dar indicatorul RSI peste 70 crește riscul unei marcări rapide de profit.',
-          caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
-        },
-        {
-          ticker: 'AMD',
-          company: 'Advanced Micro Devices',
-          sector: 'Semiconductors',
-          status: 'WAIT',
-          score: 53,
-          winProb: 49,
-          lossProb: 51,
-          rrRatio: '1:1.5',
-          tpPct: '+4.1%',
-          slPct: '-2.7%',
-          refPrice: '$141.30',
-          tpPrice: '$147.09',
-          slPrice: '$137.48',
-          winsCount: 23,
-          totalSetups: 47,
-          rsi: '43.1',
-          rsiNote: 'Fără semnal clar de inversare',
-          sma200: '-2.4%',
-          smaNote: 'Sub media mobilă de 200 zile',
-          rvol: '0.95x',
-          rvolNote: 'Volum neutru',
-          atr: '$4.50 (3.2%)',
-          atrNote: 'Volatilitate ridicată',
-          sentimentLabel: 'Sentiment Neutru (+0.14)',
-          sentimentType: 'neutral',
-          aiSummary: 'Acțiunea testează pragul psihologic de suport, însă nu a confirmat încă o lumânare de inversare cu volum peste medie.',
-          caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
-        },
-        {
-          ticker: 'TSLA',
-          company: 'Tesla Inc.',
-          sector: 'Auto & Energy',
-          status: 'HIGH RISK',
-          score: 43,
-          winProb: 41,
-          lossProb: 59,
-          rrRatio: '1:1.2',
-          tpPct: '+4.8%',
-          slPct: '-4.0%',
-          refPrice: '$318.00',
-          tpPrice: '$333.26',
-          slPrice: '$305.28',
-          winsCount: 19,
-          totalSetups: 46,
-          rsi: '67.9',
-          rsiNote: 'Divergență negativă ușoară',
-          sma200: '+26.5%',
-          smaNote: 'Mișcări bruște în ambele sensuri',
-          rvol: '1.44x',
-          rvolNote: 'Dispersie mare intraday',
-          atr: '$14.20 (4.5%)',
-          atrNote: 'Risc ridicat de Stop Loss',
-          sentimentLabel: 'Sentiment Polarizat (-0.18)',
-          sentimentType: 'negative',
-          aiSummary: 'Volatilitatea implicită și amplitudinea zilnică ATR cresc probabilitatea atingerii Stop Loss-ului înaintea țintei de profit.',
-          caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
-        },
-        {
-          ticker: 'JPM',
-          company: 'JPMorgan Chase & Co.',
-          sector: 'Financials',
-          status: 'AVOID',
-          score: 46,
-          winProb: 44,
-          lossProb: 56,
-          rrRatio: '1:1.3',
-          tpPct: '+2.2%',
-          slPct: '-1.7%',
-          refPrice: '$241.60',
-          tpPrice: '$246.92',
-          slPrice: '$237.49',
-          winsCount: 20,
-          totalSetups: 45,
-          rsi: '66.0',
-          rsiNote: 'Epuizare pe termen scurt',
-          sma200: '+13.1%',
-          smaNote: 'Aproape de limita superioară',
-          rvol: '0.84x',
-          rvolNote: 'Scădere a impulsului',
-          atr: '$3.85 (1.6%)',
-          atrNote: 'Volatilitate redusă',
-          sentimentLabel: 'Sentiment Prudent (-0.12)',
-          sentimentType: 'negative',
-          aiSummary: 'Sectorul bancar se află într-o zonă de rezistență istorică, iar raportul statistic Win/Loss nu oferă avantaj statistic astăzi.',
           caption: 'Exemplu fictiv — scorul nu este o analiză actuală.'
         }
       ]
@@ -741,6 +571,7 @@
 
     // State
     let currentData = JSON.parse(JSON.stringify(DEFAULT_SCAN_DATA));
+    let isLiveFeed = false;
     let activeFilter = 'ALL';
     let searchQuery = '';
     let sortMode = 'default';
@@ -755,35 +586,56 @@
     const signalsTodayValue = document.getElementById('signalsTodayValue');
     const marketStatusValue = document.getElementById('marketStatusValue');
     const modeBadge = document.getElementById('modeBadge');
+    const modeBadgeText = document.getElementById('modeBadgeText');
     const lastUpdatedLabel = document.getElementById('lastUpdatedLabel');
     const visibleCountBadge = document.getElementById('visibleCountBadge');
+    const reloadBtn = document.getElementById('reloadBtn');
+    const reloadIcon = document.getElementById('reloadIcon');
 
-    // Badge styling helper
+    // Badge styling helper (BUY in emerald green, WATCH in teal/green, WAIT in amber/orange)
     function getStatusBadgeStyle(status) {
       const normalized = (status || '').toUpperCase();
-      if (normalized === 'BUY' || normalized === 'WATCH') {
+      if (normalized === 'BUY') {
         return {
-          bg: 'bg-pillGreenBg',
-          text: 'text-pillGreenText',
+          bg: 'bg-[#064e3b]/60 border border-[#10b981]/30',
+          text: 'text-[#34d399]',
+        };
+      }
+      if (normalized === 'WATCH') {
+        return {
+          bg: 'bg-[#0b2918] border border-[#22c55e]/20',
+          text: 'text-[#22c55e]',
         };
       }
       if (normalized === 'WAIT') {
         return {
-          bg: 'bg-pillAmberBg',
+          bg: 'bg-pillAmberBg border border-[#f59e0b]/20',
           text: 'text-pillAmberText',
         };
       }
       return {
-        bg: 'bg-pillRedBg',
+        bg: 'bg-pillRedBg border border-[#ef4444]/20',
         text: 'text-pillRedText',
       };
     }
 
-    // Progress bar fill color helper
+    // Progress bar fill color helper: green for >=70, orange for 55-69, red for <55
     function getScoreBarColor(score) {
       if (score >= 70) return '#16a34a'; // emerald green
-      if (score >= 50) return '#d97706'; // warm amber
+      if (score >= 55) return '#f59e0b'; // amber/orange
       return '#dc2626'; // crimson red
+    }
+
+    // Update top header mode badge ('Live Feed' in green vs 'Demo UI' in amber)
+    function updateModeBadge(live) {
+      isLiveFeed = live;
+      if (live) {
+        modeBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pillGreenBg text-pillGreenText tracking-wide';
+        modeBadgeText.textContent = 'Live Feed';
+      } else {
+        modeBadge.className = 'inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-pillAmberBg text-pillAmberText tracking-wide';
+        modeBadgeText.textContent = 'Demo UI';
+      }
     }
 
     // Update KPI summary row
@@ -797,11 +649,50 @@
         return st === 'WATCH' || st === 'BUY';
       }).length;
 
-      signalsTodayValue.textContent = actionableCount;
+      signalsTodayValue.textContent = currentData.signalsToday ?? actionableCount;
       marketStatusValue.textContent = currentData.marketStatus || 'Monitoring';
-      modeBadge.textContent = currentData.mode || 'Demo UI';
-      if (currentData.updatedAt) {
-        lastUpdatedLabel.textContent = currentData.updatedAt;
+
+      const timestampText = currentData.lastUpdated || currentData.updatedAt;
+      if (timestampText) {
+        lastUpdatedLabel.textContent = timestampText;
+      }
+    }
+
+    // Fetch ./data.json?t=Date.now() with no-cache on load & reload
+    async function loadDataFeed(isManualReload = false) {
+      if (isManualReload) {
+        reloadIcon.classList.add('animate-spin');
+      }
+
+      try {
+        const response = await fetch(`./data.json?t=${Date.now()}`, {
+          cache: 'no-store',
+          headers: {
+            'Cache-Control': 'no-cache'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const parsed = await response.json();
+        if (!parsed || !Array.isArray(parsed.opportunities)) {
+          throw new Error('Invalid JSON structure');
+        }
+
+        currentData = parsed;
+        updateModeBadge(true);
+      } catch (err) {
+        // Gracefully fall back to realistic sample data when ./data.json is missing or invalid
+        currentData = JSON.parse(JSON.stringify(DEFAULT_SCAN_DATA));
+        updateModeBadge(false);
+      } finally {
+        updateKpis();
+        renderCards();
+        if (isManualReload) {
+          setTimeout(() => reloadIcon.classList.remove('animate-spin'), 350);
+        }
       }
     }
 
@@ -809,13 +700,9 @@
     function renderCards() {
       let items = [...(currentData.opportunities || [])];
 
-      // Filter by tab
-      if (activeFilter === 'ACTIONABLE') {
-        items = items.filter(i => ['WATCH', 'BUY'].includes((i.status || '').toUpperCase()));
-      } else if (activeFilter === 'WAIT') {
-        items = items.filter(i => (i.status || '').toUpperCase() === 'WAIT');
-      } else if (activeFilter === 'HIGH_RISK') {
-        items = items.filter(i => ['HIGH RISK', 'AVOID'].includes((i.status || '').toUpperCase()));
+      // Filter by tab: All, BUY, WATCH, WAIT
+      if (activeFilter !== 'ALL') {
+        items = items.filter(i => (i.status || '').toUpperCase() === activeFilter);
       }
 
       // Filter by search query
@@ -846,8 +733,10 @@
 
       cardsContainer.innerHTML = items.map((stock) => {
         const badge = getStatusBadgeStyle(stock.status);
-        const barColor = getScoreBarColor(stock.score);
         const clampedScore = Math.max(0, Math.min(100, Number(stock.score) || 0));
+        const barColor = getScoreBarColor(clampedScore);
+        const displayPrice = stock.currentPrice || stock.refPrice || 'N/A';
+        const conciseSummary = stock.summary || stock.aiSummary || stock.caption || 'Analiză tehnică și statistică bazată pe datele istorice.';
 
         return `
           <article
@@ -857,7 +746,7 @@
             role="button"
             aria-label="Vezi detalii analiză pentru ${stock.ticker}"
           >
-            <!-- Row 1: Ticker + Company Name & Status Pill -->
+            <!-- Row 1: Ticker + Company Name subtitle on left & Signal pill badge on right -->
             <div class="flex items-center justify-between gap-3">
               <div class="flex items-baseline gap-2.5 min-w-0">
                 <span class="text-[17px] font-bold text-[#f8fafc] tracking-tight">${stock.ticker}</span>
@@ -868,22 +757,22 @@
               </span>
             </div>
 
-            <!-- Row 2: Technical score label & numeric value -->
+            <!-- Row 2: 'Technical & Win score' on left and 'XX/100' on right -->
             <div class="mt-3 flex items-center justify-between text-xs sm:text-[13px]">
-              <span class="text-mutedText font-medium">Technical score</span>
+              <span class="text-mutedText font-medium">Technical &amp; Win score</span>
               <span class="font-bold text-[#f8fafc] text-sm">${clampedScore}/100</span>
             </div>
 
-            <!-- Row 3: Sleek 6px rounded progress bar -->
-            <div class="mt-2.5 w-full h-[6px] rounded-full bg-[#1f2228] overflow-hidden">
+            <!-- Row 3: Smooth horizontal progress bar -->
+            <div class="mt-2.5 w-full h-[6px] rounded-full bg-[#1f1f23] overflow-hidden">
               <div
                 class="h-full rounded-full transition-all duration-500"
                 style="width: ${clampedScore}%; background-color: ${barColor};"
               ></div>
             </div>
 
-            <!-- Row 4: Win/Loss Probability & R/R Strip -->
-            <div class="mt-3.5 pt-3 border-t border-[#14171d] flex flex-wrap items-center justify-between gap-y-1.5 gap-x-4 text-xs">
+            <!-- Row 4: Compact metrics row ('Win chance', 'Loss risk', 'R/R', current price) -->
+            <div class="mt-3.5 pt-3 border-t border-[#18181b] flex flex-wrap items-center justify-between gap-y-1.5 gap-x-4 text-xs">
               <div class="flex flex-wrap items-center gap-x-4 gap-y-1">
                 <span>
                   <span class="text-mutedText">Win chance:</span>
@@ -895,24 +784,25 @@
                 </span>
                 <span class="hidden sm:inline text-[#2f3540]">|</span>
                 <span>
-                  <span class="text-mutedText">Risk/Reward:</span>
-                  <span class="font-medium text-[#f8fafc] ml-1">${stock.rrRatio || '1:2.0'}</span>
+                  <span class="text-mutedText">R/R:</span>
+                  <span class="font-medium text-[#f8fafc] ml-1">${stock.rrRatio || '1 : 2.0'}</span>
                 </span>
-                <span class="hidden md:inline">
-                  <span class="text-mutedText">Setup:</span>
-                  <span class="text-[#cbd5e1] ml-1">${stock.tpPct || '+3.0%'} TP / ${stock.slPct || '-1.5%'} SL</span>
+                <span class="hidden sm:inline text-[#2f3540]">|</span>
+                <span>
+                  <span class="text-mutedText">Price:</span>
+                  <span class="font-semibold text-[#f8fafc] ml-1">${displayPrice}</span>
                 </span>
               </div>
 
               <span class="text-[11px] font-medium text-mutedText group-hover:text-[#f8fafc] transition">
-                Click for breakdown &rarr;
+                Details &rarr;
               </span>
             </div>
 
-            <!-- Row 5: Muted footer caption -->
-            <div class="mt-2.5 text-[11px] text-mutedText">
-              ${stock.caption || 'Exemplu fictiv — scorul nu este o analiză actuală.'}
-            </div>
+            <!-- Row 5: 1-2 line concise summary at the bottom -->
+            <p class="mt-2.5 text-xs text-mutedText leading-relaxed line-clamp-2">
+              ${conciseSummary}
+            </p>
           </article>
         `;
       }).join('');
@@ -959,15 +849,15 @@
 
       document.getElementById('modalRsi').textContent = stock.rsi || '48.0';
       document.getElementById('modalRsiNote').textContent = stock.rsiNote || 'Indicator momentum 14 zile';
-      document.getElementById('modalSma').textContent = stock.sma200 || '+4.2%';
+      document.getElementById('modalSma').textContent = stock.sma200 || stock.smaTrend || '+4.2%';
       document.getElementById('modalSmaNote').textContent = stock.smaNote || 'Poziție față de SMA 200';
       document.getElementById('modalRvol').textContent = stock.rvol || '1.10x';
       document.getElementById('modalRvolNote').textContent = stock.rvolNote || 'Volum relativ zilnic';
       document.getElementById('modalAtr').textContent = stock.atr || '2.1%';
       document.getElementById('modalAtrNote').textContent = stock.atrNote || 'Interval mediu zilnic';
 
-      document.getElementById('modalRRBadge').textContent = `Risk / Reward: ${stock.rrRatio || '1:2.0'}`;
-      document.getElementById('modalRefPrice').textContent = stock.refPrice || 'N/A';
+      document.getElementById('modalRRBadge').textContent = `R/R: ${stock.rrRatio || '1 : 2.0'}`;
+      document.getElementById('modalRefPrice').textContent = stock.currentPrice || stock.refPrice || 'N/A';
       document.getElementById('modalTpPrice').textContent = `${stock.tpPrice || ''} (${stock.tpPct || '+3.0%'})`;
       document.getElementById('modalSlPrice').textContent = `${stock.slPrice || ''} (${stock.slPct || '-1.5%'})`;
 
@@ -981,8 +871,10 @@
         sentTag.className = 'text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-pillGreenBg text-pillGreenText';
       }
 
-      document.getElementById('modalAiSummary').textContent = stock.aiSummary || 'Analiză combinată bazată pe indicatorii tehnici zilnici și fluxul de știri financiare.';
-      document.getElementById('modalDisclaimer').textContent = stock.caption || 'Exemplu fictiv — scorul nu este o analiză actuală.';
+      document.getElementById('modalAiSummary').textContent = stock.aiSummary || stock.summary || 'Analiză combinată bazată pe indicatorii tehnici zilnici și fluxul de știri financiare.';
+      document.getElementById('modalDisclaimer').textContent = isLiveFeed
+        ? 'Date generate automat din scanarea zilnică.'
+        : (stock.caption || 'Exemplu fictiv — scorul nu este o analiză actuală.');
 
       detailModal.classList.remove('hidden');
       detailModal.classList.add('flex');
@@ -1006,10 +898,10 @@
       activeFilter = btn.getAttribute('data-filter');
 
       document.querySelectorAll('.filter-pill').forEach(p => {
-        p.classList.remove('bg-[#181b21]', 'text-[#f8fafc]');
+        p.classList.remove('bg-[#1f1f23]', 'text-[#f8fafc]');
         p.classList.add('text-mutedText');
       });
-      btn.classList.add('bg-[#181b21]', 'text-[#f8fafc]');
+      btn.classList.add('bg-[#1f1f23]', 'text-[#f8fafc]');
       btn.classList.remove('text-mutedText');
 
       renderCards();
@@ -1034,57 +926,19 @@
       sortSelect.value = 'default';
       document.querySelectorAll('.filter-pill').forEach((p, idx) => {
         if (idx === 0) {
-          p.classList.add('bg-[#181b21]', 'text-[#f8fafc]');
+          p.classList.add('bg-[#1f1f23]', 'text-[#f8fafc]');
           p.classList.remove('text-mutedText');
         } else {
-          p.classList.remove('bg-[#181b21]', 'text-[#f8fafc]');
+          p.classList.remove('bg-[#1f1f23]', 'text-[#f8fafc]');
           p.classList.add('text-mutedText');
         }
       });
       renderCards();
     });
 
-    // Simulate Scan Button (animates a live scan refresh)
-    const simulateBtn = document.getElementById('simulateBtn');
-    const simulateIcon = document.getElementById('simulateIcon');
-    simulateBtn.addEventListener('click', () => {
-      simulateIcon.classList.add('animate-spin');
-      marketStatusValue.textContent = 'Scanning...';
-
-      setTimeout(() => {
-        // Slightly vary scores & win probabilities to demonstrate live updates
-        currentData.opportunities = currentData.opportunities.map(item => {
-          const delta = Math.floor(Math.random() * 7) - 3; // -3 to +3
-          const newScore = Math.max(30, Math.min(94, item.score + delta));
-          const newWin = Math.max(35, Math.min(85, item.winProb + Math.round(delta * 0.8)));
-          const newLoss = 100 - newWin;
-
-          let newStatus = item.status;
-          if (newScore >= 80) newStatus = 'BUY';
-          else if (newScore >= 70) newStatus = 'WATCH';
-          else if (newScore >= 50) newStatus = 'WAIT';
-          else newStatus = 'HIGH RISK';
-
-          return {
-            ...item,
-            score: newScore,
-            winProb: newWin,
-            lossProb: newLoss,
-            status: newStatus
-          };
-        });
-
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        currentData.marketStatus = 'Monitoring';
-        currentData.stocksScanned = 50;
-        currentData.updatedAt = `Simulare rulată la ${hh}:${mm}`;
-
-        simulateIcon.classList.remove('animate-spin');
-        updateKpis();
-        renderCards();
-      }, 550);
+    // Reload Button: re-fetches ./data.json?t=Date.now()
+    reloadBtn.addEventListener('click', () => {
+      loadDataFeed(true);
     });
 
     // JSON Import Modal Logic
@@ -1121,10 +975,9 @@
 
     // Sample JSON Schema for Python Backend integration
     const SAMPLE_BACKEND_JSON = {
-      mode: "Live Scan",
       marketStatus: "Monitoring",
       stocksScanned: 50,
-      updatedAt: "Scanare zilnică • 15:35 EET",
+      lastUpdated: "Live Scan • 15:35 EET",
       opportunities: [
         {
           ticker: "MSFT",
@@ -1134,17 +987,17 @@
           score: 84,
           winProb: 73,
           lossProb: 27,
-          rrRatio: "1:2.4",
+          rrRatio: "1 : 2.4",
           tpPct: "+3.3%",
           slPct: "-1.4%",
-          refPrice: "$431.20",
+          currentPrice: "$431.20",
           tpPrice: "$445.43",
           slPrice: "$425.16",
           winsCount: 38,
           totalSetups: 52,
           rsi: "39.4",
           rsiNote: "Revenire din supravândut",
-          sma200: "+7.1%",
+          sma200: "+7.1% vs SMA200",
           smaNote: "Peste media 200 zile",
           rvol: "1.45x",
           rvolNote: "Volum instituțional ridicat",
@@ -1152,8 +1005,8 @@
           atrNote: "Volatilitate optimă",
           sentimentLabel: "AI Bullish (+0.82)",
           sentimentType: "positive",
-          aiSummary: "Date reale din scriptul Python: semnal statistic confirmat pe backtest 3 ani + știri pozitive pe segmentul Cloud AI.",
-          caption: "Analiză generată automat din datele zilnice."
+          summary: "Semnal statistic confirmat pe backtest 3 ani + știri pozitive pe segmentul Cloud AI.",
+          aiSummary: "Date reale din scriptul Python: semnal statistic confirmat pe backtest 3 ani + știri pozitive pe segmentul Cloud AI."
         },
         {
           ticker: "NVDA",
@@ -1163,26 +1016,26 @@
           score: 72,
           winProb: 64,
           lossProb: 36,
-          rrRatio: "1:2.0",
+          rrRatio: "1 : 2.0",
           tpPct: "+4.2%",
           slPct: "-2.1%",
-          refPrice: "$138.90",
+          currentPrice: "$138.90",
           tpPrice: "$144.73",
           slPrice: "$135.98",
           winsCount: 32,
           totalSetups: 50,
           rsi: "48.6",
           rsiNote: "Momentum în consolidare",
-          sma200: "+19.4%",
+          sma200: "+19.4% vs SMA200",
           smaNote: "Trend primar puternic",
           rvol: "1.18x",
           rvolNote: "Acumulare graduală",
-          atr: '$4.80 (3.4%)',
-          atrNote: 'Volatilitate medie-ridicată',
+          atr: "$4.80 (3.4%)",
+          atrNote: "Volatilitate medie-ridicată",
           sentimentLabel: "AI Bullish (+0.68)",
           sentimentType: "positive",
-          aiSummary: "Cererea pentru acceleratoare AI susține suportul tehnic. Așteaptă confirmarea deschiderii NYSE.",
-          caption: "Analiză generată automat din datele zilnice."
+          summary: "Cererea pentru acceleratoare AI susține suportul tehnic. Așteaptă confirmarea deschiderii NYSE.",
+          aiSummary: "Cererea pentru acceleratoare AI susține suportul tehnic. Așteaptă confirmarea deschiderii NYSE."
         }
       ]
     };
@@ -1230,6 +1083,7 @@
           throw new Error('JSON-ul trebuie să conțină o listă "opportunities".');
         }
         currentData = parsed;
+        updateModeBadge(true);
         updateKpis();
         renderCards();
         closeImportModal();
@@ -1246,9 +1100,8 @@
       }
     });
 
-    // Initial Render
-    updateKpis();
-    renderCards();
+    // Automatically load ./data.json on startup (falls back gracefully to Demo UI)
+    loadDataFeed(false);
   </script>
 </body>
 </html>
