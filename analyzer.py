@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import html
 from datetime import datetime
 from zoneinfo import ZoneInfo
 import requests
@@ -62,8 +63,6 @@ def detect_scan_phase():
     now_ny = datetime.now(TZ_NY)
     event_name = os.getenv("GITHUB_EVENT_NAME", "manual")
 
-    # Daca rularea este automata (schedule), verificam sa fie in una din cele 3 ferestre din Bucuresti
-    # (Acest filtru rezolva automat trecerea la ora de vara/iarna fara a modifica cron-ul)
     if event_name == "schedule":
         mins_ro = now_ro.hour * 60 + now_ro.minute
         in_prep = (15 * 60 + 5) <= mins_ro <= (15 * 60 + 50)
@@ -72,7 +71,6 @@ def detect_scan_phase():
         if not (in_prep or in_pre or in_open):
             return None, None, now_ro, now_ny
 
-    # Determinam faza activa in functie de ora bursei din New York (deschidere la 09:30 ET)
     ny_mins = now_ny.hour * 60 + now_ny.minute
     if ny_mins < 9 * 60:
         phase = "PREP"
@@ -99,6 +97,25 @@ def load_custom_watchlist(filepath="watchlist.txt"):
                 if clean and not clean.startswith("#"):
                     custom.append(clean)
     return list(dict.fromkeys(custom))
+
+
+def load_previous_scan(filepath="data.json"):
+    """Citeste scanarea anterioara pentru a evita notificari duplicate in aceeasi zi."""
+    if not os.path.exists(filepath):
+        return "", {}
+    try:
+        with open(filepath, "r", encoding="utf-8") as f:
+            old_data = json.load(f)
+        updated_at = old_data.get("updatedAt", "")
+        prev_date = updated_at.split(",")[0].strip() if "," in updated_at else ""
+        prev_map = {
+            item["ticker"]: item.get("signal", "WAIT")
+            for item in old_data.get("opportunities", [])
+            if "ticker" in item
+        }
+        return prev_date, prev_map
+    except Exception:
+        return "", {}
 
 
 def get_trading212_data():
@@ -150,13 +167,6 @@ def get_trading212_data():
 
 
 def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
-    """
-    Extrage datele intraday pe 15 minute (inclusiv Pre-Market) pentru a masura:
-    - Pretul live exact (inclusiv in Pre-Market)
-    - Variatia procentuala fata de inchiderea de ieri
-    - Raportul de volum la deschidere (primele 15 min vs media ultimelor 4 zile)
-    - Pozitia fata de VWAP intraday
-    """
     result = {
         "live_price": prev_close,
         "change_pct": 0.0,
@@ -172,7 +182,6 @@ def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
         if intra is None or intra.empty:
             return result
 
-        # Convertim indexul in fusul orar al pietei relevante
         target_tz = TZ_NY if is_us else TZ_RO
         if intra.index.tz is None:
             intra.index = intra.index.tz_localize("UTC").tz_convert(target_tz)
@@ -191,7 +200,6 @@ def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
             result["change_pct"] = round(((live_price - prev_close) / prev_close) * 100, 2)
 
         if is_us:
-            # Separam barele din Pre-Market (< 09:30 ET) de cele din sesiunea normala (>= 09:30 ET)
             mins_of_day = today_bars.index.hour * 60 + today_bars.index.minute
             pre_bars = today_bars[mins_of_day < (9 * 60 + 30)]
             reg_bars = today_bars[mins_of_day >= (9 * 60 + 30)]
@@ -203,14 +211,12 @@ def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
 
             if not reg_bars.empty:
                 result["has_open_15m"] = True
-                # Calculam VWAP pentru sesiunea de azi
                 typical_price = (reg_bars["High"] + reg_bars["Low"] + reg_bars["Close"]) / 3.0
                 total_vol = reg_bars["Volume"].sum()
                 if total_vol > 0:
                     vwap = float((typical_price * reg_bars["Volume"]).sum() / total_vol)
                     result["above_vwap"] = live_price >= vwap
 
-                # Comparam volumul primei lumanari de 15m (09:30) cu media primelor 15m din zilele trecute
                 first_bar_vol = float(reg_bars["Volume"].iloc[0])
                 past_bars = intra[intra.index.date < today_date]
                 if not past_bars.empty and first_bar_vol > 0:
@@ -222,7 +228,6 @@ def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
                         if avg_open_vol > 0:
                             result["open_vol_ratio"] = round(first_bar_vol / avg_open_vol, 2)
         else:
-            # Pentru actiuni europene/worldwide, calculam VWAP pe sesiunea curenta
             typical_price = (today_bars["High"] + today_bars["Low"] + today_bars["Close"]) / 3.0
             total_vol = today_bars["Volume"].sum()
             if total_vol > 0:
@@ -236,17 +241,12 @@ def analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro):
 
 
 def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase):
-    """
-    Combina analiza istorica pe 3 ani (backtest Win/Loss) cu semnalele live
-    din Pre-Market si din primele 15 minute de la deschidere.
-    """
     df = df.copy()
     if df.index.tz is None:
         df.index = df.index.tz_localize("UTC")
     df_local = df.tz_convert(TZ_NY if is_us else TZ_RO)
     today_date = now_ny.date() if is_us else now_ro.date()
 
-    # Pastram doar zilele inchise pentru calculul indicatorilor zilnici si al backtest-ului
     closed_df = df_local[df_local.index.date < today_date].copy()
     if len(closed_df) < 220:
         closed_df = df_local.copy()
@@ -290,7 +290,6 @@ def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase
     sma200 = float(latest["SMA200"])
     vol_ratio = float(latest["VolRatio"])
 
-    # Praguri dinamice Take Profit / Stop Loss bazate pe volatilitatea ATR
     tp_pct = min(max((2.2 * atr) / live_price, 0.025), 0.12)
     sl_pct = min(max((1.2 * atr) / live_price, 0.015), 0.06)
     rr_ratio = round(tp_pct / sl_pct, 2)
@@ -340,7 +339,6 @@ def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase
     win_chance = max(25, min(88, win_chance))
     loss_risk = 100 - win_chance
 
-    # 1. Scorul de baza (tehnic + statistic)
     score = int(win_chance * 0.62)
     if above_200:
         score += 14
@@ -353,7 +351,6 @@ def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase
     if vol_ratio > 1.15:
         score += 4
 
-    # 2. Ajustari specifice pentru fazele 16:15 (Pre-Market) si 16:45 (Open Confirm)
     pre_pct = intra_info.get("premarket_pct")
     open_vol = intra_info.get("open_vol_ratio")
     above_vwap = intra_info.get("above_vwap")
@@ -361,19 +358,19 @@ def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase
 
     if phase == "PREMARKET" and pre_pct is not None:
         if 0.6 <= pre_pct <= 6.5 and above_200:
-            score += 8   # Gap pozitiv sanatos sustinut de trend
+            score += 8
         elif pre_pct > 9.0:
-            score -= 6   # Risc de marcari de profit la deschidere (gap prea mare)
+            score -= 6
         elif pre_pct < -2.5:
-            score -= 8   # Presiune de vanzare in pre-market
+            score -= 8
 
     elif phase in ("OPEN_CONFIRM", "INTRADAY"):
         if open_vol is not None and open_vol >= 1.35 and change_pct > 0.3:
-            score += 8   # Explozie de volum la deschidere pe crestere
+            score += 8
         if above_vwap is True and change_pct > 0:
-            score += 6   # Cumparatorii apara pretul peste VWAP
+            score += 6
         elif above_vwap is False and pre_pct is not None and pre_pct > 1.0:
-            score -= 9   # Capcana (Gap & Fade): a deschis sus, dar a cazut sub VWAP
+            score -= 9
 
     score = max(15, min(96, score))
 
@@ -400,10 +397,6 @@ def compute_indicators_and_backtest(df, is_us, now_ny, now_ro, intra_info, phase
 
 
 def get_ai_news_insight(ticker, name, headlines, stats, phase):
-    """
-    Genereaza rezumatul scurt in romana folosind Gemini AI (daca exista GEMINI_API_KEY)
-    sau construieste automat rezumatul tehnic + intraday.
-    """
     gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
 
     live_context = ""
@@ -444,12 +437,133 @@ def get_ai_news_insight(ticker, name, headlines, stats, phase):
     return fallback_text
 
 
+def send_notifications(results, status_label, phase, today_str, prev_date, prev_signal_map):
+    """
+    Trimite alerta pe Telegram si/sau Discord daca exista semnale BUY
+    sau miscari relevante pe actiunile din watchlist.txt (CUSTOM).
+    """
+    tg_token = os.getenv("TELEGRAM_BOT_TOKEN", "").strip()
+    tg_chat_id = os.getenv("TELEGRAM_CHAT_ID", "").strip()
+    discord_webhook = os.getenv("DISCORD_WEBHOOK_URL", "").strip()
+    dashboard_url = os.getenv("DASHBOARD_URL", "").strip()
+    event_name = os.getenv("GITHUB_EVENT_NAME", "manual")
+
+    if not ((tg_token and tg_chat_id) or discord_webhook):
+        print("Info: Nu sunt configurate chei Telegram sau Discord. Sar peste notificari.")
+        return
+
+    is_new_day = (today_str != prev_date)
+    buy_alerts = []
+    custom_alerts = []
+
+    for item in results:
+        t = item["ticker"]
+        sig = item["signal"]
+        prev_sig = prev_signal_map.get(t, "WAIT")
+        chg = abs(item.get("_changePct", 0.0))
+        pm_chg = abs(item.get("_premarketPct") or 0.0)
+        strong_move = max(chg, pm_chg) >= 2.0
+
+        if sig == "BUY":
+            # Trimitem daca e zi noua, daca abia a urcat in BUY, daca e confirmarea de la 16:45 sau test manual
+            if is_new_day or prev_sig != "BUY" or phase == "OPEN_CONFIRM" or event_name != "schedule":
+                buy_alerts.append(item)
+        elif item["isCustom"] and (item["score"] >= 62 or strong_move):
+            if is_new_day or phase in ("PREMARKET", "OPEN_CONFIRM") or event_name != "schedule":
+                custom_alerts.append(item)
+
+    if not buy_alerts and not custom_alerts:
+        print("Nu exista semnale BUY noi sau miscari majore pe watchlist pentru notificare.")
+        return
+
+    # 1. Trimitere pe TELEGRAM (format HTML curat)
+    if tg_token and tg_chat_id:
+        lines = [f"📊 <b>AI Trading Analyst</b> — {html.escape(status_label)}"]
+
+        if buy_alerts:
+            lines.append("\n🟢 <b>Semnale BUY detectate:</b>")
+            for x in buy_alerts[:6]:
+                badge = " ⭐" if x["isCustom"] else ""
+                lines.append(
+                    f"• <b>{html.escape(x['ticker'])}</b>{badge} | Scor: <b>{x['score']}/100</b> (Win {x['winChance']}%)\n"
+                    f"  Preț: {html.escape(x['price'])} | TP: {html.escape(x['takeProfit'])} | SL: {html.escape(x['stopLoss'])}"
+                )
+
+        if custom_alerts:
+            lines.append("\n⭐ <b>Alerte Watchlist (CUSTOM):</b>")
+            for x in custom_alerts[:5]:
+                lines.append(
+                    f"• <b>{html.escape(x['ticker'])}</b> [{x['signal']}] — Scor {x['score']}/100\n"
+                    f"  Preț: {html.escape(x['price'])} | {html.escape(x['summary'])}"
+                )
+
+        if dashboard_url:
+            lines.append(f"\n🔗 <a href=\"{html.escape(dashboard_url)}\">Deschide Dashboard-ul Live</a>")
+
+        tg_text = "\n".join(lines)
+        try:
+            r = requests.post(
+                f"https://api.telegram.org/bot{tg_token}/sendMessage",
+                json={
+                    "chat_id": tg_chat_id,
+                    "text": tg_text,
+                    "parse_mode": "HTML",
+                    "disable_web_page_preview": True
+                },
+                timeout=15
+            )
+            if r.status_code == 200:
+                print("Notificare Telegram trimisa cu succes!")
+            else:
+                print(f"Eroare Telegram ({r.status_code}): {r.text}")
+        except Exception as e:
+            print(f"Exceptie Telegram: {e}")
+
+    # 2. Trimitere pe DISCORD (format Markdown)
+    if discord_webhook:
+        d_lines = [f"📊 **AI Trading Analyst** — `{status_label}`"]
+
+        if buy_alerts:
+            d_lines.append("\n🟢 **Semnale BUY detectate:**")
+            for x in buy_alerts[:6]:
+                badge = " ⭐" if x["isCustom"] else ""
+                d_lines.append(
+                    f"• **{x['ticker']}**{badge} | Scor: **{x['score']}/100** (Win {x['winChance']}%)\n"
+                    f"  Preț: `{x['price']}` | TP: `{x['takeProfit']}` | SL: `{x['stopLoss']}`"
+                )
+
+        if custom_alerts:
+            d_lines.append("\n⭐ **Alerte Watchlist (CUSTOM):**")
+            for x in custom_alerts[:5]:
+                d_lines.append(
+                    f"• **{x['ticker']}** [`{x['signal']}`] — Scor {x['score']}/100\n"
+                    f"  Preț: `{x['price']}` — {x['summary']}"
+                )
+
+        if dashboard_url:
+            d_lines.append(f"\n🔗 Deschide Dashboard-ul: {dashboard_url}")
+
+        try:
+            r = requests.post(
+                discord_webhook,
+                json={"content": "\n".join(d_lines)[:1950]},
+                timeout=15
+            )
+            if r.status_code in (200, 204):
+                print("Notificare Discord trimisa cu succes!")
+            else:
+                print(f"Eroare Discord ({r.status_code}): {r.text}")
+        except Exception as e:
+            print(f"Exceptie Discord: {e}")
+
+
 def main():
     phase, status_label, now_ro, now_ny = detect_scan_phase()
     if phase is None:
         print(f"Ora curenta RO ({now_ro.strftime('%H:%M')}) este in afara ferestrelor 15:30/16:15/16:45. Iesire rapida.")
         return
 
+    prev_date, prev_signal_map = load_previous_scan("data.json")
     print(f"Pornire scanare in faza: {phase} ({status_label}) | RO: {now_ro.strftime('%H:%M')} | NY: {now_ny.strftime('%H:%M')}")
 
     custom_tickers = load_custom_watchlist("watchlist.txt")
@@ -469,7 +583,6 @@ def main():
             if hist.empty or len(hist) < 220:
                 continue
 
-            # Luam ultimul pret de inchidere anterior zilei de azi pentru calculul exact al variatiei
             temp_df = hist.copy()
             if temp_df.index.tz is None:
                 temp_df.index = temp_df.index.tz_localize("UTC")
@@ -478,9 +591,7 @@ def main():
             prev_rows = temp_df[temp_df.index.date < today_d]
             prev_close = float(prev_rows["Close"].iloc[-1]) if not prev_rows.empty else float(temp_df["Close"].iloc[-1])
 
-            # Analizam miscarile live din Pre-Market si primele 15 min
             intra_info = analyze_intraday_and_premarket(stock, prev_close, is_us, now_ny, now_ro)
-
             stats = compute_indicators_and_backtest(hist, is_us, now_ny, now_ro, intra_info, phase)
             if not stats:
                 continue
@@ -513,7 +624,6 @@ def main():
             if t212_available and not on_t212 and not is_custom:
                 continue
 
-            # Praguri semnal calibrate
             if stats["score"] >= 68 and stats["win_chance"] >= 54:
                 signal = "BUY"
                 signals_count += 1
@@ -532,7 +642,6 @@ def main():
                 tags.append("IN PORTFOLIO")
             tags.append(region)
 
-            # Construim badge-urile de indicatori inclusiv datele live Pre-Market / Open
             indicators_list = [
                 f"RSI(14): {stats['rsi']}",
                 f"SMA200: {'Deasupra' if stats['sma200_above'] else 'Sub'}"
@@ -545,7 +654,6 @@ def main():
             if stats["above_vwap"] is not None:
                 indicators_list.append(f"VWAP: {'Deasupra' if stats['above_vwap'] else 'Sub'}")
 
-            # Formatam pretul cu variatia de azi intre paranteze
             chg = stats["change_pct"]
             chg_str = f" ({'+' if chg >= 0 else ''}{chg}%)" if chg != 0 else ""
 
@@ -564,7 +672,9 @@ def main():
                 "stopLoss": f"-{stats['sl_pct']}% ({sym}{stats['price'] * (1 - stats['sl_pct']/100):.2f})",
                 "backtestStats": f"{stats['wins']} Wins vs {stats['losses']} Losses (ultimii 3 ani)",
                 "indicators": indicators_list,
-                "summary": summary
+                "summary": summary,
+                "_changePct": stats["change_pct"],
+                "_premarketPct": stats["premarket_pct"]
             })
 
             time.sleep(0.25)
@@ -575,7 +685,15 @@ def main():
     results.sort(key=lambda x: (not x["isCustom"], -x["score"]))
 
     tz_abbr = now_ro.tzname() or "EET"
+    today_str = now_ro.strftime("%d %b %Y")
     ro_time = now_ro.strftime(f"%d %b %Y, %H:%M {tz_abbr}")
+
+    # Trimitem notificarile pe Telegram / Discord inainte de a curata campurile interne
+    send_notifications(results, status_label, phase, today_str, prev_date, prev_signal_map)
+
+    for item in results:
+        item.pop("_changePct", None)
+        item.pop("_premarketPct", None)
 
     output_data = {
         "marketStatus": status_label,
